@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorPrimaryVariant">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorSecondaryVariant">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        
+        <!-- Status bar color -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here -->
+    </style>
+    
+    <!-- Card Styles -->
+    <style name="Widget.SiteBook.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="android:layout_margin">@dimen/card_margin</item>
+        <item name="contentPadding">@dimen/card_padding</item>
+    </style>
+    
+    <!-- Button Styles -->
+    <style name="Widget.SiteBook.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:paddingStart">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/button_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/button_padding_vertical</item>
+    </style>
+    
+    <style name="Widget.SiteBook.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:paddingStart">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/button_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/button_padding_vertical</item>
+    </style>
+    
+    <!-- Text Styles -->
+    <style name="TextAppearance.SiteBook.Headline1" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="TextAppearance.SiteBook.Headline2" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="TextAppearance.SiteBook.Body1" parent="TextAppearance.Material3.BodyLarge" />
+    
+    <style name="TextAppearance.SiteBook.Body2" parent="TextAppearance.Material3.BodyMedium" />
+    
+    <style name="TextAppearance.SiteBook.Caption" parent="TextAppearance.Material3.BodySmall" />
+    
+    <!-- FAB Styles -->
+    <style name="Widget.SiteBook.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+    </style>
+    
+    <!-- Toolbar Styles -->
+    <style name="Widget.SiteBook.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:elevation">@dimen/toolbar_elevation</item>
+        <item name="titleTextAppearance">@style/TextAppearance.SiteBook.Headline2</item>
+    </style>
+</resources>
