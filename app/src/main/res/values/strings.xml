@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">SiteBook</string>
+
+    <!-- Navigation -->
+    <string name="title_campgrounds">Campgrounds</string>
+    <string name="title_reservations">Reservations</string>
+    <string name="title_profile">Profile</string>
+
+    <!-- Actions -->
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="book_now">Book Now</string>
+    <string name="add_campground">Add Campground</string>
+    <string name="add_reservation">Add Reservation</string>
+    <string name="monitor">Monitor</string>
+    <string name="stop_monitoring">Stop Monitoring</string>
+    <string name="refresh">Refresh</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading...</string>
+    <string name="error_occurred">An error occurred</string>
+    <string name="ok">OK</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="close">Close</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    
+    <!-- Campgrounds -->
+    <string name="campgrounds_title">Campgrounds</string>
+    <string name="search_campgrounds">Search campgrounds...</string>
+    <string name="no_campgrounds_found">No campgrounds found</string>
+    <string name="campground_details">Campground Details</string>
+    <string name="campsite_details">Campsite Details</string>
+    <string name="view_campsites">View Campsites</string>
+    <string name="monitor_campground">Monitor for Availability</string>
+    
+    <!-- Reservations -->
+    <string name="reservations_title">My Reservations</string>
+    <string name="no_reservations_title">No Reservations</string>
+    <string name="no_reservations_message">You don\'t have any reservations yet. Tap the + button to start monitoring campsites.</string>
+    <string name="reservation_details">Reservation Details</string>
+    <string name="cancel_reservation">Cancel Reservation</string>
+    
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="auto_reserve_settings">Auto-Reserve Settings</string>
+    <string name="search_preferences">Search Preferences</string>
+    <string name="security_settings">Security Settings</string>
+    
+    <!-- Settings -->
+    <string name="push_notifications">Push Notifications</string>
+    <string name="enable_auto_reserve">Enable Auto-Reserve</string>
+    <string name="max_auto_reserve_price">Max Auto-Reserve Price ($)</string>
+    <string name="preferred_search_radius">Preferred Search Radius</string>
+    <string name="biometric_authentication">Biometric Authentication</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="monitoring_settings">Monitoring Settings</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="check_interval">Check Interval (minutes)</string>
+    <string name="preferred_radius">Preferred Search Radius (miles)</string>
+    <string name="biometric_auth">Biometric Authentication</string>
+    
+    <!-- Status -->
+    <string name="status_confirmed">Confirmed</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_monitoring">Monitoring</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_failed">Failed</string>
+    <string name="status_expired">Expired</string>
+    
+    <!-- Permissions -->
+    <string name="permission_location">Location Permission Required</string>
+    <string name="permission_location_message">SiteBook needs location access to find campgrounds near you.</string>
+    <string name="permission_location_title">Location Permission</string>
+    <string name="permission_notification_title">Notification Permission</string>
+    <string name="permission_notification_message">SiteBook needs notification access to alert you when campsites become available.</string>
+    <string name="grant_permission">Grant Permission</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_availability">Campsite Availability</string>
+    <string name="notification_availability_title">Campsite Available!</string>
+    <string name="notification_availability_message">%s is now available for your requested dates</string>
+    
+    <!-- Date/Time -->
+    <string name="check_in">Check In</string>
+    <string name="check_out">Check Out</string>
+    <string name="guests">Guests</string>
+    
+    <!-- Accessibility -->
+    <string name="accessible_site">Accessible Site</string>
+    <string name="ada_compliant">ADA Compliant</string>
+
+    <!-- Errors -->
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_login_failed">Login failed. Please check your credentials.</string>
+    <string name="error_registration_failed">Registration failed. Please try again.</string>
+    <string name="error_reservation_failed">Failed to create reservation</string>
+    <string name="error_monitoring_failed">Failed to start monitoring</string>
+    <string name="error_invalid_dates">Please select valid dates</string>
+    <string name="error_no_location_permission">Location permission required</string>
+
+    <!-- Success messages -->
+    <string name="success_reservation_created">Reservation created successfully</string>
+    <string name="success_monitoring_started">Monitoring started</string>
+    <string name="success_monitoring_stopped">Monitoring stopped</string>
+    <string name="success_login">Welcome back!</string>
+    <string name="success_registration">Account created successfully</string>
+
+    <!-- Empty states -->
+    <string name="empty_campgrounds">No campgrounds available</string>
+    <string name="empty_reservations">No reservations found</string>
+    <string name="empty_search_results">No search results</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_campground_image">Campground image</string>
+    <string name="cd_back_button">Back</string>
+    <string name="cd_menu">Menu</string>
+    <string name="cd_monitoring_toggle">Toggle monitoring</string>
+</resources>
