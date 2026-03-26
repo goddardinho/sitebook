@@ -186,55 +186,6 @@ class ReservationMonitorService : Service() {
     }
 }
 
-// WorkManager Worker for periodic availability checks
-@HiltWorker
-class AvailabilityCheckWorker @AssistedInject constructor(
-    @Assisted context: Context,
-    @Assisted params: WorkerParameters,
-    private val reservationRepository: ReservationRepository
-) : CoroutineWorker(context, params) {
-
-    override suspend fun doWork(): Result {
-        return try {
-            val activeReservations = reservationRepository.getActiveMonitoringReservations()
-
-            for (reservation in activeReservations) {
-                reservationRepository.checkAvailability(
-                    reservation.campsiteId,
-                    reservation.checkInDate,
-                    reservation.checkOutDate
-                )
-            }
-
-            Result.success()
-        } catch (e: Exception) {
-            Result.retry()
-        }
-    }
-
-    companion object {
-        fun schedulePeriodicCheck(context: Context) {
-            val workRequest = PeriodicWorkRequestBuilder<AvailabilityCheckWorker>(
-                15, TimeUnit.MINUTES
-            )
-                .setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build()
-                )
-                .addTag(SiteBookApplication.AVAILABILITY_CHECK_WORK)
-                .build()
-
-            WorkManager.getInstance(context)
-                .enqueueUniquePeriodicWork(
-                    SiteBookApplication.AVAILABILITY_CHECK_WORK,
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    workRequest
-                )
-        }
-    }
-}
-
 // Boot receiver to restart monitoring after device restart
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

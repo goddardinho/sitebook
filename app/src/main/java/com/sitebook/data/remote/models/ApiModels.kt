@@ -242,7 +242,6 @@ typealias AddressDto = AddressResponse
 typealias OrganizationDto = OrganizationResponse
 typealias ReservationDto = ReservationResponse
 typealias RecreationGovAvailabilityResponse = AvailabilityResponse
-)
 
 data class ErrorResponse(
     val error: String,
