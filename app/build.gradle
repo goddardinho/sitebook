@@ -1,9 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    // id 'kotlin-kapt'  // Temporarily disabled
-    // id 'dagger.hilt.android.plugin'  // Temporarily disabled
-    id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    // id 'androidx.navigation.safeargs.kotlin'  // Temporarily disabled to fix wrapper
     id 'kotlin-parcelize'
 }
 
@@ -140,5 +140,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.navigation:navigation-testing:$navigation_version"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    // kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"  // Temporarily disabled
+    androidTestImplementation "androidx.room:room-testing:$room_version"
+    kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
 }
