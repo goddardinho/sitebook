@@ -3,11 +3,12 @@
 ## Prerequisites
 
 ### Required Software
-- **Android Studio**: Hedgehog (2023.1.1) or newer
-- **JDK**: OpenJDK 17 or Oracle JDK 17
-- **Android SDK**: API Level 34 (Android 14)
+- **Android Studio**: Koala (2024.1.1) or newer
+- **JDK**: OpenJDK 25.0.2 or Oracle JDK 25+
+- **Android SDK**: API Level 35 (Android 15)
+- **Gradle**: 9.4.1+ (managed by wrapper)
 - **Git**: Latest version
-- **Kotlin**: 1.9.20+ (handled by Gradle)
+- **Kotlin**: 2.3.0+ (handled by Gradle)
 
 ### Development Environment
 - **Operating System**: Windows 10+, macOS 12+, or Ubuntu 20.04+
@@ -47,6 +48,8 @@ FIREBASE_PROJECT_ID=your_firebase_project_id
 ```bash
 ./gradlew assembleDebug
 ```
+
+**Current Build Status**: ⚠️ KAPT annotation processing temporarily disabled due to compatibility issues with Java 25 environment. Core functionality works, but dependency injection features require manual setup until compatible library versions are released.
 
 ## Project Structure
 

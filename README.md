@@ -70,9 +70,11 @@ SiteBook integrates with the official Recreation.gov API to access:
 ## Getting Started
 
 ### Prerequisites
-- Android Studio Hedgehog or newer
-- Android SDK 24+ (Android 7.0)
-- Kotlin 1.9.20+
+- Android Studio Koala or newer (2024.1.1+)
+- Android SDK 35+ (Android 15)
+- Java 25+ (OpenJDK 25.0.2 recommended)
+- Gradle 9.4.1+
+- Kotlin 2.3.0+
 - Git
 
 ### Setup Instructions
@@ -83,9 +85,10 @@ SiteBook integrates with the official Recreation.gov API to access:
    cd sitebook
    ```
 
-2. **API Keys Configuration**
+2. **Configure SDK Path**
    Create a `local.properties` file in the project root:
    ```properties
+   sdk.dir=/path/to/your/Android/Sdk
    RECREATION_GOV_API_KEY=your_recreation_gov_api_key_here
    SITEBOOK_API_KEY=your_sitebook_api_key_here
    ```
@@ -95,6 +98,8 @@ SiteBook integrates with the official Recreation.gov API to access:
    ./gradlew assembleDebug
    # or open in Android Studio and run
    ```
+
+   **Note**: Currently requires disabling KAPT annotation processing due to compatibility issues with Java 25. Full dependency injection will be re-enabled when compatible versions are available.
 
 ### Development Setup
 

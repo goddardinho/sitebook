@@ -36,4 +36,8 @@
     </style>
     
     <style name="Theme.SiteBook" parent="Base.Theme.SiteBook" />
+    
+    <style name="Theme.SiteBook.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    
+    <style name="Theme.SiteBook.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
