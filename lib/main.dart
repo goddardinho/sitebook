@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'features/campgrounds/campgrounds_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _screens = [
-    CampgroundsPlaceholder(),
+    CampgroundsScreen(),
     ReservationsPlaceholder(),
     MapPlaceholder(),
     ProfilePlaceholder(),
@@ -94,38 +95,6 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 // Placeholder screens
-class CampgroundsPlaceholder extends StatelessWidget {
-  const CampgroundsPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Campgrounds'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.nature, size: 64, color: Colors.green),
-            SizedBox(height: 16),
-            Text(
-              'Campgrounds Screen',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Browse and monitor campgrounds',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class ReservationsPlaceholder extends StatelessWidget {
   const ReservationsPlaceholder({super.key});
 
