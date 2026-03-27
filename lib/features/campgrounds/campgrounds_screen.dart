@@ -31,8 +31,6 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredCampgrounds = ref.watch(filteredCampgroundsProvider);
-    final monitoredCount = ref.watch(monitoredCountProvider);
     final searchQuery = ref.watch(searchQueryProvider);
     final theme = Theme.of(context);
 
@@ -81,7 +79,16 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                           ],
                           if (!_isSearching) ...[
                             const SizedBox(height: 8),
-                            _buildHeaderStats(theme, monitoredCount),
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final monitoredCountAsync = ref.watch(monitoredCountProvider);
+                                return monitoredCountAsync.when(
+                                  data: (count) => _buildHeaderStats(theme, count),
+                                  loading: () => _buildHeaderStats(theme, 0),
+                                  error: (error, stack) => _buildHeaderStats(theme, 0),
+                                );
+                              },
+                            ),
                           ],
                           const SizedBox(height: 16),
                         ],
@@ -110,16 +117,46 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                   child: _buildQuickActions(theme),
                 ),
               ),
-            if (searchQuery.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: _buildSearchResults(theme, filteredCampgrounds.length, searchQuery),
-                ),
-              ),
+            Consumer(
+              builder: (context, ref, child) {
+                if (searchQuery.isNotEmpty) {
+                  final filteredCampgroundsAsync = ref.watch(searchResultsProvider);
+                  return filteredCampgroundsAsync.when(
+                    data: (campgrounds) => SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: _buildSearchResults(theme, campgrounds.length, searchQuery),
+                      ),
+                    ),
+                    loading: () => const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
+                    error: (error, stack) => SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: _buildSearchResults(theme, 0, searchQuery),
+                      ),
+                    ),
+                  );
+                }
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              },
+            ),
           ];
         },
-        body: _buildCampgroundsList(filteredCampgrounds),
+        body: Consumer(
+          builder: (context, ref, child) {
+            final filteredCampgroundsAsync = ref.watch(searchResultsProvider);
+            return filteredCampgroundsAsync.when(
+              data: (campgrounds) => _buildCampgroundsList(campgrounds),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => _buildErrorState(error),
+            );
+          },
+        ),
       ),
     );
   }
@@ -397,6 +434,47 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
       const SnackBar(
         content: Text('Recently added filter coming soon!'),
         duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(dynamic error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Oops! Something went wrong',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error.toString(),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(153),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () {
+                // Trigger a refresh
+                ref.invalidate(searchResultsProvider);
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Try Again'),
+            ),
+          ],
+        ),
       ),
     );
   }
