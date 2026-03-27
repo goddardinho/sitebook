@@ -25,13 +25,9 @@ class CampgroundActionButtons extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: campground.reservationUrl != null ? onReservePressed : null,
+            onPressed: onReservePressed,
             icon: const Icon(Icons.book_online),
-            label: Text(
-              campground.reservationUrl != null 
-                  ? 'Reserve Now'
-                  : 'Reservations Unavailable',
-            ),
+            label: const Text('Make Reservation'),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),

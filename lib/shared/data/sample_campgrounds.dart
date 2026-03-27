@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/campground.dart';
 
 // Sample campground data for development
