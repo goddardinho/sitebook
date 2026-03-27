@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/models/campground.dart';
 import '../../../shared/providers/campground_providers.dart';
+import '../../reservations/reservation_form_screen.dart';
 import 'widgets/campground_image_carousel.dart';
 import 'widgets/campground_info_section.dart';
 import 'widgets/campground_action_buttons.dart';
@@ -165,27 +166,14 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
   }
 
   void _handleReservePressed() {
-    // TODO: Navigate to reservation screen or open web booking
-    if (widget.campground.reservationUrl != null) {
-      // For now, show a snackbar - later we'll implement web view or reservation form
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Opening reservation system...'),
-          action: SnackBarAction(
-            label: 'Open',
-            onPressed: () {
-              // TODO: Launch URL or navigate to reservation form
-            },
-          ),
+    // Navigate to reservation form
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ReservationFormScreen(
+          campground: widget.campground,
         ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Reservations not available online for this campground'),
-        ),
-      );
-    }
+      ),
+    );
   }
 
   void _handleDirectionsPressed() {

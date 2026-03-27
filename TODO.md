@@ -54,7 +54,7 @@
 ### 2. State Management & API Integration (Week 1-2)
 - [x] **Set up Riverpod providers for campground data** ✅ **COMPLETE**
 - [ ] Implement Recreation.gov API service layer
-
+- [ ] Implement state park API service layer
 - [ ] Create offline-first data strategy with SQLite
 - [ ] Build real-time availability checking
 
