@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/models/campground.dart';
-import '../../../shared/providers/campground_providers.dart';
+import '../../../shared/providers/campground_providers_demo.dart';
 import '../../reservations/reservation_form_screen.dart';
 import 'widgets/campground_image_carousel.dart';
 import 'widgets/campground_info_section.dart';
@@ -151,7 +151,7 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
 
   void _toggleMonitoring() {
     final actions = ref.read(campgroundActionsProvider);
-    actions.toggleMonitoring(widget.campground.id);
+    actions.toggleMonitoring(widget.campground.id, !widget.campground.isMonitored);
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

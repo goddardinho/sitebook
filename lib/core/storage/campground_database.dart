@@ -421,4 +421,16 @@ class CampgroundDatabase {
     
     return radiusOfEarth * 2 * math.asin(math.sqrt(a));
   }
+
+  /// Clear all data from database (useful for testing)
+  Future<void> clearAllData() async {
+    try {
+      final db = await database;
+      await db.delete(_campgroundsTable);
+      _logger.i('Cleared all campground data');
+    } catch (e) {
+      _logger.e('Error clearing database', error: e);
+      rethrow;
+    }
+  }
 }

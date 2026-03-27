@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/campground.dart';
 import '../repositories/campground_repository.dart';
-import '../repositories/campground_repository_impl.dart';
+import '../repositories/simple_campground_repository.dart';
 
-// Repository provider
+// Repository provider - using simplified version for UX testing
 final campgroundRepositoryProvider = Provider<CampgroundRepository>((ref) {
-  return CampgroundRepositoryImpl();
+  return SimpleCampgroundRepository();
 });
 
 // Provider for all campgrounds (async from repository)
