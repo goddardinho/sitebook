@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/models/campground.dart';
-import '../../../shared/providers/campground_providers.dart';
+import '../../../shared/providers/campground_providers_demo.dart';
 import '../details/campground_details_screen.dart';
 
 class CampgroundCard extends ConsumerWidget {
@@ -161,7 +161,7 @@ class CampgroundCard extends ConsumerWidget {
                       const SizedBox(width: 8),
                       // Monitor button
                       IconButton.filledTonal(
-                        onPressed: () => actions.toggleMonitoring(campground.id),
+                        onPressed: () => actions.toggleMonitoring(campground.id, !campground.isMonitored),
                         icon: Icon(
                           campground.isMonitored ? Icons.visibility : Icons.visibility_off,
                         ),

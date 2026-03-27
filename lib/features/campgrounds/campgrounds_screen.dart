@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../shared/providers/campground_providers.dart';
+import '../../shared/providers/campground_providers_demo.dart';
 import 'widgets/campground_card.dart';
 
 class CampgroundsScreen extends ConsumerStatefulWidget {

@@ -85,7 +85,7 @@ class StateParkApiService {
         'lng': longitude,
         'radius': radiusMiles,
         'type': 'camping',
-        if (stateCode != null) 'state': stateCode,
+        'state': ?stateCode,
       });
 
       if (response.statusCode == 200) {
