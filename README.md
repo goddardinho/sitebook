@@ -1,17 +1,107 @@
-# sitebook_flutter
+# SiteBook - Campground Monitor & Reservation App
 
-A new Flutter project.
+*Modern Flutter application for discovering, monitoring, and booking campgrounds across National Parks and recreational areas*
 
-## Getting Started
+[![Flutter](https://img.shields.io/badge/Flutter-3.41.6-blue.svg)](https://flutter.dev/)
+[![Dart](https://img.shields.io/badge/Dart-3.11.4-blue.svg)](https://dart.dev/)
+[![Material 3](https://img.shields.io/badge/Material%203-Design-green.svg)](https://m3.material.io/)
 
-This project is a starting point for a Flutter application.
+## 🏕️ Features
 
-A few resources to get you started if this is your first Flutter project:
+### ✅ **Campground Discovery**
+- **Professional listing interface** with Material 3 design
+- **Rich campground cards** with image carousels and detailed information
+- **Real-time search & filtering** by name, park, state, amenities, and activities
+- **Monitoring system** to track availability for your favorite campgrounds
+- **Sample data** from 5 major National Parks (Yellowstone, Grand Canyon, Yosemite, Olympic, Zion)
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+### 🔧 **Technical Highlights**
+- **Flutter 3.41.6** with modern Dart 3.11.4
+- **Riverpod state management** for reactive data flow
+- **Material 3 theming** with automatic dark/light mode
+- **Responsive design** optimized for mobile and web
+- **Clean architecture** with separation of concerns
+- **Type-safe development** with comprehensive null safety
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Getting Started
+
+### Prerequisites
+- Flutter 3.41.6 or higher
+- Dart 3.11.4 or higher
+- Chrome (for web development)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/goddardinho/sitebook.git
+   cd sitebook
+   ```
+
+2. **Install dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Generate required code**
+   ```bash
+   flutter packages pub run build_runner build
+   ```
+
+4. **Run the application**
+   ```bash
+   # Web (Chrome)
+   flutter run -d chrome
+   
+   # iOS Simulator
+   flutter run -d ios
+   
+   # Android Emulator
+   flutter run -d android
+   ```
+
+## 📱 Current Status
+
+### ✅ **Completed Features**
+- **Campground Listing Screen**: Professional UI with search, filtering, and monitoring
+- **State Management**: Complete Riverpod provider architecture
+- **Navigation**: Bottom navigation with Material 3 styling
+- **Theming**: Responsive design with automatic theme switching
+
+### 🚧 **In Development**
+- Campground details view with full information display
+- Reservation form with date selection and booking flow
+- Interactive maps with campground locations
+- User profile and preference management
+
+## 🏗️ Architecture
+
+```
+lib/
+├── core/               # Core utilities and constants
+├── features/           # Feature-based modules
+│   └── campgrounds/    # Campground listing and management
+│       ├── widgets/    # Reusable UI components
+│       └── screens/    # Screen implementations
+└── shared/             # Shared resources
+    ├── data/           # Sample data and repositories
+    ├── models/         # Data models with JSON serialization
+    ├── providers/      # Riverpod state management
+    └── widgets/        # Common UI components
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Development Status**: Active development with professional-grade campground listing interface complete. Next phase focuses on details view and reservation functionality.
