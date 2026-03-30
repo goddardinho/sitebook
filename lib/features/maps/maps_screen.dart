@@ -1,7 +1,9 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../shared/models/campground.dart';
 import '../../shared/providers/campground_providers.dart';
 
@@ -17,6 +19,8 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
   Position? _currentPosition;
   Set<Marker> _markers = {};
   bool _isLoadingLocation = true;
+  bool _isLoadingMarkers = false;
+  MapType _currentMapType = MapType.normal;
 
   // Default location (San Francisco Bay Area - good for demo campgrounds)
   static const CameraPosition _defaultPosition = CameraPosition(
@@ -86,8 +90,24 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
   }
 
   Future<void> _createCampgroundMarkers() async {
-    final campgrounds = await ref.read(searchResultsProvider.future);
-    await _createCampgroundMarkersFromList(campgrounds);
+    setState(() => _isLoadingMarkers = true);
+    try {
+      final campgrounds = await ref.read(searchResultsProvider.future);
+      await _createCampgroundMarkersFromList(campgrounds);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading campgrounds: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingMarkers = false);
+      }
+    }
   }
 
   Future<void> _createCampgroundMarkersFromList(List<Campground> campgrounds) async {
@@ -285,11 +305,115 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
     ) / 1609.344; // Convert meters to miles
   }
 
-  void _navigateToCampground(Campground campground) {
-    // In a real app, this would open the device's map app with directions
-    final url = 'https://www.google.com/maps/dir/?api=1&destination=${campground.latitude},${campground.longitude}';
-    debugPrint('Navigate to: $url');
-    // You could use url_launcher package to open this URL
+  Future<void> _navigateToCampground(Campground campground) async {
+    try {
+      final url = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=${campground.latitude},${campground.longitude}&travelmode=driving'
+      );
+      
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open maps application'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening directions: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  static Future<void> openDirections(double latitude, double longitude, BuildContext context) async {
+    try {
+      final url = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving'
+      );
+      
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open maps application'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening directions: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _toggleMapType() {
+    setState(() {
+      switch (_currentMapType) {
+        case MapType.normal:
+          _currentMapType = MapType.satellite;
+          break;
+        case MapType.satellite:
+          _currentMapType = MapType.terrain;
+          break;
+        case MapType.terrain:
+          _currentMapType = MapType.hybrid;
+          break;
+        case MapType.hybrid:
+        case MapType.none:
+          _currentMapType = MapType.normal;
+          break;
+      }
+    });
+  }
+
+  Future<void> _fitAllMarkers() async {
+    if (_mapController == null || _markers.isEmpty) return;
+
+    final bounds = _calculateBounds(_markers);
+    await _mapController!.animateCamera(
+      CameraUpdate.newLatLngBounds(bounds, 100.0),
+    );
+  }
+
+  LatLngBounds _calculateBounds(Set<Marker> markers) {
+    double minLat = double.infinity;
+    double maxLat = -double.infinity; 
+    double minLng = double.infinity;
+    double maxLng = -double.infinity;
+
+    for (final marker in markers) {
+      final lat = marker.position.latitude;
+      final lng = marker.position.longitude;
+      
+      minLat = math.min(minLat, lat);
+      maxLat = math.max(maxLat, lat);
+      minLng = math.min(minLng, lng);
+      maxLng = math.max(maxLng, lng);
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -304,6 +428,19 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
         title: const Text('Campgrounds Map'),
         centerTitle: true,
         actions: [
+          // Map type toggle
+          IconButton(
+            onPressed: _toggleMapType,
+            icon: const Icon(Icons.layers),
+            tooltip: 'Map Type',
+          ),
+          // Fit all markers
+          if (_markers.isNotEmpty)
+            IconButton(
+              onPressed: _fitAllMarkers,
+              icon: const Icon(Icons.fit_screen),
+              tooltip: 'Fit All Markers',
+            ),
           // Current location button
           if (_currentPosition != null)
             IconButton(
@@ -336,6 +473,7 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
                   zoom: 10.0,
                 )
               : _defaultPosition,
+            mapType: _currentMapType,
             markers: _markers,
             myLocationEnabled: _currentPosition != null,
             myLocationButtonEnabled: false, // We have our own button
@@ -344,11 +482,23 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
             padding: const EdgeInsets.only(bottom: 80), // Space for floating button
           ),
           // Loading indicator
-          if (_isLoadingLocation)
+          if (_isLoadingLocation || _isLoadingMarkers)
             Container(
               color: Colors.black54,
-              child: const Center(
-                child: CircularProgressIndicator(),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(
+                      _isLoadingLocation 
+                        ? 'Getting your location...' 
+                        : 'Loading campgrounds...',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
