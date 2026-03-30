@@ -24,6 +24,14 @@
 - **Comprehensive pricing calculator** with taxes, fees, and detailed breakdown
 - **Reservation summary and confirmation** with complete booking details
 
+### ✅ **Maps & Location Features**
+- **Interactive Google Maps integration** with campground markers and location display
+- **"View on Map" functionality** - Navigate from campground details to focused map view
+- **"Directions" integration** - One-tap launch to Google Maps with driving directions
+- **Current location support** with permissions handling for iOS and Android
+- **Map controls** - Map type selector (Normal/Satellite/Terrain/Hybrid) and marker clustering
+- **Cross-platform navigation** - Automatic detection of available maps applications
+
 ### 🔧 **Technical Highlights**
 - **Flutter 3.41.6** with modern Dart 3.11.4
 - **Riverpod state management** for reactive data flow
@@ -59,16 +67,25 @@
    flutter packages pub run build_runner build
    ```
 
-4. **Run the application**
+4. **Set up environment variables**
    ```bash
-   # Web (Chrome)
-   flutter run -d chrome
+   cp .env.example .env
+   # Edit .env with your Google Maps and Recreation.gov API keys
+   ```
+
+5. **Run the application**
+   ```bash
+   # Secure script with API key management (recommended)
+   ./scripts/run_secure.sh
    
-   # iOS Simulator
-   flutter run -d ios
+   # Or specify a device
+   ./scripts/run_secure.sh ios          # iOS Simulator
+   ./scripts/run_secure.sh emulator-5554  # Android Emulator
    
-   # Android Emulator
-   flutter run -d android
+   # Or run directly (requires API keys in .env)
+   flutter run -d chrome    # Web
+   flutter run -d ios       # iOS Simulator  
+   flutter run -d android   # Android Emulator
    ```
 
 ## 📱 Current Status
@@ -91,10 +108,10 @@
 - **Theming**: Responsive design with automatic theme switching
 
 ### 🚧 **In Development**
-- Interactive maps with campground locations
-- Recreation.gov API integration for real-time availability
+- Recreation.gov API integration for real-time availability (service layer complete)
 - User profile and preference management
 - Payment processing integration
+- Push notifications for availability monitoring
 
 ## 🏗️ Architecture
 

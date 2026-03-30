@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/models/campground.dart';
 import '../../../shared/providers/campground_providers_demo.dart';
+import '../../../shared/utils/navigation_utils.dart';
 import '../../reservations/reservation_form_screen.dart';
 import 'widgets/campground_image_carousel.dart';
 import 'widgets/campground_info_section.dart';
@@ -177,18 +178,19 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
   }
 
   void _handleDirectionsPressed() {
-    // TODO: Open maps with directions
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Getting directions to ${widget.campground.name}...'),
-        action: SnackBarAction(
-          label: 'Open Maps',
-          onPressed: () {
-            // TODO: Launch maps app with coordinates
-          },
+    final latitude = widget.campground.latitude;
+    final longitude = widget.campground.longitude;
+    
+    if (latitude != null && longitude != null) {
+      NavigationUtils.openDirections(latitude, longitude, context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Location not available for ${widget.campground.name}'),
+          backgroundColor: Colors.orange,
         ),
-      ),
-    );
+      );
+    }
   }
 
   void _handleSharePressed() {

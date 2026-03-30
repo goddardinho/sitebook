@@ -8,7 +8,9 @@ import '../../shared/models/campground.dart';
 import '../../shared/providers/campground_providers.dart';
 
 class MapsScreen extends ConsumerStatefulWidget {
-  const MapsScreen({super.key});
+  final Campground? focusCampground;
+  
+  const MapsScreen({super.key, this.focusCampground});
 
   @override
   ConsumerState<MapsScreen> createState() => _MapsScreenState();
@@ -18,6 +20,7 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
   GoogleMapController? _mapController;
   Position? _currentPosition;
   Set<Marker> _markers = {};
+  Marker? _focusedCampgroundMarker;
   bool _isLoadingLocation = true;
   bool _isLoadingMarkers = false;
   MapType _currentMapType = MapType.normal;
@@ -32,6 +35,11 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    if (widget.focusCampground != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _focusOnCampground(widget.focusCampground!);
+      });
+    }
   }
 
   Future<void> _getCurrentLocation() async {
@@ -87,6 +95,38 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
     }
 
     return true;
+  }
+
+  void _focusOnCampground(Campground campground) {
+    if (campground.latitude != null && campground.longitude != null) {
+      final campgroundLatLng = LatLng(campground.latitude!, campground.longitude!);
+      
+      _mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: campgroundLatLng,
+            zoom: 14.0,
+          ),
+        ),
+      );
+      
+      // Add marker for focused campground
+      setState(() {
+        _focusedCampgroundMarker = Marker(
+          markerId: MarkerId('focused_${campground.id}'),
+          position: campgroundLatLng,
+          infoWindow: InfoWindow(
+            title: campground.name,
+            snippet: campground.parkName ?? campground.state,
+          ),
+        );
+      });
+      
+      // Show info for this campground after a delay
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _showCampgroundDetails(campground);
+      });
+    }
   }
 
   Future<void> _createCampgroundMarkers() async {
@@ -474,7 +514,10 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
                 )
               : _defaultPosition,
             mapType: _currentMapType,
-            markers: _markers,
+            markers: {
+          ..._markers,
+          if (_focusedCampgroundMarker != null) _focusedCampgroundMarker!,
+        },
             myLocationEnabled: _currentPosition != null,
             myLocationButtonEnabled: false, // We have our own button
             zoomControlsEnabled: false,

@@ -18,7 +18,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -30,6 +30,9 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Hardcoded Google Maps API key for development
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = "AIzaSyAnEt8nq3-GT09922xFxSZFbMB3HmEf6R0"
     }
 
     buildTypes {
@@ -46,6 +49,6 @@ flutter {
 }
 
 dependencies {
-    // Core library desugaring
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    // Core library desugaring - updated for flutter_local_notifications compatibility
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

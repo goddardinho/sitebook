@@ -201,11 +201,10 @@ class CampgroundInfoSection extends StatelessWidget {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      // TODO: Open map view
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Map view coming soon!'),
-                        ),
+                      Navigator.pushNamed(
+                        context,
+                        '/maps',
+                        arguments: campground,
                       );
                     },
                     icon: const Icon(Icons.map_outlined),

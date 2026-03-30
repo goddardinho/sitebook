@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/campgrounds/campgrounds_screen.dart';
+import 'features/maps/maps_screen.dart';
+import 'shared/models/campground.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,9 +36,22 @@ class SiteBookApp extends ConsumerWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: const MainScreen(),
+      initialRoute: '/',
+      onGenerateRoute: _generateRoute,
       debugShowCheckedModeBanner: false,
     );
+  }
+
+  static Route<dynamic>? _generateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/':
+        return MaterialPageRoute(builder: (_) => const MainScreen());
+      case '/maps':
+        final campground = settings.arguments as Campground?;
+        return MaterialPageRoute(builder: (_) => MapsScreen(focusCampground: campground));
+      default:
+        return null;
+    }
   }
 }
 
