@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/providers/campground_providers_demo.dart';
+import '../maps/maps_screen.dart';
 import 'widgets/campground_card.dart';
 
 class CampgroundsScreen extends ConsumerStatefulWidget {
@@ -98,6 +99,11 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                 ),
               ),
               actions: [
+                IconButton(
+                  icon: const Icon(Icons.map),
+                  onPressed: _openMapsView,
+                  tooltip: 'Map view',
+                ),
                 IconButton(
                   icon: Icon(_isSearching ? Icons.close : Icons.search),
                   onPressed: _toggleSearch,
@@ -366,6 +372,15 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _openMapsView() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MapsScreen(),
       ),
     );
   }
