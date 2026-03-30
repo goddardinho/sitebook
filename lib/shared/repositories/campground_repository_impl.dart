@@ -217,7 +217,7 @@ class CampgroundRepositoryImpl implements CampgroundRepository {
             _formatDate(startDate),
             _formatDate(endDate),
           );
-          return _parseRecreationGovAvailability(availability);
+          return _parseRecreationGovAvailability(availability.availability);
         }
       } catch (e) {
         _logger.w('Recreation.gov availability check failed', error: e);

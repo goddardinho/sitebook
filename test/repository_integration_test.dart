@@ -162,7 +162,15 @@ void main() {
 
       test('should handle sync failures gracefully', () async {
         // Arrange - Mock API failures
-        when(mockRecreationGovApi.getFacilities(any: anyNamed('any')))
+        when(mockRecreationGovApi.getFacilities(
+          activity: any,
+          state: any,
+          latitude: any,
+          longitude: any,
+          radius: any,
+          limit: any,
+          offset: any,
+        ))
             .thenThrow(Exception('Network Error'));
         when(mockStateParkApi.getCampgroundsByState(any))
             .thenThrow(Exception('Network Error'));
@@ -262,7 +270,15 @@ void main() {
 
       test('should handle mixed success/failure scenarios', () async {
         // Arrange - One API succeeds, one fails
-        when(mockRecreationGovApi.getFacilities(any: anyNamed('any')))
+        when(mockRecreationGovApi.getFacilities(
+          activity: any,
+          state: any,
+          latitude: any,
+          longitude: any,
+          radius: any,
+          limit: any,
+          offset: any,
+        ))
             .thenAnswer((_) async => RecreationGovResponse<RecreationGovFacility>(
               data: [_createMockRecGovFacility()],
               metadata: _createMockMetadata(),

@@ -16,7 +16,7 @@ abstract class RecreationGovApiService {
 
   // Get facilities (campgrounds)
   @GET('/facilities')
-  Future<RecreationGovResponse<List<RecreationGovFacility>>> getFacilities({
+  Future<RecreationGovResponse<RecreationGovFacility>> getFacilities({
     @Query('activity') String? activity,
     @Query('state') String? state,
     @Query('latitude') double? latitude,
@@ -34,7 +34,7 @@ abstract class RecreationGovApiService {
 
   // Get campsites for a facility
   @GET('/facilities/{facilityId}/campsites')
-  Future<RecreationGovResponse<List<RecreationGovCampsite>>> getCampsites(
+  Future<RecreationGovResponse<RecreationGovCampsite>> getCampsites(
     @Path('facilityId') String facilityId, {
     @Query('limit') int limit = 50,
     @Query('offset') int offset = 0,
@@ -42,7 +42,7 @@ abstract class RecreationGovApiService {
 
   // Get availability for a campsite
   @GET('/facilities/{facilityId}/campsites/{campsiteId}/availability')
-  Future<Map<String, dynamic>> getCampsiteAvailability(
+  Future<RecreationGovAvailabilityResponse> getCampsiteAvailability(
     @Path('facilityId') String facilityId,
     @Path('campsiteId') String campsiteId,
     @Query('start_date') String startDate, // YYYY-MM-DD format
@@ -269,4 +269,21 @@ class RecreationGovCampsite {
       campsiteAccessible: json['CampsiteAccessible'] == 'Yes',
     );
   }
+}
+
+// Wrapper for campsite availability response - handles raw Map data
+class RecreationGovAvailabilityResponse {
+  final Map<String, dynamic> availability;
+
+  RecreationGovAvailabilityResponse({
+    required this.availability,
+  });
+
+  factory RecreationGovAvailabilityResponse.fromJson(Map<String, dynamic> json) {
+    return RecreationGovAvailabilityResponse(
+      availability: json,
+    );
+  }
+
+  Map<String, dynamic> toJson() => availability;
 }

@@ -40,6 +40,14 @@ class _FakeRecreationGovFacility_1 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakeRecreationGovAvailabilityResponse_2 extends _i1.SmartFake
+    implements _i2.RecreationGovAvailabilityResponse {
+  _FakeRecreationGovAvailabilityResponse_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(parent, parentInvocation);
+}
+
 /// A class which mocks [RecreationGovApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -50,7 +58,7 @@ class MockRecreationGovApiService extends _i1.Mock
   }
 
   @override
-  _i3.Future<_i2.RecreationGovResponse<List<_i2.RecreationGovFacility>>>
+  _i3.Future<_i2.RecreationGovResponse<_i2.RecreationGovFacility>>
   getFacilities({
     String? activity,
     String? state,
@@ -72,9 +80,9 @@ class MockRecreationGovApiService extends _i1.Mock
             }),
             returnValue:
                 _i3.Future<
-                  _i2.RecreationGovResponse<List<_i2.RecreationGovFacility>>
+                  _i2.RecreationGovResponse<_i2.RecreationGovFacility>
                 >.value(
-                  _FakeRecreationGovResponse_0<List<_i2.RecreationGovFacility>>(
+                  _FakeRecreationGovResponse_0<_i2.RecreationGovFacility>(
                     this,
                     Invocation.method(#getFacilities, [], {
                       #activity: activity,
@@ -88,9 +96,7 @@ class MockRecreationGovApiService extends _i1.Mock
                   ),
                 ),
           )
-          as _i3.Future<
-            _i2.RecreationGovResponse<List<_i2.RecreationGovFacility>>
-          >);
+          as _i3.Future<_i2.RecreationGovResponse<_i2.RecreationGovFacility>>);
 
   @override
   _i3.Future<_i2.RecreationGovFacility> getFacilityDetails(
@@ -108,8 +114,11 @@ class MockRecreationGovApiService extends _i1.Mock
           as _i3.Future<_i2.RecreationGovFacility>);
 
   @override
-  _i3.Future<_i2.RecreationGovResponse<List<_i2.RecreationGovCampsite>>>
-  getCampsites(String? facilityId, {int? limit = 50, int? offset = 0}) =>
+  _i3.Future<_i2.RecreationGovResponse<_i2.RecreationGovCampsite>> getCampsites(
+    String? facilityId, {
+    int? limit = 50,
+    int? offset = 0,
+  }) =>
       (super.noSuchMethod(
             Invocation.method(
               #getCampsites,
@@ -118,9 +127,9 @@ class MockRecreationGovApiService extends _i1.Mock
             ),
             returnValue:
                 _i3.Future<
-                  _i2.RecreationGovResponse<List<_i2.RecreationGovCampsite>>
+                  _i2.RecreationGovResponse<_i2.RecreationGovCampsite>
                 >.value(
-                  _FakeRecreationGovResponse_0<List<_i2.RecreationGovCampsite>>(
+                  _FakeRecreationGovResponse_0<_i2.RecreationGovCampsite>(
                     this,
                     Invocation.method(
                       #getCampsites,
@@ -130,12 +139,10 @@ class MockRecreationGovApiService extends _i1.Mock
                   ),
                 ),
           )
-          as _i3.Future<
-            _i2.RecreationGovResponse<List<_i2.RecreationGovCampsite>>
-          >);
+          as _i3.Future<_i2.RecreationGovResponse<_i2.RecreationGovCampsite>>);
 
   @override
-  _i3.Future<Map<String, dynamic>> getCampsiteAvailability(
+  _i3.Future<_i2.RecreationGovAvailabilityResponse> getCampsiteAvailability(
     String? facilityId,
     String? campsiteId,
     String? startDate,
@@ -148,11 +155,20 @@ class MockRecreationGovApiService extends _i1.Mock
               startDate,
               endDate,
             ]),
-            returnValue: _i3.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
+            returnValue:
+                _i3.Future<_i2.RecreationGovAvailabilityResponse>.value(
+                  _FakeRecreationGovAvailabilityResponse_2(
+                    this,
+                    Invocation.method(#getCampsiteAvailability, [
+                      facilityId,
+                      campsiteId,
+                      startDate,
+                      endDate,
+                    ]),
+                  ),
+                ),
           )
-          as _i3.Future<Map<String, dynamic>>);
+          as _i3.Future<_i2.RecreationGovAvailabilityResponse>);
 }
 
 /// A class which mocks [StateParkApiService].
