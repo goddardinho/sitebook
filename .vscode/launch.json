@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch SiteBook (Secure)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--dart-define=GOOGLE_MAPS_API_KEY=${env:GOOGLE_MAPS_IOS_API_KEY}",
+                "--dart-define=RECREATION_GOV_API_KEY=${env:RECREATION_GOV_API_KEY}"
+            ],
+            "env": {
+                "GOOGLE_MAPS_IOS_API_KEY": "${env:GOOGLE_MAPS_IOS_API_KEY}",
+                "RECREATION_GOV_API_KEY": "${env:RECREATION_GOV_API_KEY}"
+            }
+        },
+        {
+            "name": "Launch SiteBook (iOS Secure)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--dart-define=GOOGLE_MAPS_API_KEY=${env:GOOGLE_MAPS_IOS_API_KEY}",
+                "--dart-define=RECREATION_GOV_API_KEY=${env:RECREATION_GOV_API_KEY}"
+            ],
+            "deviceId": "ios"
+        }
+    ]
+}

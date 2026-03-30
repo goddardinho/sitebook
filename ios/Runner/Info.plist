@@ -73,6 +73,6 @@
 	<string>SiteBook uses your location to provide personalized campground recommendations and enable location-based search features.</string>
 	<!-- Google Maps API Key for iOS -->
 	<key>GMSApiKey</key>
-	<string>AIzaSyDEMO_KEY_REPLACE_WITH_YOUR_ACTUAL_GOOGLE_MAPS_API_KEY</string>
+	<string>$(GOOGLE_MAPS_API_KEY)</string>
 </dict>
 </plist>
