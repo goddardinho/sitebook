@@ -1,12 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:sitebook_flutter/shared/models/campground.dart';
 import 'package:sitebook_flutter/core/storage/campground_database.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'database_test.mocks.dart';
-
-@GenerateMocks([])
 void main() {
   group('CampgroundDatabase Tests', () {
     late CampgroundDatabase database;

@@ -20,7 +20,7 @@ class _RecreationGovApiService implements RecreationGovApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<RecreationGovResponse<List<RecreationGovFacility>>> getFacilities({
+  Future<RecreationGovResponse<RecreationGovFacility>> getFacilities({
     String? activity,
     String? state,
     double? latitude,
@@ -43,7 +43,7 @@ class _RecreationGovApiService implements RecreationGovApiService {
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
-        _setStreamType<RecreationGovResponse<List<RecreationGovFacility>>>(
+        _setStreamType<RecreationGovResponse<RecreationGovFacility>>(
           Options(method: 'GET', headers: _headers, extra: _extra)
               .compose(
                 _dio.options,
@@ -56,19 +56,11 @@ class _RecreationGovApiService implements RecreationGovApiService {
               ),
         );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late RecreationGovResponse<List<RecreationGovFacility>> _value;
+    late RecreationGovResponse<RecreationGovFacility> _value;
     try {
-      _value = RecreationGovResponse<List<RecreationGovFacility>>.fromJson(
+      _value = RecreationGovResponse<RecreationGovFacility>.fromJson(
         _result.data!,
-        (json) => json is List<dynamic>
-            ? json
-                  .map<RecreationGovFacility>(
-                    (i) => RecreationGovFacility.fromJson(
-                      i as Map<String, dynamic>,
-                    ),
-                  )
-                  .toList()
-            : List.empty(),
+        (json) => RecreationGovFacility.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
@@ -105,7 +97,7 @@ class _RecreationGovApiService implements RecreationGovApiService {
   }
 
   @override
-  Future<RecreationGovResponse<List<RecreationGovCampsite>>> getCampsites(
+  Future<RecreationGovResponse<RecreationGovCampsite>> getCampsites(
     String facilityId, {
     int limit = 50,
     int offset = 0,
@@ -118,7 +110,7 @@ class _RecreationGovApiService implements RecreationGovApiService {
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
-        _setStreamType<RecreationGovResponse<List<RecreationGovCampsite>>>(
+        _setStreamType<RecreationGovResponse<RecreationGovCampsite>>(
           Options(method: 'GET', headers: _headers, extra: _extra)
               .compose(
                 _dio.options,
@@ -131,19 +123,11 @@ class _RecreationGovApiService implements RecreationGovApiService {
               ),
         );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late RecreationGovResponse<List<RecreationGovCampsite>> _value;
+    late RecreationGovResponse<RecreationGovCampsite> _value;
     try {
-      _value = RecreationGovResponse<List<RecreationGovCampsite>>.fromJson(
+      _value = RecreationGovResponse<RecreationGovCampsite>.fromJson(
         _result.data!,
-        (json) => json is List<dynamic>
-            ? json
-                  .map<RecreationGovCampsite>(
-                    (i) => RecreationGovCampsite.fromJson(
-                      i as Map<String, dynamic>,
-                    ),
-                  )
-                  .toList()
-            : List.empty(),
+        (json) => RecreationGovCampsite.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
@@ -153,7 +137,7 @@ class _RecreationGovApiService implements RecreationGovApiService {
   }
 
   @override
-  Future<Map<String, dynamic>> getCampsiteAvailability(
+  Future<RecreationGovAvailabilityResponse> getCampsiteAvailability(
     String facilityId,
     String campsiteId,
     String startDate,
@@ -166,7 +150,7 @@ class _RecreationGovApiService implements RecreationGovApiService {
     };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<Map<String, dynamic>>(
+    final _options = _setStreamType<RecreationGovAvailabilityResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -177,12 +161,9 @@ class _RecreationGovApiService implements RecreationGovApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late Map<String, dynamic> _value;
+    late RecreationGovAvailabilityResponse _value;
     try {
-      _value = _result.data!.map(
-        (k, dynamic v) =>
-            MapEntry(k, dynamic.fromJson(v as Map<String, dynamic>)),
-      );
+      _value = RecreationGovAvailabilityResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
