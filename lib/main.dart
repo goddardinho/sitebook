@@ -4,19 +4,40 @@ import 'features/campgrounds/campgrounds_screen_ios_compatible.dart';
 import 'features/reservations/reservations_screen_ios_compatible.dart';
 import 'features/maps/map_screen_ios_compatible.dart';
 import 'features/profile/profile_screen_ios_compatible.dart';
+import 'shared/services/availability_monitoring_service.dart';
+import 'shared/services/enhanced_notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  debugPrint('🚀 SiteBook startup - iOS compatible version with all screens');
+  debugPrint('🚀 SiteBook startup - iOS compatible with availability monitoring');
   
-  // Using iOS-compatible versions of all screens to avoid notification integration crashes
+  // Initialize availability monitoring and notification services
+  await _initializeServices();
   
   runApp(
     const ProviderScope(
       child: SiteBookApp(),
     ),
   );
+}
+
+/// Initialize background services for availability monitoring
+Future<void> _initializeServices() async {
+  try {
+    debugPrint('🔧 Initializing availability monitoring services...');
+    
+    // Initialize enhanced notification service
+    await EnhancedNotificationService.initialize();
+    
+    // Initialize availability monitoring service
+    await AvailabilityMonitoringService.initialize();
+    
+    debugPrint('✅ All services initialized successfully');
+  } catch (e) {
+    debugPrint('❌ Error initializing services: $e');
+    // Continue app startup even if services fail to initialize
+  }
 }
 
 class SiteBookApp extends ConsumerWidget {

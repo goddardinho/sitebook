@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../monitoring/monitoring_settings_screen.dart';
+import '../../shared/providers/campground_providers_ios_compatible.dart';
 
 // Demo user profile data
 class UserProfile {
@@ -374,6 +376,21 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
     return Card(
       child: Column(
         children: [
+          // Add monitoring settings at the top
+          _buildListTile(
+            icon: Icons.monitor_outlined,
+            title: 'Availability Monitoring',
+            subtitle: 'Background service and notification settings',
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const MonitoringSettingsScreen(),
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1),
           _buildSwitchTile(
             icon: Icons.notifications_outlined,
             title: 'Push Notifications',

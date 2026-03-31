@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
 import '../models/campground.dart';
 import '../../demo/demo_data_provider.dart';
+import '../services/availability_monitoring_service.dart';
+import '../services/enhanced_notification_service.dart';
 // Note: Removed notification integration import to fix iOS crashes
 
 // Demo providers for immediate UX testing (iOS-compatible version)
@@ -96,6 +98,113 @@ final monitoredCountProvider = FutureProvider<int>((ref) async {
   return DemoDataProvider.getMonitoredCampgrounds().length;
 });
 
+// Provider for background monitoring status
+final backgroundMonitoringStatusProvider = FutureProvider<BackgroundMonitoringStatus>((ref) async {
+  final isActive = await AvailabilityMonitoringService.isMonitoringActive();
+  final monitoredCount = DemoDataProvider.getMonitoredCampgrounds().length;
+  final notificationsEnabled = await EnhancedNotificationService.areNotificationsEnabled();
+  
+  return BackgroundMonitoringStatus(
+    isActive: isActive,
+    monitoredCampgrounds: monitoredCount,
+    notificationsEnabled: notificationsEnabled,
+    lastCheckTime: DateTime.now(), // TODO: Store actual last check time
+  );
+});
+
+// Provider for manual monitoring controls
+final monitoringControlsProvider = Provider((ref) {
+  return MonitoringControls(ref);
+});
+
+/// Background monitoring status data model
+class BackgroundMonitoringStatus {
+  final bool isActive;
+  final int monitoredCampgrounds;
+  final bool notificationsEnabled;
+  final DateTime lastCheckTime;
+
+  const BackgroundMonitoringStatus({
+    required this.isActive,
+    required this.monitoredCampgrounds,
+    required this.notificationsEnabled,
+    required this.lastCheckTime,
+  });
+  
+  bool get hasMonitoredCampgrounds => monitoredCampgrounds > 0;
+  
+  String get statusText {
+    if (!hasMonitoredCampgrounds) return 'No campgrounds monitored';
+    if (!isActive) return 'Monitoring paused';
+    if (!notificationsEnabled) return 'Notifications disabled';
+    return 'Monitoring $monitoredCampgrounds campgrounds';
+  }
+}
+
+/// Monitoring controls for manual operations
+class MonitoringControls {
+  final Ref _ref;
+  
+  MonitoringControls(this._ref);
+  
+  /// Trigger immediate availability check
+  Future<void> triggerImmediateCheck() async {
+    try {
+      await AvailabilityMonitoringService.triggerImmediateCheck();
+      debugPrint('🔍 Manual availability check triggered');
+      
+      // Invalidate status provider to update UI
+      _ref.invalidate(backgroundMonitoringStatusProvider);
+      
+    } catch (e) {
+      debugPrint('❌ Error triggering immediate check: $e');
+    }
+  }
+  
+  /// Start background monitoring service
+  Future<void> startBackgroundMonitoring() async {
+    try {
+      await AvailabilityMonitoringService.startMonitoring();
+      debugPrint('🔄 Background monitoring started manually');
+      
+      // Invalidate status provider to update UI
+      _ref.invalidate(backgroundMonitoringStatusProvider);
+      
+    } catch (e) {
+      debugPrint('❌ Error starting background monitoring: $e');
+    }
+  }
+  
+  /// Stop background monitoring service
+  Future<void> stopBackgroundMonitoring() async {
+    try {
+      await AvailabilityMonitoringService.stopMonitoring();
+      debugPrint('⏹️ Background monitoring stopped manually');
+      
+      // Invalidate status provider to update UI
+      _ref.invalidate(backgroundMonitoringStatusProvider);
+      
+    } catch (e) {
+      debugPrint('❌ Error stopping background monitoring: $e');
+    }
+  }
+  
+  /// Request notification permissions
+  Future<bool> requestNotificationPermissions() async {
+    try {
+      final granted = await EnhancedNotificationService.requestPermissions();
+      
+      // Invalidate status provider to update UI
+      _ref.invalidate(backgroundMonitoringStatusProvider);
+      
+      return granted;
+    } catch (e) {
+      debugPrint('❌ Error requesting notification permissions: $e');
+      return false;
+    }
+  }
+}
+
 class CampgroundActionsIOSCompatible {
   static int _monitoringStartCount = 0;
   final Ref _ref;
@@ -116,22 +225,61 @@ class CampgroundActionsIOSCompatible {
       final campground = DemoDataProvider.getCampgroundById(campgroundId);
       if (campground == null) return;
       
-      // iOS-compatible: Log monitoring status instead of sending notifications
-      debugPrint('🏕️ Monitoring ${isMonitored ? 'started' : 'stopped'} for ${campground.name}');
-      
-      // Send welcome notification on first monitoring start (iOS-compatible version)
-      if (isMonitored && _monitoringStartCount == 0) {
-        _monitoringStartCount++;
-        debugPrint('✅ Welcome! Monitoring started for your first campground.');
-      }
-      
-      // For demo purposes, simulate finding availability shortly after monitoring starts
+      // Enhanced monitoring integration
       if (isMonitored) {
-        _simulateAvailabilityCheck(campground);
+        await _startMonitoring(campground);
+      } else {
+        await _stopMonitoring(campground);
       }
       
     } catch (e) {
       debugPrint('❌ Error toggling monitoring for $campgroundId: $e');
+    }
+  }
+  
+  /// Start monitoring for a specific campground
+  Future<void> _startMonitoring(Campground campground) async {
+    try {
+      debugPrint('🏕️ Monitoring started for ${campground.name}');
+      
+      // Send monitoring started notification
+      await EnhancedNotificationService.sendMonitoringStartedNotification(campground);
+      
+      // Send welcome notification on first monitoring start
+      if (_monitoringStartCount == 0) {
+        _monitoringStartCount++;
+        await EnhancedNotificationService.sendWelcomeNotification();
+      }
+      
+      // Start background monitoring service if we have monitored campgrounds
+      final monitoredCount = DemoDataProvider.getMonitoredCampgrounds().length;
+      if (monitoredCount == 1) { // First campground being monitored
+        await AvailabilityMonitoringService.startMonitoring();
+        debugPrint('🔄 Background availability monitoring service started');
+      }
+      
+      // Trigger immediate check for demo purposes
+      await AvailabilityMonitoringService.triggerImmediateCheck();
+      
+    } catch (e) {
+      debugPrint('❌ Error starting monitoring for ${campground.name}: $e');
+    }
+  }
+  
+  /// Stop monitoring for a specific campground
+  Future<void> _stopMonitoring(Campground campground) async {
+    try {
+      debugPrint('🏕️ Monitoring stopped for ${campground.name}');
+      
+      // Check if we still have any monitored campgrounds
+      final monitoredCount = DemoDataProvider.getMonitoredCampgrounds().length;
+      if (monitoredCount == 0) { // No more campgrounds being monitored
+        await AvailabilityMonitoringService.stopMonitoring();
+        debugPrint('⏹️ Background availability monitoring service stopped');
+      }
+      
+    } catch (e) {
+      debugPrint('❌ Error stopping monitoring for ${campground.name}: $e');
     }
   }
   
