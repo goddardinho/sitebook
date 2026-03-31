@@ -103,10 +103,27 @@
   - [x] **NavigationUtils service** - Centralized navigation utilities for external apps
   - [x] **Production validation** - Tested on both iOS simulator and Android emulator
 
-### 4. Notifications & Background Tasks (Week 3)
-- [ ] Set up Firebase for push notifications
-- [ ] Implement availability monitoring worker
-- [ ] Create notification preferences system
+### 🚧 4. Notifications & Background Tasks (Week 3) - **IN PROGRESS**
+- [ ] **Firebase Integration & Setup**
+  - [ ] Add Firebase dependencies (firebase_core, firebase_messaging)
+  - [ ] Configure Firebase projects for iOS and Android
+  - [ ] Set up FCM (Firebase Cloud Messaging) tokens
+  - [ ] Handle notification permissions for both platforms
+- [ ] **Push Notifications Implementation**
+  - [ ] Create notification service layer
+  - [ ] Implement foreground notification display 
+  - [ ] Handle background and terminated app notifications
+  - [ ] Add notification action handling (tap to open campground details)
+- [ ] **Availability Monitoring Worker**
+  - [ ] Create background task service using WorkManager/iOS Background App Refresh
+  - [ ] Implement periodic availability checking for monitored campgrounds
+  - [ ] Add intelligent scheduling (avoid rate limiting, battery optimization)
+  - [ ] Create notification triggers for availability changes
+- [ ] **Notification Preferences System**
+  - [ ] Design settings UI for notification preferences
+  - [ ] Implement user preference storage (SQLite/SharedPreferences)
+  - [ ] Add granular controls (times, frequency, campground-specific)
+  - [ ] Integrate with system notification settings
 
 ### 5. Authentication & Profile (Week 3-4)
 - [ ] Build login/signup flow
