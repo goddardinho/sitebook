@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/firebase/firebase_config.dart';
 import 'core/notifications/notification_service.dart';
+import 'core/integrations/campground_notification_integration.dart';
 import 'features/campgrounds/campgrounds_screen.dart';
 import 'features/maps/maps_screen.dart';
 import 'shared/models/campground.dart';
@@ -12,6 +13,7 @@ void main() async {
   // Initialize Firebase and notifications
   await FirebaseConfig.initialize();
   await NotificationService.initialize();
+  await CampgroundNotificationIntegration.initialize();
   
   runApp(
     const ProviderScope(

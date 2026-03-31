@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod/riverpod.dart';
 import '../models/campground.dart';
 import '../../demo/demo_data_provider.dart';
+import '../../core/integrations/campground_notification_integration.dart';
 
 // Demo providers for immediate UX testing
 final campgroundRepositoryProvider = Provider((ref) => "Demo Mode");
@@ -15,12 +18,28 @@ final monitoredCampgroundsProvider = FutureProvider<List<Campground>>((ref) asyn
   return DemoDataProvider.getMonitoredCampgrounds();
 });
 
-// Provider for search query state
-final searchQueryProvider = StateProvider<String>((ref) => '');
+// Provider for search query state (converted from StateProvider)
+final searchQueryProvider = Provider((ref) => SearchQueryNotifier());
+
+class SearchQueryNotifier {
+  String _query = '';
+  
+  String get query => _query;
+  bool get isEmpty => _query.isEmpty;
+  bool get isNotEmpty => _query.isNotEmpty;
+  
+  void updateQuery(String newQuery) {
+    _query = newQuery;
+  }
+  
+  @override
+  String toString() => _query;
+}
 
 // Provider for search results based on query
 final searchResultsProvider = FutureProvider<List<Campground>>((ref) async {
-  final query = ref.watch(searchQueryProvider);
+  final searchQueryNotifier = ref.watch(searchQueryProvider);
+  final query = searchQueryNotifier.query;
   if (query.isEmpty) {
     return DemoDataProvider.getAllCampgrounds();
   }
@@ -37,9 +56,29 @@ final campgroundDetailsProvider = FutureProvider.family<Campground?, String>((re
   return DemoDataProvider.getCampgroundById(id);
 });
 
-// Provider for UI state
-final campgroundLoadingProvider = StateProvider<bool>((ref) => false);
-final campgroundErrorProvider = StateProvider<String?>((ref) => null);
+// Provider for UI state (converted from StateProvider)
+final campgroundLoadingProvider = Provider((ref) => UIStateNotifier());
+final campgroundErrorProvider = Provider((ref) => ErrorStateNotifier());
+
+class UIStateNotifier {
+  bool _loading = false;
+  
+  bool get loading => _loading;
+  
+  void setLoading(bool loading) {
+    _loading = loading;
+  }
+}
+
+class ErrorStateNotifier {
+  String? _error;
+  
+  String? get error => _error;
+  
+  void setError(String? error) {
+    _error = error;
+  }
+}
 
 // Location search provider
 final nearbySearchProvider = FutureProvider.family<List<Campground>, Map<String, dynamic>>((ref, params) async {
@@ -58,9 +97,71 @@ final monitoredCountProvider = FutureProvider<int>((ref) async {
 });
 
 class CampgroundActions {
+  static int _monitoringStartCount = 0;
+  
   Future<void> toggleMonitoring(String campgroundId, bool isMonitored) async {
-    // Update the demo data
-    DemoDataProvider.toggleMonitoring(campgroundId);
+    try {
+      // Update the demo data
+      DemoDataProvider.toggleMonitoring(campgroundId);
+      
+      // Get the campground details for notifications
+      final campground = DemoDataProvider.getCampgroundById(campgroundId);
+      if (campground == null) return;
+      
+      // Send notification about monitoring status change
+      await CampgroundNotificationIntegration.notifyMonitoringUpdate(
+        campground: campground,
+        isMonitored: isMonitored,
+      );
+      
+      // Send welcome notification on first monitoring start
+      if (isMonitored && _monitoringStartCount == 0) {
+        _monitoringStartCount++;
+        await CampgroundNotificationIntegration.sendWelcomeNotification();
+      }
+      
+      // For demo purposes, simulate finding availability shortly after monitoring starts
+      if (isMonitored) {
+        _simulateAvailabilityCheck(campground);
+      }
+      
+    } catch (e) {
+      debugPrint('❌ Error toggling monitoring for $campgroundId: $e');
+    }
+  }
+  
+  /// Simulate availability check for demo purposes
+  Future<void> _simulateAvailabilityCheck(Campground campground) async {
+    // Wait a few seconds, then possibly send an availability notification
+    Future.delayed(const Duration(seconds: 5), () async {
+      // 30% chance of "finding" availability for demo
+      final random = DateTime.now().millisecondsSinceEpoch % 100;
+      if (random < 30) {
+        await CampgroundNotificationIntegration.notifyCampgroundAvailable(
+          campground: campground,
+          startDate: DateTime.now().add(const Duration(days: 14)),
+          endDate: DateTime.now().add(const Duration(days: 16)),
+        );
+      }
+    });
+  }
+  
+  /// Test notification functionality 
+  Future<void> testNotifications() async {
+    try {
+      final campgrounds = DemoDataProvider.getAllCampgrounds();
+      if (campgrounds.isNotEmpty) {
+        final testCampground = campgrounds.first;
+        
+        await CampgroundNotificationIntegration.notifyCampgroundAvailable(
+          campground: testCampground,
+          startDate: DateTime.now().add(const Duration(days: 7)),
+          endDate: DateTime.now().add(const Duration(days: 9)),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error testing notifications: $e');  
+    }
   }
   
   Future<void> refreshCampgrounds() async {

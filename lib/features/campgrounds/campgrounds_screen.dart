@@ -131,7 +131,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                     data: (campgrounds) => SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: _buildSearchResults(theme, campgrounds.length, searchQuery),
+                        child: _buildSearchResults(theme, campgrounds.length, searchQuery.query),
                       ),
                     ),
                     loading: () => const SliverToBoxAdapter(
@@ -143,7 +143,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                     error: (error, stack) => SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
-                        child: _buildSearchResults(theme, 0, searchQuery),
+                        child: _buildSearchResults(theme, 0, searchQuery.query),
                       ),
                     ),
                   );

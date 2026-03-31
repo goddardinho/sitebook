@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod/riverpod.dart';
 import '../models/campground.dart';
 import '../repositories/campground_repository.dart';
 import '../repositories/simple_campground_repository.dart';
@@ -26,13 +27,29 @@ final monitoredCampgroundsProvider = FutureProvider<List<Campground>>((ref) asyn
   return await repository.getMonitoredCampgrounds();
 });
 
-// Provider for search query state
-final searchQueryProvider = StateProvider<String>((ref) => '');
+// Provider for search query state (converted from StateProvider)
+final searchQueryProvider = Provider((ref) => SearchQueryNotifier());
+
+class SearchQueryNotifier {
+  String _query = '';
+  
+  String get query => _query;
+  bool get isEmpty => _query.isEmpty;
+  bool get isNotEmpty => _query.isNotEmpty;
+  
+  void updateQuery(String newQuery) {
+    _query = newQuery;
+  }
+  
+  @override
+  String toString() => _query;
+}
 
 // Provider for search results based on query
 final searchResultsProvider = FutureProvider<List<Campground>>((ref) async {
   final repository = ref.read(campgroundRepositoryProvider);
-  final query = ref.watch(searchQueryProvider);
+  final searchQueryNotifier = ref.watch(searchQueryProvider);
+  final query = searchQueryNotifier.query;
   
   if (query.isEmpty) {
     // Return all campgrounds when no search query
@@ -80,9 +97,29 @@ final campgroundActionsProvider = Provider<CampgroundActions>((ref) {
   return CampgroundActions(ref.read(campgroundRepositoryProvider), ref);
 });
 
-// State classes for tracking loading/error states
-final campgroundLoadingProvider = StateProvider<bool>((ref) => false);
-final campgroundErrorProvider = StateProvider<String?>((ref) => null);
+// State classes for tracking loading/error states (converted from StateProvider)
+final campgroundLoadingProvider = Provider((ref) => UIStateNotifier());
+final campgroundErrorProvider = Provider((ref) => ErrorStateNotifier());
+
+class UIStateNotifier {
+  bool _loading = false;
+  
+  bool get loading => _loading;
+  
+  void setLoading(bool loading) {
+    _loading = loading;
+  }
+}
+
+class ErrorStateNotifier {
+  String? _error;
+  
+  String? get error => _error;
+  
+  void setError(String? error) {
+    _error = error;
+  }
+}
 
 // Actions class for handling campground operations
 class CampgroundActions {
@@ -94,31 +131,31 @@ class CampgroundActions {
   /// Toggle monitoring status for a campground
   Future<void> toggleMonitoring(String campgroundId, bool isMonitored) async {
     try {
-      _ref.read(campgroundLoadingProvider.notifier).state = true;
-      _ref.read(campgroundErrorProvider.notifier).state = null;
+      _ref.read(campgroundLoadingProvider).setLoading(true);
+      _ref.read(campgroundErrorProvider).setError(null);
       
       await _repository.updateMonitoringStatus(campgroundId, isMonitored);
       
       // Refresh monitored campgrounds
       _ref.invalidate(monitoredCampgroundsProvider);
       
-      _ref.read(campgroundLoadingProvider.notifier).state = false;
+      _ref.read(campgroundLoadingProvider).setLoading(false);
     } catch (e) {
-      _ref.read(campgroundLoadingProvider.notifier).state = false;
-      _ref.read(campgroundErrorProvider.notifier).state = 'Failed to update monitoring status: ${e.toString()}';
+      _ref.read(campgroundLoadingProvider).setLoading(false);
+      _ref.read(campgroundErrorProvider).setError('Failed to update monitoring status: ${e.toString()}');
     }
   }
 
   /// Update search query
   void updateSearchQuery(String query) {
-    _ref.read(searchQueryProvider.notifier).state = query;
+    _ref.read(searchQueryProvider).updateQuery(query);
   }
 
   /// Refresh all campground data from APIs
   Future<void> refreshData() async {
     try {
-      _ref.read(campgroundLoadingProvider.notifier).state = true;
-      _ref.read(campgroundErrorProvider.notifier).state = null;
+      _ref.read(campgroundLoadingProvider).setLoading(true);
+      _ref.read(campgroundErrorProvider).setError(null);
       
       await _repository.refresh();
       
@@ -127,18 +164,18 @@ class CampgroundActions {
       _ref.invalidate(searchResultsProvider);
       _ref.invalidate(monitoredCampgroundsProvider);
       
-      _ref.read(campgroundLoadingProvider.notifier).state = false;
+      _ref.read(campgroundLoadingProvider).setLoading(false);
     } catch (e) {
-      _ref.read(campgroundLoadingProvider.notifier).state = false;
-      _ref.read(campgroundErrorProvider.notifier).state = 'Failed to refresh data: ${e.toString()}';
+      _ref.read(campgroundLoadingProvider).setLoading(false);
+      _ref.read(campgroundErrorProvider).setError('Failed to refresh data: ${e.toString()}');
     }
   }
 
   /// Clear all cached campground data
   Future<void> clearCache() async {
     try {
-      _ref.read(campgroundLoadingProvider.notifier).state = true;
-      _ref.read(campgroundErrorProvider.notifier).state = null;
+      _ref.read(campgroundLoadingProvider).setLoading(true);
+      _ref.read(campgroundErrorProvider).setError(null);
       
       await _repository.clearCache();
       
@@ -147,16 +184,16 @@ class CampgroundActions {
       _ref.invalidate(searchResultsProvider);
       _ref.invalidate(monitoredCampgroundsProvider);
       
-      _ref.read(campgroundLoadingProvider.notifier).state = false;
+      _ref.read(campgroundLoadingProvider).setLoading(false);
     } catch (e) {
-      _ref.read(campgroundLoadingProvider.notifier).state = false;
-      _ref.read(campgroundErrorProvider.notifier).state = 'Failed to clear cache: ${e.toString()}';
+      _ref.read(campgroundLoadingProvider).setLoading(false);
+      _ref.read(campgroundErrorProvider).setError('Failed to clear cache: ${e.toString()}');
     }
   }
 
   /// Clear any error state
   void clearError() {
-    _ref.read(campgroundErrorProvider.notifier).state = null;
+    _ref.read(campgroundErrorProvider).setError(null);
   }
 }
 
