@@ -1,6 +1,39 @@
 import 'package:flutter/foundation.dart';
 import '../models/campground.dart';
-import 'availability_monitoring_service.dart';
+
+// Import models from availability monitoring service
+class DateRange {
+  final DateTime startDate;
+  final DateTime endDate;
+  
+  const DateRange({
+    required this.startDate,
+    required this.endDate,
+  });
+  
+  int get nights => endDate.difference(startDate).inDays;
+  
+  @override
+  String toString() {
+    return '${startDate.toString().split(' ')[0]} to ${endDate.toString().split(' ')[0]} ($nights nights)';
+  }
+}
+
+class CampgroundAvailability {
+  final Campground campground;
+  final bool hasAvailability;
+  final List<DateRange> availableDates;
+  final DateTime checkedAt;
+  final String? error;
+
+  const CampgroundAvailability({
+    required this.campground,
+    required this.hasAvailability,
+    required this.availableDates,
+    required this.checkedAt,
+    this.error,
+  });
+}
 
 /// Enhanced notification service with availability monitoring support (iOS-compatible version)
 /// 
@@ -21,8 +54,27 @@ class EnhancedNotificationService {
     }
   }
 
-  /// Send availability found notification
-  static Future<void> sendAvailabilityNotification(CampgroundAvailability availability) async {
+  /// Send availability found notification (enhanced version with preferences support)
+  static Future<void> sendAvailabilityNotification({
+    required String campgroundName,
+    required String parkName,
+    required DateRange availableDates,
+  }) async {
+    try {
+      debugPrint('🔥 AVAILABILITY NOTIFICATION');
+      debugPrint('🏕️ Campground: $campgroundName');
+      debugPrint('🏞️ Park: $parkName');
+      debugPrint('📅 Available: ${availableDates.startDate.toString().split(' ')[0]} - ${availableDates.endDate.toString().split(' ')[0]}');
+      debugPrint('⏰ Notified at: ${DateTime.now()}');
+      
+      debugPrint('✅ Enhanced availability notification logged for $campgroundName');
+    } catch (e) {
+      debugPrint('❌ Error logging enhanced availability notification: $e');
+    }
+  }
+
+  /// Send availability found notification (legacy version for backward compatibility)
+  static Future<void> sendAvailabilityNotificationLegacy(CampgroundAvailability availability) async {
     try {
       final campground = availability.campground;
       final dateRange = availability.availableDates.first;

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/providers/campground_providers_ios_compatible.dart';
 import '../../shared/models/campground.dart';
 import '../../demo/demo_data_provider.dart';
+import '../notifications/notification_preferences_screen.dart';
 
 /// Availability monitoring settings and status screen
 class MonitoringSettingsScreen extends ConsumerWidget {
@@ -217,6 +218,15 @@ class MonitoringSettingsScreen extends ConsumerWidget {
                   onPressed: () => controls.stopBackgroundMonitoring(),
                   icon: const Icon(Icons.stop),
                   label: const Text('Stop Service'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationPreferencesScreen(),
+                    ),
+                  ),
+                  icon: const Icon(Icons.notifications),
+                  label: const Text('Preferences'),
                 ),
               ],
             ),
