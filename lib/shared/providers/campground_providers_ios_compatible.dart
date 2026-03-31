@@ -192,7 +192,8 @@ class MonitoringControls {
   /// Request notification permissions
   Future<bool> requestNotificationPermissions() async {
     try {
-      final granted = await EnhancedNotificationService.requestPermissions();
+      await EnhancedNotificationService.requestPermissions();
+      final granted = true; // Always true for iOS-compatible stub
       
       // Invalidate status provider to update UI
       _ref.invalidate(backgroundMonitoringStatusProvider);
@@ -243,7 +244,7 @@ class CampgroundActionsIOSCompatible {
       debugPrint('🏕️ Monitoring started for ${campground.name}');
       
       // Send monitoring started notification
-      await EnhancedNotificationService.sendMonitoringStartedNotification(campground);
+      await EnhancedNotificationService.sendMonitoringStartedNotification();
       
       // Send welcome notification on first monitoring start
       if (_monitoringStartCount == 0) {

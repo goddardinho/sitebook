@@ -1,39 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../models/campground.dart';
-
-// Import models from availability monitoring service
-class DateRange {
-  final DateTime startDate;
-  final DateTime endDate;
-  
-  const DateRange({
-    required this.startDate,
-    required this.endDate,
-  });
-  
-  int get nights => endDate.difference(startDate).inDays;
-  
-  @override
-  String toString() {
-    return '${startDate.toString().split(' ')[0]} to ${endDate.toString().split(' ')[0]} ($nights nights)';
-  }
-}
-
-class CampgroundAvailability {
-  final Campground campground;
-  final bool hasAvailability;
-  final List<DateRange> availableDates;
-  final DateTime checkedAt;
-  final String? error;
-
-  const CampgroundAvailability({
-    required this.campground,
-    required this.hasAvailability,
-    required this.availableDates,
-    required this.checkedAt,
-    this.error,
-  });
-}
+import 'availability_monitoring_service.dart';
 
 /// Enhanced notification service with availability monitoring support (iOS-compatible version)
 /// 
@@ -91,12 +58,13 @@ class EnhancedNotificationService {
   }
 
   /// Send monitoring started notification
-  static Future<void> sendMonitoringStartedNotification(Campground campground) async {
+  static Future<void> sendMonitoringStartedNotification() async {
     try {
-      debugPrint('✅ Monitoring started for ${campground.name}');
-      debugPrint('🔄 Background service will check for availability every 6-24 hours');
+      debugPrint('🔄 MONITORING STARTED NOTIFICATION');
+      debugPrint('📡 Background monitoring service has been started');
+      debugPrint('✅ Monitoring started notification logged');
     } catch (e) {
-      debugPrint('❌ Error sending monitoring notification: $e');
+      debugPrint('❌ Error logging monitoring started notification: $e');
     }
   }
 

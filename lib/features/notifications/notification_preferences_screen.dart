@@ -86,8 +86,11 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
                   : 'All notifications are disabled',
               ),
               value: notificationsEnabled,
-              onChanged: (value) {
-                ref.read(notificationsEnabledProvider.notifier).setEnabled(value);
+              onChanged: (value) async {
+                final service = ref.read(notificationPreferencesServiceProvider);
+                await service.setNotificationsEnabled(value);
+                // Refresh the UI
+                ref.invalidate(notificationsEnabledProvider);
               },
             ),
           ],
@@ -203,9 +206,11 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
                     child: Text('$hours hours'),
                   );
                 }).toList(),
-                onChanged: notificationsEnabled ? (value) {
+                onChanged: notificationsEnabled ? (value) async {
                   if (value != null) {
-                    ref.read(checkFrequencyProvider.notifier).setFrequency(value);
+                    final service = ref.read(notificationPreferencesServiceProvider);
+                    await service.setCheckFrequencyHours(value);
+                    ref.invalidate(checkFrequencyProvider);
                   }
                 } : null,
               ),
@@ -282,52 +287,68 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
   Widget _buildCampgroundSpecificSection(
     ThemeData theme, 
     bool notificationsEnabled, 
-    List<Campground> monitoredCampgrounds
+    AsyncValue<List<Campground>> monitoredCampgroundsAsync
   ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Campground-Specific Settings',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+    return monitoredCampgroundsAsync.when(
+      data: (monitoredCampgrounds) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Campground-Specific Settings',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Control notifications for individual campgrounds',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (monitoredCampgrounds.isEmpty)
-              ListTile(
-                leading: Icon(
-                  Icons.info_outline,
+              const SizedBox(height: 8),
+              Text(
+                'Control notifications for individual campgrounds',
+                style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                title: const Text('No monitored campgrounds'),
-                subtitle: const Text('Add campgrounds to monitoring to configure individual settings'),
-              )
-            else
-              ...monitoredCampgrounds.take(5).map((campground) => 
-                _buildCampgroundNotificationSwitch(campground, notificationsEnabled)
               ),
-            if (monitoredCampgrounds.length > 5)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  '... and ${monitoredCampgrounds.length - 5} more',
-                  style: theme.textTheme.bodySmall?.copyWith(
+              const SizedBox(height: 16),
+              if (monitoredCampgrounds.isEmpty)
+                ListTile(
+                  leading: Icon(
+                    Icons.info_outline,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
+                  title: const Text('No monitored campgrounds'),
+                  subtitle: const Text('Add campgrounds to monitoring to configure individual settings'),
+                )
+              else
+                ...monitoredCampgrounds.take(5).map((campground) => 
+                  _buildCampgroundNotificationSwitch(campground, notificationsEnabled)
                 ),
-              ),
-          ],
+              if (monitoredCampgrounds.length > 5)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    '... and ${monitoredCampgrounds.length - 5} more',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+      loading: () => const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      ),
+      error: (error, stack) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text('Error loading campgrounds: $error'),
         ),
       ),
     );
@@ -414,9 +435,12 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
                     value: index,
                     child: Text(_formatHour(index)),
                   )),
-                  onChanged: (value) {
+                  onChanged: (value) async {
                     if (value != null) {
-                      ref.read(quietHoursProvider.notifier).setStartTime(value);
+                      final service = ref.read(notificationPreferencesServiceProvider);
+                      await service.setQuietHoursStart(value);
+                      ref.invalidate(quietHoursProvider);
+                      Navigator.of(context).pop();
                     }
                   },
                 ),
@@ -431,9 +455,12 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
                     value: index,
                     child: Text(_formatHour(index)),
                   )),
-                  onChanged: (value) {
+                  onChanged: (value) async {
                     if (value != null) {
-                      ref.read(quietHoursProvider.notifier).setEndTime(value);
+                      final service = ref.read(notificationPreferencesServiceProvider);
+                      await service.setQuietHoursEnd(value);
+                      ref.invalidate(quietHoursProvider);
+                      Navigator.of(context).pop();
                     }
                   },
                 ),

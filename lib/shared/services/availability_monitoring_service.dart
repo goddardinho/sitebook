@@ -247,8 +247,7 @@ Future<void> _sendAvailabilityNotifications(List<CampgroundAvailability> availab
     }
     
     // Initialize enhanced notification service
-    final notificationService = EnhancedNotificationService();
-    await notificationService.initialize();
+    await EnhancedNotificationService.initialize();
     
     // Send notifications for each available campground
     for (final availability in availabilities) {
@@ -274,7 +273,7 @@ Future<void> _sendAvailabilityNotifications(List<CampgroundAvailability> availab
       debugPrint('⚙️ Notification preferences: vibration=${prefsService.vibrationEnabled}, sound=${prefsService.soundEnabled}');
       
       // Send availability notification using enhanced service
-      await notificationService.sendAvailabilityNotification(
+      await EnhancedNotificationService.sendAvailabilityNotification(
         campgroundName: campground.name,
         parkName: campground.parkName ?? 'Unknown Park',
         availableDates: dates,

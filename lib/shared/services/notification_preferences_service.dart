@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for managing notification preferences
@@ -137,82 +138,23 @@ final notificationPreferencesServiceProvider = Provider<NotificationPreferencesS
   return service;
 });
 
-/// Provider for notifications enabled status
-final notificationsEnabledProvider = StateNotifierProvider<NotificationsEnabledNotifier, bool>((ref) {
+/// Simple provider for notifications enabled status
+final notificationsEnabledProvider = Provider<bool>((ref) {
   final service = ref.watch(notificationPreferencesServiceProvider);
-  return NotificationsEnabledNotifier(service);
+  return service.notificationsEnabled;
 });
 
-class NotificationsEnabledNotifier extends StateNotifier<bool> {
-  final NotificationPreferencesService _service;
-
-  NotificationsEnabledNotifier(this._service) : super(true) {
-    _loadState();
-  }
-
-  Future<void> _loadState() async {
-    await _service.initialize();
-    state = _service.notificationsEnabled;
-  }
-
-  Future<void> setEnabled(bool enabled) async {
-    await _service.setNotificationsEnabled(enabled);
-    state = enabled;
-  }
-}
-
-/// Provider for quiet hours settings
-final quietHoursProvider = StateNotifierProvider<QuietHoursNotifier, Map<String, int>>((ref) {
+/// Simple provider for quiet hours settings
+final quietHoursProvider = Provider<Map<String, int>>((ref) {
   final service = ref.watch(notificationPreferencesServiceProvider);
-  return QuietHoursNotifier(service);
+  return {
+    'start': service.quietHoursStart,
+    'end': service.quietHoursEnd,
+  };
 });
 
-class QuietHoursNotifier extends StateNotifier<Map<String, int>> {
-  final NotificationPreferencesService _service;
-
-  QuietHoursNotifier(this._service) : super({'start': 22, 'end': 7}) {
-    _loadState();
-  }
-
-  Future<void> _loadState() async {
-    await _service.initialize();
-    state = {
-      'start': _service.quietHoursStart,
-      'end': _service.quietHoursEnd,
-    };
-  }
-
-  Future<void> setStartTime(int hour) async {
-    await _service.setQuietHoursStart(hour);
-    state = {...state, 'start': hour};
-  }
-
-  Future<void> setEndTime(int hour) async {
-    await _service.setQuietHoursEnd(hour);
-    state = {...state, 'end': hour};
-  }
-}
-
-/// Provider for check frequency
-final checkFrequencyProvider = StateNotifierProvider<CheckFrequencyNotifier, int>((ref) {
+/// Simple provider for check frequency
+final checkFrequencyProvider = Provider<int>((ref) {
   final service = ref.watch(notificationPreferencesServiceProvider);
-  return CheckFrequencyNotifier(service);
+  return service.checkFrequencyHours;
 });
-
-class CheckFrequencyNotifier extends StateNotifier<int> {
-  final NotificationPreferencesService _service;
-
-  CheckFrequencyNotifier(this._service) : super(12) {
-    _loadState();
-  }
-
-  Future<void> _loadState() async {
-    await _service.initialize();
-    state = _service.checkFrequencyHours;
-  }
-
-  Future<void> setFrequency(int hours) async {
-    await _service.setCheckFrequencyHours(hours);
-    state = hours;
-  }
-}
