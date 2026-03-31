@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/firebase/firebase_config.dart';
+import 'core/notifications/notification_service.dart';
 import 'features/campgrounds/campgrounds_screen.dart';
 import 'features/maps/maps_screen.dart';
 import 'shared/models/campground.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase and notifications
+  await FirebaseConfig.initialize();
+  await NotificationService.initialize();
   
   runApp(
     const ProviderScope(

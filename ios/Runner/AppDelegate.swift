@@ -15,6 +15,9 @@ import GoogleMaps
       GMSServices.provideAPIKey(apiKey)
     }
     
+    // Firebase will be initialized in Flutter code
+    // This allows for better error handling and development mode support
+    
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
