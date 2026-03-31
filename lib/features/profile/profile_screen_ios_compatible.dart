@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../monitoring/monitoring_settings_screen.dart';
+// Temporarily disabled: import '../notifications/notification_preferences_screen.dart';
 import '../../shared/providers/campground_providers_ios_compatible.dart';
 
 // Demo user profile data
@@ -391,6 +392,21 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
             },
           ),
           const Divider(height: 1),
+          // Temporarily disable notification preferences until compilation issues are fixed
+          // _buildListTile(
+          //   icon: Icons.tune_outlined,
+          //   title: 'Notification Preferences',
+          //   subtitle: 'Customize when and how notifications are sent',
+          //   trailing: const Icon(Icons.chevron_right),
+          //   onTap: () {
+          //     Navigator.of(context).push(
+          //       MaterialPageRoute(
+          //         builder: (context) => const NotificationPreferencesScreen(),
+          //       ),
+          //     );
+          //   },
+          // ),
+          // const Divider(height: 1),
           _buildSwitchTile(
             icon: Icons.notifications_outlined,
             title: 'Push Notifications',

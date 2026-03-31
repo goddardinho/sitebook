@@ -6,6 +6,7 @@ import 'features/maps/map_screen_ios_compatible.dart';
 import 'features/profile/profile_screen_ios_compatible.dart';
 import 'shared/services/availability_monitoring_service.dart';
 import 'shared/services/enhanced_notification_service.dart';
+import 'shared/services/notification_preferences_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,11 @@ Future<void> _initializeServices() async {
     
     // Initialize enhanced notification service
     await EnhancedNotificationService.initialize();
+    
+    // Initialize notification preferences service
+    final prefsService = NotificationPreferencesService();
+    await prefsService.initialize();
+    debugPrint('⚙️ Notification preferences service initialized');
     
     // Initialize availability monitoring service
     await AvailabilityMonitoringService.initialize();

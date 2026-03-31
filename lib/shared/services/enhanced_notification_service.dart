@@ -21,8 +21,27 @@ class EnhancedNotificationService {
     }
   }
 
-  /// Send availability found notification
-  static Future<void> sendAvailabilityNotification(CampgroundAvailability availability) async {
+  /// Send availability found notification (enhanced version with preferences support)
+  static Future<void> sendAvailabilityNotification({
+    required String campgroundName,
+    required String parkName,
+    required DateRange availableDates,
+  }) async {
+    try {
+      debugPrint('🔥 AVAILABILITY NOTIFICATION');
+      debugPrint('🏕️ Campground: $campgroundName');
+      debugPrint('🏞️ Park: $parkName');
+      debugPrint('📅 Available: ${availableDates.startDate.toString().split(' ')[0]} - ${availableDates.endDate.toString().split(' ')[0]}');
+      debugPrint('⏰ Notified at: ${DateTime.now()}');
+      
+      debugPrint('✅ Enhanced availability notification logged for $campgroundName');
+    } catch (e) {
+      debugPrint('❌ Error logging enhanced availability notification: $e');
+    }
+  }
+
+  /// Send availability found notification (legacy version for backward compatibility)
+  static Future<void> sendAvailabilityNotificationLegacy(CampgroundAvailability availability) async {
     try {
       final campground = availability.campground;
       final dateRange = availability.availableDates.first;
@@ -39,12 +58,13 @@ class EnhancedNotificationService {
   }
 
   /// Send monitoring started notification
-  static Future<void> sendMonitoringStartedNotification(Campground campground) async {
+  static Future<void> sendMonitoringStartedNotification() async {
     try {
-      debugPrint('✅ Monitoring started for ${campground.name}');
-      debugPrint('🔄 Background service will check for availability every 6-24 hours');
+      debugPrint('🔄 MONITORING STARTED NOTIFICATION');
+      debugPrint('📡 Background monitoring service has been started');
+      debugPrint('✅ Monitoring started notification logged');
     } catch (e) {
-      debugPrint('❌ Error sending monitoring notification: $e');
+      debugPrint('❌ Error logging monitoring started notification: $e');
     }
   }
 

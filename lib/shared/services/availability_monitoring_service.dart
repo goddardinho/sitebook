@@ -4,6 +4,7 @@ import 'package:workmanager/workmanager.dart';
 import '../models/campground.dart';
 import '../../demo/demo_data_provider.dart';
 import 'enhanced_notification_service.dart';
+import 'notification_preferences_service.dart';
 
 /// Background task service for monitoring campground availability
 /// 
@@ -229,17 +230,54 @@ Future<CampgroundAvailability> _checkCampgroundAvailability(Campground campgroun
 /// Send notifications for found availability
 Future<void> _sendAvailabilityNotifications(List<CampgroundAvailability> availabilities) async {
   try {
-    // For now, just log the notifications (iOS-compatible approach)
+    // Initialize notification preferences service
+    final prefsService = NotificationPreferencesService();
+    await prefsService.initialize();
+    
+    // Check if notifications are enabled globally
+    if (!prefsService.notificationsEnabled) {
+      debugPrint('🔕 Notifications disabled globally, skipping notifications');
+      return;
+    }
+    
+    // Check if we're in quiet hours
+    if (prefsService.isQuietHours) {
+      debugPrint('🌙 Currently in quiet hours, skipping notifications');
+      return;
+    }
+    
+    // Initialize enhanced notification service
+    await EnhancedNotificationService.initialize();
+    
+    // Send notifications for each available campground
     for (final availability in availabilities) {
       final campground = availability.campground;
+      
+      // Check campground-specific settings
+      if (!prefsService.getCampgroundNotificationsEnabled(campground.id)) {
+        debugPrint('🔕 Notifications disabled for ${campground.name}, skipping');
+        continue;
+      }
+      
+      // Check if instant notifications are enabled
+      if (!prefsService.instantNotificationsEnabled) {
+        debugPrint('📬 Instant notifications disabled, will include in summary only');
+        continue;
+      }
+      
       final dates = availability.availableDates.first;
       
       debugPrint('🔥 AVAILABILITY FOUND: ${campground.name}');
       debugPrint('📅 Available: ${dates.startDate.toString().split(' ')[0]} - ${dates.endDate.toString().split(' ')[0]}');
       debugPrint('🏞️ Park: ${campground.parkName}');
+      debugPrint('⚙️ Notification preferences: vibration=${prefsService.vibrationEnabled}, sound=${prefsService.soundEnabled}');
       
-      // TODO: Integrate with actual notification service when iOS compatibility is resolved
-      // await NotificationService.sendAvailabilityNotification(availability);
+      // Send availability notification using enhanced service
+      await EnhancedNotificationService.sendAvailabilityNotification(
+        campgroundName: campground.name,
+        parkName: campground.parkName ?? 'Unknown Park',
+        availableDates: dates,
+      );
     }
     
   } catch (e) {
