@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "123456789",
+    "project_id": "sitebook-dev",
+    "storage_bucket": "sitebook-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "com.sitebook.sitebook-flutter",
+        "android_client_info": {
+          "package_name": "com.sitebook.sitebook_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "123456789-android.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sitebook.sitebook_flutter"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "development-api-key"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "123456789-development.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

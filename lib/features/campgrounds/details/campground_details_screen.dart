@@ -191,6 +191,9 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
         ),
       );
     }
+  }
+  
+  void _handleSharePressed() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Sharing ${widget.campground.name}...'),

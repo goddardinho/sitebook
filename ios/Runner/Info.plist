@@ -71,8 +71,25 @@
 	<string>SiteBook needs access to your location to find nearby campgrounds and show you relevant search results on the map.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>SiteBook uses your location to provide personalized campground recommendations and enable location-based search features.</string>
+	
+	<!-- Notification permissions -->
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>SiteBook sends notifications to alert you when monitored campgrounds become available for your desired dates.</string>
+	
+	<!-- Background processing for availability monitoring -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-processing</string>
+		<string>remote-notification</string>
+		<string>background-fetch</string>
+	</array>
+	
+	<!-- Firebase configuration -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	
 	<!-- Google Maps API Key for iOS -->
 	<key>GMSApiKey</key>
-	<string>$(GOOGLE_MAPS_API_KEY)</string>
+	<string>development-api-key</string>
 </dict>
 </plist>
