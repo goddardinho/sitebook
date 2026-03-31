@@ -88,7 +88,7 @@ final nearbySearchProvider = FutureProvider.family<List<Campground>, Map<String,
 
 // Actions provider for campground operations  
 final campgroundActionsProvider = Provider((ref) {
-  return CampgroundActions();
+  return CampgroundActions(ref);
 });
 
 // Provider for monitored count
@@ -98,11 +98,19 @@ final monitoredCountProvider = FutureProvider<int>((ref) async {
 
 class CampgroundActions {
   static int _monitoringStartCount = 0;
+  final Ref _ref;
+  
+  CampgroundActions(this._ref);
   
   Future<void> toggleMonitoring(String campgroundId, bool isMonitored) async {
     try {
       // Update the demo data
       DemoDataProvider.toggleMonitoring(campgroundId);
+      
+      // Invalidate providers to trigger UI update
+      _ref.invalidate(searchResultsProvider);
+      _ref.invalidate(campgroundsProvider);
+      _ref.invalidate(monitoredCountProvider);
       
       // Get the campground details for notifications
       final campground = DemoDataProvider.getCampgroundById(campgroundId);
@@ -175,7 +183,9 @@ class CampgroundActions {
   }
   
   Future<void> updateSearchQuery(String query) async {
-    // Demo version - search queries handled by StateProvider
-    await Future.delayed(const Duration(milliseconds: 100));
+    final searchNotifier = _ref.read(searchQueryProvider);
+    searchNotifier.updateQuery(query);
+    // Invalidate search results to trigger update
+    _ref.invalidate(searchResultsProvider);
   }
 }

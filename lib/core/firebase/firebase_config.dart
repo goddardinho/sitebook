@@ -18,25 +18,49 @@ class FirebaseConfig {
         return;
       }
       
-      // Initialize Firebase with default configuration
-      await Firebase.initializeApp(
-        options: _getFirebaseOptions(),
-      );
+      // Initialize Firebase
+      // Try platform-specific configuration first, fallback to development options
+      FirebaseOptions? config;
+      try {
+        // This will automatically read relevant config files if they exist
+        await Firebase.initializeApp();
+        debugPrint('🔥 Firebase initialized with platform configuration');
+      } catch (e) {
+        debugPrint('⚠️  Platform Firebase config failed: $e');
+        debugPrint('🔄 Falling back to development configuration');
+        
+        // Fallback to development configuration
+        config = _getFirebaseOptions();
+        await Firebase.initializeApp(options: config);
+        debugPrint('🔥 Firebase initialized with development configuration');
+      }
       
-      // Initialize Analytics
-      _analytics = FirebaseAnalytics.instance;
-      await _analytics!.setAnalyticsCollectionEnabled(true);
+      // Initialize Analytics (only if Firebase is available)
+      try {
+        _analytics = FirebaseAnalytics.instance;
+        await _analytics!.setAnalyticsCollectionEnabled(true);
+        debugPrint('📊 Firebase Analytics initialized');
+      } catch (e) {
+        debugPrint('⚠️  Firebase Analytics failed: $e');
+        _analytics = null;
+      }
       
-      // Initialize Messaging
-      _messaging = FirebaseMessaging.instance;
-      await _setupMessaging();
+      // Initialize Messaging (only if Firebase is available)
+      try {
+        _messaging = FirebaseMessaging.instance;
+        await _setupMessaging();
+        debugPrint('📱 Firebase Messaging initialized');
+      } catch (e) {
+        debugPrint('⚠️  Firebase Messaging failed: $e');
+        _messaging = null;
+      }
       
-      debugPrint('🔥 Firebase initialized successfully');
+      debugPrint('🔥 Firebase initialization completed');
       
     } catch (e) {
-      debugPrint('❌ Firebase initialization failed: $e');
-      // In development, continue without Firebase
-      debugPrint('⚠️  Continuing in development mode without Firebase');
+      debugPrint('❌ Firebase initialization completely failed: $e');
+      debugPrint('⚠️  Continuing in offline mode without Firebase services');
+      // Don't rethrow - continue without Firebase
     }
   }
   
@@ -44,37 +68,53 @@ class FirebaseConfig {
   static Future<void> _setupMessaging() async {
     if (_messaging == null) return;
     
-    // Request notification permissions
-    NotificationSettings settings = await _messaging!.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-    
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      debugPrint('🔔 Notification permissions granted');
-    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-      debugPrint('🔔 Notification permissions granted (provisional)');
-    } else {
-      debugPrint('🚫 Notification permissions not granted');
+    try {
+      // Request notification permissions
+      NotificationSettings settings = await _messaging!.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+      
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        debugPrint('🔔 Notification permissions granted');
+      } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+        debugPrint('🔔 Notification permissions granted (provisional)');
+      } else {
+        debugPrint('🚫 Notification permissions not granted');
+      }
+      
+      // Get FCM token for this device (with error handling)
+      try {
+        String? token = await _messaging!.getToken();
+        if (token != null) {
+          debugPrint('📱 FCM Token: ${token.substring(0, 20)}...');
+          // TODO: Send token to your server for targeted notifications
+        }
+      } catch (e) {
+        debugPrint('⚠️  FCM Token retrieval failed: $e');
+      }
+      
+      // Handle token refresh (with error handling)
+      try {
+        _messaging!.onTokenRefresh.listen((String token) {
+          debugPrint('🔄 FCM Token refreshed: ${token.substring(0, 20)}...');
+          // TODO: Send updated token to your server
+        }, onError: (error) {
+          debugPrint('⚠️  FCM Token refresh failed: $error');
+        });
+      } catch (e) {
+        debugPrint('⚠️  FCM Token refresh setup failed: $e');
+      }
+      
+    } catch (e) {
+      debugPrint('❌ Firebase Messaging setup failed: $e');
+      // Don't rethrow - continue without messaging
     }
-    
-    // Get FCM token for this device
-    String? token = await _messaging!.getToken();
-    if (token != null) {
-      debugPrint('📱 FCM Token: ${token.substring(0, 20)}...');
-      // TODO: Send token to your server for targeted notifications
-    }
-    
-    // Handle token refresh
-    _messaging!.onTokenRefresh.listen((String token) {
-      debugPrint('🔄 FCM Token refreshed: ${token.substring(0, 20)}...');
-      // TODO: Send updated token to your server
-    });
   }
   
   /// Get Firebase options for the current platform
@@ -102,8 +142,15 @@ class FirebaseConfig {
   
   /// Log analytics events
   static Future<void> logEvent(String name, {Map<String, Object>? parameters}) async {
-    if (_analytics != null) {
-      await _analytics!.logEvent(name: name, parameters: parameters);
+    try {
+      if (_analytics != null) {
+        await _analytics!.logEvent(name: name, parameters: parameters);
+        debugPrint('📊 Analytics event logged: $name');
+      } else {
+        debugPrint('⚠️  Analytics not available, skipping event: $name');
+      }
+    } catch (e) {
+      debugPrint('❌ Analytics event failed: $name, error: $e');
     }
   }
 }

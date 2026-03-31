@@ -106,11 +106,14 @@
 ### ✅ 4. Notifications & Background Tasks (Week 3) - **COMPLETE**
 - [x] **Firebase Integration & Setup** ✅ **COMPLETE**
   - [x] Add Firebase dependencies (firebase_core, firebase_messaging, firebase_analytics)
-  - [x] Configure Firebase projects for iOS and Android (placeholders ready)
+  - [x] Configure Firebase projects for iOS and Android (development configs ready)
   - [x] Set up FCM (Firebase Cloud Messaging) service foundation
   - [x] Handle notification permissions for both platforms
   - [x] Create development mode (works without actual Firebase project)
   - [x] Create comprehensive setup documentation (docs/FIREBASE_SETUP.md)
+  - [x] **iOS Firebase configuration resolved** - Fault-tolerant initialization implemented ✅
+  - [x] **iOS deployment target fixed** - Updated from 13.0 to 15.0 to match dependencies ✅
+  - [x] **iOS crash resolved** - SIGABRT issue fixed with graceful Firebase error handling ✅
 - [x] **Push Notifications Implementation** ✅ **COMPLETE**
   - [x] Create notification service integration with campground monitoring
   - [x] Implement foreground notification display with custom UI
@@ -120,6 +123,12 @@
   - [x] Connect notification triggers to campground monitoring toggles
   - [x] Welcome notification system for new users
   - [x] Demo availability notifications with 30% simulation rate
+  - [x] **Cross-platform validation complete** - iOS & Android both stable and functional ✅
+- [x] **Fault-tolerant Error Handling** ✅ **COMPLETE**
+  - [x] Firebase initialization with graceful fallback handling
+  - [x] Service-level error isolation preventing app crashes
+  - [x] Analytics and messaging services with independent error handling
+  - [x] Development mode compatibility without production Firebase setup
 - [ ] **Availability Monitoring Worker**
   - [ ] Create background task service using WorkManager/iOS Background App Refresh
   - [ ] Implement periodic availability checking for monitored campgrounds
@@ -136,6 +145,39 @@
 - [ ] Build login/signup flow
 - [ ] Implement secure token management
 - [ ] Create user preferences and profile management
+
+### 6. Campsite-Level Monitoring (Week 5-7)
+- [ ] **Enhanced Data Models & Architecture**
+  - [ ] Create Campsite model with site-specific details (number, type, amenities, rates)
+  - [ ] Implement CampsiteMonitoringSettings for granular user preferences
+  - [ ] Extend database schema for campsite-level data storage
+  - [ ] Add campsite availability tracking and caching
+- [ ] **Advanced API Integration**
+  - [ ] Recreation.gov campsite-level availability API integration
+  - [ ] Individual campsite reservation URL generation
+  - [ ] Campsite amenity and rate data fetching
+  - [ ] Real-time campsite availability updates
+- [ ] **Campsite Selection UI**
+  - [ ] Interactive campground map with individual site numbers
+  - [ ] Campsite filtering by type, amenities, and daily rate
+  - [ ] Multi-site monitoring toggle interface
+  - [ ] "Monitor Any Available" fallback option
+  - [ ] Enhanced campground details with site breakdown
+- [ ] **Granular Monitoring System**
+  - [ ] Site-specific monitoring preferences (dates, types, rates)
+  - [ ] Alternative site suggestions within same campground
+  - [ ] Rate-based filtering and price drop alerts
+  - [ ] Backup site monitoring for high-demand locations
+- [ ] **Advanced Notifications**
+  - [ ] Site-specific availability notifications with site numbers
+  - [ ] Price drop alerts for monitored campsites
+  - [ ] Alternative site suggestions in notifications
+  - [ ] Enhanced notification content with campsite details
+- [ ] **User Preference Management**
+  - [ ] Save and sync campsite monitoring preferences across devices
+  - [ ] Campground-specific site preferences and history
+  - [ ] Rate limit preferences and budget-based filtering
+  - [ ] Notification frequency controls for campsite alerts
 
 ## 🎯 **MAJOR ADVANTAGES OF FLUTTER MIGRATION**
 

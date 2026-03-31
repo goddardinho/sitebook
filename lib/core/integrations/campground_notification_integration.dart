@@ -94,7 +94,7 @@ class CampgroundNotificationIntegration {
       await FirebaseConfig.logEvent('campground_monitoring_update', parameters: {
         'campground_id': campground.id,
         'campground_name': campground.name,
-        'is_monitored': isMonitored,
+        'is_monitored': isMonitored.toString(), // Convert boolean to string for Firebase Analytics
         'action': isMonitored ? 'start_monitoring' : 'stop_monitoring',
       });
       

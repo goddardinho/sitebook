@@ -57,19 +57,31 @@ class NotificationService {
   
   /// Initialize Firebase messaging handlers
   static Future<void> _initializeFirebaseMessaging() async {
-    // Handle background messages
-    FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessage);
-    
-    // Handle foreground messages
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
-    
-    // Handle notification taps when app is in background
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
-    
-    // Handle notification tap when app is terminated
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      _handleNotificationTap(initialMessage);
+    try {
+      // Only initialize Firebase messaging if Firebase is available
+      if (FirebaseMessaging.instance != null) {
+        // Handle background messages
+        FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessage);
+        
+        // Handle foreground messages
+        FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+        
+        // Handle notification taps when app is in background
+        FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+        
+        // Handle notification tap when app is terminated
+        RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+        if (initialMessage != null) {
+          _handleNotificationTap(initialMessage);
+        }
+        
+        debugPrint('📱 Firebase messaging handlers initialized');
+      } else {
+        debugPrint('⚠️  Firebase messaging not available, using local notifications only');
+      }
+    } catch (e) {
+      debugPrint('❌ Firebase messaging initialization failed: $e');
+      debugPrint('⚠️  Continuing with local notifications only');
     }
   }
   

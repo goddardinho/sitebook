@@ -10,10 +10,30 @@ import 'shared/models/campground.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Firebase and notifications
-  await FirebaseConfig.initialize();
-  await NotificationService.initialize();
-  await CampgroundNotificationIntegration.initialize();
+  // Initialize services with fault-tolerant error handling
+  try {
+    await FirebaseConfig.initialize();
+    debugPrint('✅ Firebase services initialized successfully');
+  } catch (e) {
+    debugPrint('❌ Firebase initialization failed in main: $e');
+    debugPrint('⚠️  Continuing with local services only');
+  }
+  
+  try {
+    await NotificationService.initialize();
+    debugPrint('✅ Notification service initialized successfully');
+  } catch (e) {
+    debugPrint('❌ Notification service initialization failed in main: $e');
+  }
+  
+  try {
+    await CampgroundNotificationIntegration.initialize();
+    debugPrint('✅ Campground notification integration initialized successfully');
+  } catch (e) {
+    debugPrint('❌ Campground notification integration failed in main: $e');
+  }
+  
+  debugPrint('🚀 SiteBook initialization complete - launching app');
   
   runApp(
     const ProviderScope(

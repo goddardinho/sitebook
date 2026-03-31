@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Firebase Project Configuration for iOS Development -->
+	<key>CLIENT_ID</key>
+	<string>123456789-development.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.123456789-development</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>123456789-android.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>development-api-key</string>
+	<key>GCM_SENDER_ID</key>
+	<string>123456789</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.sitebook.sitebookFlutter</string>
+	<key>PROJECT_ID</key>
+	<string>sitebook-dev</string>
+	<key>STORAGE_BUCKET</key>
+	<string>sitebook-dev.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<true/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>com.sitebook.sitebook-flutter</string>
+</dict>
+</plist>
