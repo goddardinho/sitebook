@@ -225,7 +225,7 @@
   - [ ] Rate limit preferences and budget-based filtering
   - [ ] Notification frequency controls for campsite alerts
 
-### 7. Campsite-Level Monitoring (Week 8-9)
+### 7. User Acceptance and Testing (Week 8-9)
 - [ ] **User Acceptance Testing**
 - [ ] **Complete end-to-end smoke, unit, and integration testing**
 - [ ] **Flutter error cleanup**
