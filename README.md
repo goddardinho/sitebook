@@ -55,6 +55,8 @@
 - **Production deployment ready** - Validated on both App Store and Google Play target platforms
 - **Complete availability monitoring** - Background service with intelligent scheduling and user controls
 - **Cross-platform user testing validated** - Comprehensive testing on iOS and Android confirmed identical functionality
+- **Automated Quality Assurance** - Pre-commit hooks, CI/CD pipeline, and comprehensive static analysis
+- **Enterprise-grade testing infrastructure** - Automated test execution with quality gates
 
 ## 🚀 Getting Started
 
@@ -87,7 +89,17 @@
    # Edit .env with your Google Maps and Recreation.gov API keys
    ```
 
-5. **Run the application**
+5. **Set up development environment (one-time)**
+   ```bash
+   ./scripts/setup_dev.sh    # Install pre-commit hooks and tools
+   ```
+
+6. **Run quality checks (recommended before commits)**
+   ```bash
+   ./scripts/quality_check.sh    # Run tests, analysis, and formatting
+   ```
+
+7. **Run the application**
    ```bash
    # Secure script with API key management (recommended)
    ./scripts/run_secure.sh
@@ -148,6 +160,35 @@
 ### 🚧 **In Development**
 - Recreation.gov API integration for real-time availability (service layer complete)
 - Background task worker for periodic availability monitoring
+
+## 🛡️ **Quality Assurance & Development**
+
+### **Automated Testing Infrastructure**
+- **Pre-commit Hooks** - Automatic code quality checks before each commit
+- **GitHub Actions CI/CD** - Automated testing and validation on push/PR
+- **Comprehensive Static Analysis** - Enhanced linting rules catching code quality issues
+- **Test Suite** - 70+ passing tests with provider integration and widget testing
+- **Quality Gates** - Prevents broken code from reaching main branch
+
+### **Development Workflow**
+```bash
+# 1. One-time setup
+./scripts/setup_dev.sh
+
+# 2. Regular development
+./scripts/quality_check.sh    # Run before commits
+git commit -m "Your changes"   # Pre-commit hooks run automatically
+git push                      # GitHub Actions run automatically
+```
+
+### **Code Quality Standards**
+- **Error-free builds** - Zero compilation errors enforced
+- **Comprehensive linting** - Enhanced analysis rules beyond Flutter defaults  
+- **Automatic formatting** - Consistent code style maintained
+- **Test coverage** - Critical functionality validated
+- **Security checks** - No hardcoded secrets or credentials
+
+See [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) for detailed development guidelines.
 - User profile and preference management
 - Payment processing integration
 - Notification preferences and settings UI

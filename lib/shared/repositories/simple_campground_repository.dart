@@ -7,7 +7,6 @@ import 'campground_repository.dart';
 class SimpleCampgroundRepository implements CampgroundRepository {
   final CampgroundDatabase _database = CampgroundDatabase();
 
-  @override
   Future<List<Campground>> getCampgroundsByLocation({
     required double latitude,
     required double longitude,
@@ -79,7 +78,6 @@ class SimpleCampgroundRepository implements CampgroundRepository {
     );
   }
 
-  @override
   Future<Map<String, dynamic>> getCampsiteAvailability({
     required String campgroundId,
     required DateTime startDate,
@@ -89,7 +87,7 @@ class SimpleCampgroundRepository implements CampgroundRepository {
     return {
       'available_dates': [],
       'unavailable_dates': [],
-      'status': 'available'
+      'status': 'available',
     };
   }
 
@@ -130,63 +128,93 @@ class SimpleCampgroundRepository implements CampgroundRepository {
     return DateTime.now();
   }
 
-  @override
   Future<void> syncWithApis() async {
     // Add some sample data for UX testing
     final sampleCampgrounds = [
       Campground(
         id: 'sample_1',
         name: 'Yosemite Valley Campground',
-        description: 'Beautiful wilderness camping in the heart of Yosemite National Park. Surrounded by towering granite cliffs and pristine forests.',
-        latitude: 37.7459, 
+        description:
+            'Beautiful wilderness camping in the heart of Yosemite National Park. Surrounded by towering granite cliffs and pristine forests.',
+        latitude: 37.7459,
         longitude: -119.5873,
         state: 'CA',
         parkName: 'Yosemite National Park',
-        amenities: const ['Restrooms', 'Fire Pits', 'Water', 'Picnic Tables', 'Bear Lockers'],
-        activities: const ['Hiking', 'Rock Climbing', 'Photography', 'Wildlife Viewing'],
+        amenities: const [
+          'Restrooms',
+          'Fire Pits',
+          'Water',
+          'Picnic Tables',
+          'Bear Lockers',
+        ],
+        activities: const [
+          'Hiking',
+          'Rock Climbing',
+          'Photography',
+          'Wildlife Viewing',
+        ],
         imageUrls: const [],
         reservationUrl: 'https://recreation.gov/camping/campgrounds/232447',
         phoneNumber: '209-372-0200',
       ),
       Campground(
-        id: 'sample_2', 
+        id: 'sample_2',
         name: 'Big Sur Coastal Camp',
-        description: 'Stunning oceanfront camping with dramatic coastal views and rugged hiking trails along the Pacific Coast.',
+        description:
+            'Stunning oceanfront camping with dramatic coastal views and rugged hiking trails along the Pacific Coast.',
         latitude: 36.2704,
         longitude: -121.8081,
         state: 'CA',
         amenities: const ['Restrooms', 'Showers', 'Fire Rings', 'Water'],
-        activities: const ['Hiking', 'Beach Walking', 'Surfing', 'Bird Watching'],
+        activities: const [
+          'Hiking',
+          'Beach Walking',
+          'Surfing',
+          'Bird Watching',
+        ],
         imageUrls: const [],
       ),
       Campground(
         id: 'sample_3',
         name: 'Lake Tahoe Alpine Camp',
-        description: 'Mountain camping at high elevation with crystal clear lake views and excellent fishing opportunities.',
+        description:
+            'Mountain camping at high elevation with crystal clear lake views and excellent fishing opportunities.',
         latitude: 39.0968,
         longitude: -120.0324,
         state: 'CA',
-        amenities: const ['Restrooms', 'Fire Pits', 'Boat Launch', 'Picnic Tables'],
+        amenities: const [
+          'Restrooms',
+          'Fire Pits',
+          'Boat Launch',
+          'Picnic Tables',
+        ],
         activities: const ['Fishing', 'Boating', 'Swimming', 'Hiking'],
         imageUrls: const [],
       ),
       Campground(
         id: 'sample_4',
         name: 'Joshua Tree Desert Camp',
-        description: 'Unique desert camping experience among iconic Joshua Trees and fascinating rock formations.',
+        description:
+            'Unique desert camping experience among iconic Joshua Trees and fascinating rock formations.',
         latitude: 33.8734,
         longitude: -115.9010,
         state: 'CA',
         parkName: 'Joshua Tree National Park',
         amenities: const ['Restrooms', 'Fire Rings', 'Picnic Tables'],
-        activities: const ['Hiking', 'Rock Climbing', 'Stargazing', 'Photography'],
+        activities: const [
+          'Hiking',
+          'Rock Climbing',
+          'Stargazing',
+          'Photography',
+        ],
         imageUrls: const [],
         reservationUrl: 'https://recreation.gov/camping/campgrounds/232447',
       ),
       Campground(
         id: 'sample_5',
         name: 'Sequoia Giant Forest Camp',
-        description: 'Camp among ancient giant sequoia trees in this pristine mountain forest setting.',
+        description:
+            'Camp among ancient giant sequoia trees in this pristine mountain forest setting.',
         latitude: 36.5647,
         longitude: -118.7732,
         state: 'CA',

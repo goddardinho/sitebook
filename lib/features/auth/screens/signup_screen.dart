@@ -53,14 +53,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             children: [
               // Header
               _buildHeader(theme),
-              
+
               const SizedBox(height: 32),
-              
+
               // Signup form
               _buildSignUpForm(theme, authState, authActions),
-              
+
               const SizedBox(height: 24),
-              
+
               // Login link
               _buildLoginLink(theme),
             ],
@@ -123,9 +123,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Email field
           TextFormField(
             controller: _emailController,
@@ -151,9 +151,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Location field (optional)
           TextFormField(
             controller: _locationController,
@@ -170,9 +170,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Password field
           TextFormField(
             controller: _passwordController,
@@ -187,11 +187,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 icon: Icon(
                   _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                 ),
-                onPressed: authState.isAuthenticating ? null : () {
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                },
+                onPressed: authState.isAuthenticating
+                    ? null
+                    : () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -210,9 +212,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Confirm password field
           TextFormField(
             controller: _confirmPasswordController,
@@ -225,13 +227,18 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               prefixIcon: const Icon(Icons.lock_outlined),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  _isConfirmPasswordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off,
                 ),
-                onPressed: authState.isAuthenticating ? null : () {
-                  setState(() {
-                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                  });
-                },
+                onPressed: authState.isAuthenticating
+                    ? null
+                    : () {
+                        setState(() {
+                          _isConfirmPasswordVisible =
+                              !_isConfirmPasswordVisible;
+                        });
+                      },
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -248,28 +255,32 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             },
             onFieldSubmitted: (_) => _handleSignUp(authActions),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Terms and conditions checkbox
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Checkbox(
                 value: _acceptTerms,
-                onChanged: authState.isAuthenticating ? null : (value) {
-                  setState(() {
-                    _acceptTerms = value ?? false;
-                  });
-                },
+                onChanged: authState.isAuthenticating
+                    ? null
+                    : (value) {
+                        setState(() {
+                          _acceptTerms = value ?? false;
+                        });
+                      },
               ),
               Expanded(
                 child: GestureDetector(
-                  onTap: authState.isAuthenticating ? null : () {
-                    setState(() {
-                      _acceptTerms = !_acceptTerms;
-                    });
-                  },
+                  onTap: authState.isAuthenticating
+                      ? null
+                      : () {
+                          setState(() {
+                            _acceptTerms = !_acceptTerms;
+                          });
+                        },
                   child: Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: RichText(
@@ -302,9 +313,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Error message
           if (authState.errorMessage != null) ...[
             Container(
@@ -334,11 +345,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // Sign up button
           FilledButton(
-            onPressed: (authState.isAuthenticating || !_acceptTerms) 
-                ? null 
+            onPressed: (authState.isAuthenticating || !_acceptTerms)
+                ? null
                 : () => _handleSignUp(authActions),
             style: FilledButton.styleFrom(
               minimumSize: const Size(double.infinity, 52),
@@ -404,24 +415,26 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   void _handleSignUp(AuthActions authActions) {
     // Clear any previous error
     authActions.clearError();
-    
+
     if (!_acceptTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please accept the Terms of Service and Privacy Policy'),
+          content: Text(
+            'Please accept the Terms of Service and Privacy Policy',
+          ),
         ),
       );
       return;
     }
-    
+
     if (_formKey.currentState?.validate() ?? false) {
       final name = _nameController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
-      final location = _locationController.text.trim().isNotEmpty 
-          ? _locationController.text.trim() 
+      final location = _locationController.text.trim().isNotEmpty
+          ? _locationController.text.trim()
           : null;
-      
+
       authActions.signUp(name, email, password, location: location);
     }
   }

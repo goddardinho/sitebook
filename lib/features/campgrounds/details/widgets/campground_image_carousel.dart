@@ -12,7 +12,8 @@ class CampgroundImageCarousel extends StatefulWidget {
   });
 
   @override
-  State<CampgroundImageCarousel> createState() => _CampgroundImageCarouselState();
+  State<CampgroundImageCarousel> createState() =>
+      _CampgroundImageCarouselState();
 }
 
 class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
@@ -64,14 +65,17 @@ class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
                 );
               },
             ),
-            
+
             // Image counter overlay
             if (widget.imageUrls.length > 1) ...[
               Positioned(
                 top: 12,
                 right: 12,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withAlpha(153),
                     borderRadius: BorderRadius.circular(16),
@@ -86,7 +90,7 @@ class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
                   ),
                 ),
               ),
-              
+
               // Page dots indicator
               Positioned(
                 bottom: 16,
@@ -95,7 +99,7 @@ class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
                 child: _buildPageIndicator(),
               ),
             ],
-            
+
             // Fullscreen hint
             Positioned(
               bottom: 12,
@@ -138,9 +142,7 @@ class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
   Widget _buildLoadingPlaceholder() {
     return Container(
       color: Colors.grey.shade200,
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      child: const Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -150,18 +152,11 @@ class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.broken_image,
-            size: 48,
-            color: Colors.grey.shade600,
-          ),
+          Icon(Icons.broken_image, size: 48, color: Colors.grey.shade600),
           const SizedBox(height: 8),
           Text(
             'Image not available',
-            style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
           ),
         ],
       ),
@@ -170,7 +165,7 @@ class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
 
   Widget _buildPlaceholder(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       height: 280,
       decoration: BoxDecoration(
@@ -214,7 +209,7 @@ class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
           width: index == _currentIndex ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
-            color: index == _currentIndex 
+            color: index == _currentIndex
                 ? Colors.white
                 : Colors.white.withAlpha(128),
             borderRadius: BorderRadius.circular(4),
@@ -237,10 +232,7 @@ class _CampgroundImageCarouselState extends State<CampgroundImageCarousel> {
           );
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
+          return FadeTransition(opacity: animation, child: child);
         },
       ),
     );
@@ -273,7 +265,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
     super.initState();
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
-    
+
     // Hide status bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
@@ -281,7 +273,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
   @override
   void dispose() {
     _pageController.dispose();
-    
+
     // Restore status bar
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
@@ -313,9 +305,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
                         return const Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
+                          child: CircularProgressIndicator(color: Colors.white),
                         );
                       },
                       errorBuilder: (context, error, stackTrace) {
@@ -345,7 +335,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                 );
               },
             ),
-            
+
             // UI overlay (app bar and counter)
             AnimatedOpacity(
               opacity: _isVisible ? 1.0 : 0.0,
@@ -405,9 +395,9 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                       ],
                     ),
                   ),
-                  
+
                   const Spacer(),
-                  
+
                   // Bottom page indicator (if multiple images)
                   if (widget.imageUrls.length > 1)
                     Container(
@@ -431,7 +421,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                             width: index == _currentIndex ? 32 : 10,
                             height: 10,
                             decoration: BoxDecoration(
-                              color: index == _currentIndex 
+                              color: index == _currentIndex
                                   ? Colors.white
                                   : Colors.white.withAlpha(128),
                               borderRadius: BorderRadius.circular(5),

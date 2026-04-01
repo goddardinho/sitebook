@@ -38,22 +38,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              
+
               // App logo and title
               _buildHeader(theme),
-              
+
               const SizedBox(height: 48),
-              
+
               // Login form
               _buildLoginForm(theme, authState, authActions),
-              
+
               const SizedBox(height: 24),
-              
+
               // Sign up link
               _buildSignUpLink(theme),
-              
+
               const SizedBox(height: 32),
-              
+
               // Additional options
               _buildAdditionalOptions(theme),
             ],
@@ -74,11 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             color: theme.colorScheme.primary,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Icon(
-            Icons.park,
-            color: theme.colorScheme.onPrimary,
-            size: 40,
-          ),
+          child: Icon(Icons.park, color: theme.colorScheme.onPrimary, size: 40),
         ),
         const SizedBox(height: 24),
         Text(
@@ -130,9 +126,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Password field
           TextFormField(
             controller: _passwordController,
@@ -147,11 +143,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 icon: Icon(
                   _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                 ),
-                onPressed: authState.isAuthenticating ? null : () {
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                },
+                onPressed: authState.isAuthenticating
+                    ? null
+                    : () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -168,27 +166,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             },
             onFieldSubmitted: (_) => _handleLogin(authActions),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Remember me and forgot password
           Row(
             children: [
               Checkbox(
                 value: _rememberMe,
-                onChanged: authState.isAuthenticating ? null : (value) {
-                  setState(() {
-                    _rememberMe = value ?? false;
-                  });
-                },
+                onChanged: authState.isAuthenticating
+                    ? null
+                    : (value) {
+                        setState(() {
+                          _rememberMe = value ?? false;
+                        });
+                      },
               ),
-              Text(
-                'Remember me',
-                style: theme.textTheme.bodyMedium,
-              ),
+              Text('Remember me', style: theme.textTheme.bodyMedium),
               const Spacer(),
               TextButton(
-                onPressed: authState.isAuthenticating ? null : _handleForgotPassword,
+                onPressed: authState.isAuthenticating
+                    ? null
+                    : _handleForgotPassword,
                 child: Text(
                   'Forgot Password?',
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -198,9 +197,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Error message
           if (authState.errorMessage != null) ...[
             Container(
@@ -230,10 +229,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // Login button
           FilledButton(
-            onPressed: authState.isAuthenticating ? null : () => _handleLogin(authActions),
+            onPressed: authState.isAuthenticating
+                ? null
+                : () => _handleLogin(authActions),
             style: FilledButton.styleFrom(
               minimumSize: const Size(double.infinity, 52),
               shape: RoundedRectangleBorder(
@@ -284,9 +285,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         TextButton(
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const SignUpScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const SignUpScreen()),
             );
           },
           child: Text(
@@ -320,9 +319,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const Expanded(child: Divider()),
           ],
         ),
-        
+
         const SizedBox(height: 24),
-        
+
         // Demo login button
         OutlinedButton(
           onPressed: () => _handleDemoLogin(ref.read(authActionsProvider)),
@@ -335,10 +334,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.person_outlined,
-                color: theme.colorScheme.primary,
-              ),
+              Icon(Icons.person_outlined, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 'Continue as Demo User',
@@ -357,11 +353,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void _handleLogin(AuthActions authActions) {
     // Clear any previous error
     authActions.clearError();
-    
+
     if (_formKey.currentState?.validate() ?? false) {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
-      
+
       authActions.signIn(email, password);
     }
   }
@@ -388,11 +384,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void _handleDemoLogin(AuthActions authActions) {
     // Clear any previous error
     authActions.clearError();
-    
+
     // Use demo credentials
     _emailController.text = 'demo@sitebook.app';
     _passwordController.text = 'demo123';
-    
+
     authActions.signIn('demo@sitebook.app', 'demo123');
   }
 }

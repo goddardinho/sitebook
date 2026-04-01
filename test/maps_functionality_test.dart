@@ -85,7 +85,10 @@ void main() {
       // Test that all providers needed by Maps screen are available
       expect(() => container.read(searchResultsProvider), returnsNormally);
       expect(() => container.read(campgroundsProvider), returnsNormally);
-      expect(() => container.read(monitoredCampgroundsProvider), returnsNormally);
+      expect(
+        () => container.read(monitoredCampgroundsProvider),
+        returnsNormally,
+      );
     });
   });
 }

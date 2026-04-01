@@ -20,7 +20,7 @@ class UserLocation {
 // Demo location provider - simulates user's current location
 final userLocationProvider = FutureProvider<UserLocation>((ref) async {
   await Future.delayed(const Duration(milliseconds: 500));
-  
+
   // Default location: San Francisco Bay Area for demo
   return const UserLocation(
     latitude: 37.7749,
@@ -30,10 +30,12 @@ final userLocationProvider = FutureProvider<UserLocation>((ref) async {
 });
 
 // Provider for campgrounds with distance calculations
-final nearbyCampgroundsProvider = FutureProvider<List<CampgroundWithDistance>>((ref) async {
+final nearbyCampgroundsProvider = FutureProvider<List<CampgroundWithDistance>>((
+  ref,
+) async {
   final userLocation = await ref.watch(userLocationProvider.future);
   final campgrounds = DemoDataProvider.getAllCampgrounds();
-  
+
   return campgrounds.map((campground) {
     final distance = _calculateDistance(
       userLocation.latitude,
@@ -41,13 +43,9 @@ final nearbyCampgroundsProvider = FutureProvider<List<CampgroundWithDistance>>((
       campground.latitude,
       campground.longitude,
     );
-    
-    return CampgroundWithDistance(
-      campground: campground,
-      distance: distance,
-    );
-  }).toList()
-    ..sort((a, b) => a.distance.compareTo(b.distance));
+
+    return CampgroundWithDistance(campground: campground, distance: distance);
+  }).toList()..sort((a, b) => a.distance.compareTo(b.distance));
 });
 
 class CampgroundWithDistance {
@@ -63,19 +61,20 @@ class CampgroundWithDistance {
 // Calculate distance between two points using Haversine formula
 double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
   const double earthRadius = 6371; // Earth's radius in kilometers
-  
+
   final double dLat = (lat2 - lat1) * (math.pi / 180);
   final double dLon = (lon2 - lon1) * (math.pi / 180);
-  
-  final double a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+
+  final double a =
+      math.sin(dLat / 2) * math.sin(dLat / 2) +
       math.cos(lat1 * (math.pi / 180)) *
           math.cos(lat2 * (math.pi / 180)) *
           math.sin(dLon / 2) *
           math.sin(dLon / 2);
-  
+
   final double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
   final double distance = earthRadius * c;
-  
+
   return distance;
 }
 
@@ -83,10 +82,12 @@ class MapScreenIOSCompatible extends ConsumerStatefulWidget {
   const MapScreenIOSCompatible({super.key});
 
   @override
-  ConsumerState<MapScreenIOSCompatible> createState() => _MapScreenIOSCompatibleState();
+  ConsumerState<MapScreenIOSCompatible> createState() =>
+      _MapScreenIOSCompatibleState();
 }
 
-class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible> {
+class _MapScreenIOSCompatibleState
+    extends ConsumerState<MapScreenIOSCompatible> {
   String _selectedFilter = 'all'; // all, monitored, available
 
   @override
@@ -136,14 +137,16 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
                                 Icon(
                                   Icons.my_location,
                                   size: 16,
-                                  color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                                  color: theme.colorScheme.onPrimary
+                                      .withOpacity(0.7),
                                 ),
                                 const SizedBox(width: 6),
                                 Expanded(
                                   child: Text(
                                     location.displayName,
                                     style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                                      color: theme.colorScheme.onPrimary
+                                          .withOpacity(0.8),
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -178,13 +181,14 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
                 ],
               ),
             ),
-            
+
             // Campgrounds list
             Expanded(
               child: nearbyCampgroundsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => _buildErrorState(theme),
-                data: (campgroundsWithDistance) => _buildCampgroundsList(theme, campgroundsWithDistance),
+                data: (campgroundsWithDistance) =>
+                    _buildCampgroundsList(theme, campgroundsWithDistance),
               ),
             ),
           ],
@@ -200,7 +204,7 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
 
   Widget _buildFilterChip(String label, String value, ThemeData theme) {
     final isSelected = _selectedFilter == value;
-    
+
     return FilterChip(
       label: Text(label),
       selected: isSelected,
@@ -212,7 +216,7 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
       backgroundColor: theme.colorScheme.surface,
       selectedColor: theme.colorScheme.primaryContainer,
       labelStyle: TextStyle(
-        color: isSelected 
+        color: isSelected
             ? theme.colorScheme.onPrimaryContainer
             : theme.colorScheme.onSurface,
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
@@ -225,11 +229,7 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.location_off,
-            size: 64,
-            color: theme.colorScheme.error,
-          ),
+          Icon(Icons.location_off, size: 64, color: theme.colorScheme.error),
           const SizedBox(height: 16),
           Text(
             'Unable to load nearby campgrounds',
@@ -246,10 +246,13 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
     );
   }
 
-  Widget _buildCampgroundsList(ThemeData theme, List<CampgroundWithDistance> campgroundsWithDistance) {
+  Widget _buildCampgroundsList(
+    ThemeData theme,
+    List<CampgroundWithDistance> campgroundsWithDistance,
+  ) {
     // Apply filter
     List<CampgroundWithDistance> filteredCampgrounds;
-    
+
     switch (_selectedFilter) {
       case 'monitored':
         filteredCampgrounds = campgroundsWithDistance
@@ -304,7 +307,10 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
     );
   }
 
-  Widget _buildCampgroundCard(ThemeData theme, CampgroundWithDistance campgroundWithDistance) {
+  Widget _buildCampgroundCard(
+    ThemeData theme,
+    CampgroundWithDistance campgroundWithDistance,
+  ) {
     final campground = campgroundWithDistance.campground;
     final distance = campgroundWithDistance.distance;
 
@@ -357,7 +363,10 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(8),
@@ -381,9 +390,9 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Description
               Text(
                 campground.description,
@@ -391,9 +400,9 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Amenities (show first 2)
               if (campground.amenities.isNotEmpty)
                 Wrap(
@@ -401,11 +410,9 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
                   runSpacing: 4,
                   children: campground.amenities.take(2).map<Widget>((amenity) {
                     return Chip(
-                      label: Text(
-                        amenity,
-                        style: theme.textTheme.labelSmall,
-                      ),
-                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      label: Text(amenity, style: theme.textTheme.labelSmall),
+                      backgroundColor:
+                          theme.colorScheme.surfaceContainerHighest,
                       side: BorderSide.none,
                     );
                   }).toList(),
@@ -417,7 +424,11 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
     );
   }
 
-  void _showCampgroundDetails(BuildContext context, Campground campground, double distance) {
+  void _showCampgroundDetails(
+    BuildContext context,
+    Campground campground,
+    double distance,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -431,11 +442,17 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
               _buildDetailRow('State:', campground.state),
               if (campground.parkName != null)
                 _buildDetailRow('Park:', campground.parkName!),
-              _buildDetailRow('Monitored:', campground.isMonitored ? 'Yes' : 'No'),
+              _buildDetailRow(
+                'Monitored:',
+                campground.isMonitored ? 'Yes' : 'No',
+              ),
               const SizedBox(height: 8),
               const Text(
                 'Description:',
-                style: TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                ),
               ),
               const SizedBox(height: 4),
               Text(campground.description),
@@ -443,7 +460,10 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
                 const SizedBox(height: 12),
                 const Text(
                   'Amenities:',
-                  style: TextStyle(fontWeight: FontWeight.w500, color: Colors.grey),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Wrap(
@@ -512,9 +532,7 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
               ),
             ),
           ),
-          Expanded(
-            child: Text(value),
-          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );
@@ -533,10 +551,7 @@ class _MapScreenIOSCompatibleState extends ConsumerState<MapScreenIOSCompatible>
               'This is a simplified map view optimized for iOS compatibility.',
             ),
             SizedBox(height: 8),
-            Text(
-              'Features:',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
+            Text('Features:', style: TextStyle(fontWeight: FontWeight.w600)),
             Text('• Distance-based sorting'),
             Text('• Filter by monitoring status'),
             Text('• Detailed campground information'),

@@ -9,7 +9,7 @@ import '../../shared/providers/campground_providers.dart';
 
 class MapsScreen extends ConsumerStatefulWidget {
   final Campground? focusCampground;
-  
+
   const MapsScreen({super.key, this.focusCampground});
 
   @override
@@ -55,7 +55,7 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
           accuracy: LocationAccuracy.high,
         ),
       );
-      
+
       setState(() {
         _currentPosition = position;
         _isLoadingLocation = false;
@@ -63,9 +63,7 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
 
       // Move camera to current location
       _mapController?.animateCamera(
-        CameraUpdate.newLatLng(
-          LatLng(position.latitude, position.longitude),
-        ),
+        CameraUpdate.newLatLng(LatLng(position.latitude, position.longitude)),
       );
     } catch (e) {
       setState(() => _isLoadingLocation = false);
@@ -98,35 +96,30 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
   }
 
   void _focusOnCampground(Campground campground) {
-    if (campground.latitude != null && campground.longitude != null) {
-      final campgroundLatLng = LatLng(campground.latitude!, campground.longitude!);
-      
-      _mapController?.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: campgroundLatLng,
-            zoom: 14.0,
-          ),
+    final campgroundLatLng = LatLng(campground.latitude, campground.longitude);
+
+    _mapController?.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: campgroundLatLng, zoom: 14.0),
+      ),
+    );
+
+    // Add marker for focused campground
+    setState(() {
+      _focusedCampgroundMarker = Marker(
+        markerId: MarkerId('focused_${campground.id}'),
+        position: campgroundLatLng,
+        infoWindow: InfoWindow(
+          title: campground.name,
+          snippet: campground.parkName ?? campground.state,
         ),
       );
-      
-      // Add marker for focused campground
-      setState(() {
-        _focusedCampgroundMarker = Marker(
-          markerId: MarkerId('focused_${campground.id}'),
-          position: campgroundLatLng,
-          infoWindow: InfoWindow(
-            title: campground.name,
-            snippet: campground.parkName ?? campground.state,
-          ),
-        );
-      });
-      
-      // Show info for this campground after a delay
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showCampgroundDetails(campground);
-      });
-    }
+    });
+
+    // Show info for this campground after a delay
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _showCampgroundDetails(campground);
+    });
   }
 
   Future<void> _createCampgroundMarkers() async {
@@ -150,7 +143,9 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
     }
   }
 
-  Future<void> _createCampgroundMarkersFromList(List<Campground> campgrounds) async {
+  Future<void> _createCampgroundMarkersFromList(
+    List<Campground> campgrounds,
+  ) async {
     final markers = <Marker>{};
 
     for (final campground in campgrounds) {
@@ -160,7 +155,8 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
         position: LatLng(campground.latitude, campground.longitude),
         infoWindow: InfoWindow(
           title: campground.name,
-          snippet: '${campground.state} • ${campground.activities.take(2).join(", ")}',
+          snippet:
+              '${campground.state} • ${campground.activities.take(2).join(", ")}',
           onTap: () => _showCampgroundDetails(campground),
         ),
         icon: await _getCampgroundMarkerIcon(campground),
@@ -173,7 +169,9 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
     });
   }
 
-  Future<BitmapDescriptor> _getCampgroundMarkerIcon(Campground campground) async {
+  Future<BitmapDescriptor> _getCampgroundMarkerIcon(
+    Campground campground,
+  ) async {
     // Use different colored markers based on campground type or availability
     if (campground.isMonitored) {
       return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
@@ -232,9 +230,8 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
                             ),
                             Text(
                               campground.parkName ?? campground.state,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: Colors.grey[600]),
                             ),
                           ],
                         ),
@@ -251,7 +248,11 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
                   if (_currentPosition != null) ...[
                     Row(
                       children: [
-                        const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                        const Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           '${_calculateDistance(_currentPosition!, campground).toStringAsFixed(1)} miles away',
@@ -271,12 +272,10 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 4,
-                      children: campground.activities.take(6).map((activity) => 
-                        Chip(
-                          label: Text(activity),
-
-                        ),
-                      ).toList(),
+                      children: campground.activities
+                          .take(6)
+                          .map((activity) => Chip(label: Text(activity)))
+                          .toList(),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -290,14 +289,16 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 4,
-                      children: campground.amenities.take(6).map((amenity) => 
-                        Chip(
-                          label: Text(amenity),
-                          backgroundColor: Colors.blue[50],
-                          side: BorderSide(color: Colors.blue[200]!),
-
-                        ),
-                      ).toList(),
+                      children: campground.amenities
+                          .take(6)
+                          .map(
+                            (amenity) => Chip(
+                              label: Text(amenity),
+                              backgroundColor: Colors.blue[50],
+                              side: BorderSide(color: Colors.blue[200]!),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ],
                   const Spacer(),
@@ -338,19 +339,20 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
 
   double _calculateDistance(Position userPosition, Campground campground) {
     return Geolocator.distanceBetween(
-      userPosition.latitude,
-      userPosition.longitude,
-      campground.latitude,
-      campground.longitude,
-    ) / 1609.344; // Convert meters to miles
+          userPosition.latitude,
+          userPosition.longitude,
+          campground.latitude,
+          campground.longitude,
+        ) /
+        1609.344; // Convert meters to miles
   }
 
   Future<void> _navigateToCampground(Campground campground) async {
     try {
       final url = Uri.parse(
-        'https://www.google.com/maps/dir/?api=1&destination=${campground.latitude},${campground.longitude}&travelmode=driving'
+        'https://www.google.com/maps/dir/?api=1&destination=${campground.latitude},${campground.longitude}&travelmode=driving',
       );
-      
+
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
@@ -375,12 +377,16 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
     }
   }
 
-  static Future<void> openDirections(double latitude, double longitude, BuildContext context) async {
+  Future<void> openDirections(
+    double latitude,
+    double longitude,
+    BuildContext context,
+  ) async {
     try {
       final url = Uri.parse(
-        'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving'
+        'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving',
       );
-      
+
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
@@ -436,14 +442,14 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
 
   LatLngBounds _calculateBounds(Set<Marker> markers) {
     double minLat = double.infinity;
-    double maxLat = -double.infinity; 
+    double maxLat = -double.infinity;
     double minLng = double.infinity;
     double maxLng = -double.infinity;
 
     for (final marker in markers) {
       final lat = marker.position.latitude;
       final lng = marker.position.longitude;
-      
+
       minLat = math.min(minLat, lat);
       maxLat = math.max(maxLat, lat);
       minLng = math.min(minLng, lng);
@@ -487,7 +493,10 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
               onPressed: () {
                 _mapController?.animateCamera(
                   CameraUpdate.newLatLng(
-                    LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                    LatLng(
+                      _currentPosition!.latitude,
+                      _currentPosition!.longitude,
+                    ),
                   ),
                 );
               },
@@ -507,22 +516,27 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
           // Google Map
           GoogleMap(
             onMapCreated: _onMapCreated,
-            initialCameraPosition: _currentPosition != null 
-              ? CameraPosition(
-                  target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                  zoom: 10.0,
-                )
-              : _defaultPosition,
+            initialCameraPosition: _currentPosition != null
+                ? CameraPosition(
+                    target: LatLng(
+                      _currentPosition!.latitude,
+                      _currentPosition!.longitude,
+                    ),
+                    zoom: 10.0,
+                  )
+                : _defaultPosition,
             mapType: _currentMapType,
             markers: {
-          ..._markers,
-          if (_focusedCampgroundMarker != null) _focusedCampgroundMarker!,
-        },
+              ..._markers,
+              if (_focusedCampgroundMarker != null) _focusedCampgroundMarker!,
+            },
             myLocationEnabled: _currentPosition != null,
             myLocationButtonEnabled: false, // We have our own button
             zoomControlsEnabled: false,
             mapToolbarEnabled: false,
-            padding: const EdgeInsets.only(bottom: 80), // Space for floating button
+            padding: const EdgeInsets.only(
+              bottom: 80,
+            ), // Space for floating button
           ),
           // Loading indicator
           if (_isLoadingLocation || _isLoadingMarkers)
@@ -535,9 +549,9 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
                     const CircularProgressIndicator(),
                     const SizedBox(height: 16),
                     Text(
-                      _isLoadingLocation 
-                        ? 'Getting your location...' 
-                        : 'Loading campgrounds...',
+                      _isLoadingLocation
+                          ? 'Getting your location...'
+                          : 'Loading campgrounds...',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ],
@@ -557,7 +571,7 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
             label: const Text('Find Nearby'),
           ),
           const SizedBox(height: 12),
-          // Refresh markers button  
+          // Refresh markers button
           FloatingActionButton(
             onPressed: _createCampgroundMarkers,
             heroTag: 'refresh_markers',
@@ -573,7 +587,9 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
     if (_currentPosition == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Location not available. Please enable location services.'),
+          content: Text(
+            'Location not available. Please enable location services.',
+          ),
         ),
       );
       return;
@@ -585,23 +601,27 @@ class _MapsScreenState extends ConsumerState<MapsScreen> {
 
   Future<void> _performLocationBasedSearch(double radiusMiles) async {
     if (_currentPosition == null) return;
-    
+
     try {
       final params = NearbySearchParams(
         latitude: _currentPosition!.latitude,
         longitude: _currentPosition!.longitude,
         radiusMiles: radiusMiles,
       );
-      
-      final nearbyCampgrounds = await ref.read(nearbySearchProvider(params).future);
-      
+
+      final nearbyCampgrounds = await ref.read(
+        nearbySearchProvider(params).future,
+      );
+
       // Update markers with nearby campgrounds
       await _createCampgroundMarkersFromList(nearbyCampgrounds);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Found ${nearbyCampgrounds.length} campgrounds within ${radiusMiles.toInt()} miles'),
+            content: Text(
+              'Found ${nearbyCampgrounds.length} campgrounds within ${radiusMiles.toInt()} miles',
+            ),
             duration: const Duration(seconds: 2),
           ),
         );

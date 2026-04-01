@@ -28,12 +28,13 @@ class ContactInformationSection extends StatefulWidget {
   });
 
   @override
-  State<ContactInformationSection> createState() => _ContactInformationSectionState();
+  State<ContactInformationSection> createState() =>
+      _ContactInformationSectionState();
 }
 
 class _ContactInformationSectionState extends State<ContactInformationSection> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Text controllers for form fields
   late final TextEditingController _firstNameController;
   late final TextEditingController _lastNameController;
@@ -51,13 +52,15 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize controllers with current values
     _firstNameController = TextEditingController(text: widget.firstName);
     _lastNameController = TextEditingController(text: widget.lastName);
     _emailController = TextEditingController(text: widget.email);
     _phoneController = TextEditingController(text: widget.phone);
-    _specialRequestsController = TextEditingController(text: widget.specialRequests);
+    _specialRequestsController = TextEditingController(
+      text: widget.specialRequests,
+    );
 
     // Add listeners to update parent state
     _firstNameController.addListener(() {
@@ -85,20 +88,20 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
     _emailController.dispose();
     _phoneController.dispose();
     _specialRequestsController.dispose();
-    
+
     _firstNameFocus.dispose();
     _lastNameFocus.dispose();
     _emailFocus.dispose();
     _phoneFocus.dispose();
     _specialRequestsFocus.dispose();
-    
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Form(
       key: _formKey,
       child: Column(
@@ -110,23 +113,23 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           Text(
             'We\'ll use this information to confirm your reservation and send updates.',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Required fields section
           _buildRequiredFieldsSection(theme),
-          
+
           const SizedBox(height: 32),
-          
+
           // Optional fields section
           _buildOptionalFieldsSection(theme),
         ],
@@ -144,9 +147,9 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Name fields row
         Row(
           children: [
@@ -177,9 +180,9 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
                 },
               ),
             ),
-            
+
             const SizedBox(width: 16),
-            
+
             Expanded(
               child: TextFormField(
                 controller: _lastNameController,
@@ -209,9 +212,9 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 20),
-        
+
         // Email field
         TextFormField(
           controller: _emailController,
@@ -220,9 +223,7 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
             labelText: 'Email Address',
             hintText: 'Enter your email address',
             prefixIcon: const Icon(Icons.email_outlined),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
@@ -240,9 +241,9 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
             return null;
           },
         ),
-        
+
         const SizedBox(height: 20),
-        
+
         // Phone field
         TextFormField(
           controller: _phoneController,
@@ -251,9 +252,7 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
             labelText: 'Phone Number',
             hintText: 'Enter your phone number',
             prefixIcon: const Icon(Icons.phone_outlined),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
           keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.next,
@@ -290,47 +289,44 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         Text(
           'Optional',
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Special requests field
         TextFormField(
           controller: _specialRequestsController,
           focusNode: _specialRequestsFocus,
           decoration: InputDecoration(
             labelText: 'Special Requests or Notes',
-            hintText: 'Any special needs, accessibility requirements, or other requests...',
+            hintText:
+                'Any special needs, accessibility requirements, or other requests...',
             prefixIcon: const Icon(Icons.note_outlined),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             alignLabelWithHint: true,
           ),
           maxLines: 4,
           maxLength: 500,
           textInputAction: TextInputAction.done,
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Privacy notice
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainer.withAlpha(128),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: theme.colorScheme.outline.withAlpha(77),
-            ),
+            border: Border.all(color: theme.colorScheme.outline.withAlpha(77)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,9 +348,9 @@ class _ContactInformationSectionState extends State<ContactInformationSection> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               Text(
                 'Your information will be used solely for reservation purposes. '
                 'We\'ll send confirmation details and any important updates about your stay.',
@@ -378,31 +374,31 @@ class _PhoneNumberFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final newText = newValue.text;
-    
+
     if (newText.isEmpty) {
       return newValue;
     }
-    
+
     // Remove any non-digit characters
     final digitsOnly = newText.replaceAll(RegExp(r'\D'), '');
-    
+
     String formattedNumber = '';
-    
+
     if (digitsOnly.isNotEmpty) {
       if (digitsOnly.length <= 3) {
         formattedNumber = '($digitsOnly';
       } else if (digitsOnly.length <= 6) {
-        formattedNumber = '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3)}';
+        formattedNumber =
+            '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3)}';
       } else {
-        formattedNumber = '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}';
+        formattedNumber =
+            '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}';
       }
     }
-    
+
     return TextEditingValue(
       text: formattedNumber,
-      selection: TextSelection.collapsed(
-        offset: formattedNumber.length,
-      ),
+      selection: TextSelection.collapsed(offset: formattedNumber.length),
     );
   }
 }

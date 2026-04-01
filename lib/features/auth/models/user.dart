@@ -29,7 +29,7 @@ class User {
       location: json['location'] as String?,
       avatarUrl: json['avatarUrl'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
-      lastLoginAt: json['lastLoginAt'] != null 
+      lastLoginAt: json['lastLoginAt'] != null
           ? DateTime.parse(json['lastLoginAt'] as String)
           : null,
       profile: json['profile'] != null
@@ -112,7 +112,9 @@ class UserProfile {
       totalNights: json['totalNights'] as int? ?? 0,
       favoriteParks: json['favoriteParks'] as int? ?? 0,
       preferences: Map<String, dynamic>.from(json['preferences'] as Map? ?? {}),
-      savedCampgrounds: List<String>.from(json['savedCampgrounds'] as List? ?? []),
+      savedCampgrounds: List<String>.from(
+        json['savedCampgrounds'] as List? ?? [],
+      ),
     );
   }
 

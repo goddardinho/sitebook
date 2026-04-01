@@ -32,7 +32,7 @@ class Reservation {
 final reservationsProvider = FutureProvider<List<Reservation>>((ref) async {
   // Simulate network delay
   await Future.delayed(const Duration(milliseconds: 800));
-  
+
   return [
     Reservation(
       id: 'res_001',
@@ -129,7 +129,8 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
         body: reservationsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => _buildErrorState(context, theme),
-          data: (reservations) => _buildReservationsList(context, theme, reservations),
+          data: (reservations) =>
+              _buildReservationsList(context, theme, reservations),
         ),
       ),
     );
@@ -140,11 +141,7 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: theme.colorScheme.error,
-          ),
+          Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
           const SizedBox(height: 16),
           Text(
             'Unable to load reservations',
@@ -161,7 +158,11 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
     );
   }
 
-  Widget _buildReservationsList(BuildContext context, ThemeData theme, List<Reservation> reservations) {
+  Widget _buildReservationsList(
+    BuildContext context,
+    ThemeData theme,
+    List<Reservation> reservations,
+  ) {
     if (reservations.isEmpty) {
       return Center(
         child: Column(
@@ -192,35 +193,65 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
     }
 
     // Group reservations by status
-    final upcoming = reservations.where((r) => r.status == 'confirmed' && r.startDate.isAfter(DateTime.now())).toList();
+    final upcoming = reservations
+        .where(
+          (r) => r.status == 'confirmed' && r.startDate.isAfter(DateTime.now()),
+        )
+        .toList();
     final pending = reservations.where((r) => r.status == 'pending').toList();
-    final past = reservations.where((r) => r.status == 'completed' || r.startDate.isBefore(DateTime.now())).toList();
+    final past = reservations
+        .where(
+          (r) =>
+              r.status == 'completed' || r.startDate.isBefore(DateTime.now()),
+        )
+        .toList();
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         if (upcoming.isNotEmpty) ...[
-          _buildSectionHeader(theme, 'Upcoming Trips', Icons.upcoming, upcoming.length),
+          _buildSectionHeader(
+            theme,
+            'Upcoming Trips',
+            Icons.upcoming,
+            upcoming.length,
+          ),
           const SizedBox(height: 8),
-          ...upcoming.map((reservation) => _buildReservationCard(context, theme, reservation)),
+          ...upcoming.map(
+            (reservation) => _buildReservationCard(context, theme, reservation),
+          ),
           const SizedBox(height: 24),
         ],
         if (pending.isNotEmpty) ...[
-          _buildSectionHeader(theme, 'Pending Requests', Icons.hourglass_empty, pending.length),
+          _buildSectionHeader(
+            theme,
+            'Pending Requests',
+            Icons.hourglass_empty,
+            pending.length,
+          ),
           const SizedBox(height: 8),
-          ...pending.map((reservation) => _buildReservationCard(context, theme, reservation)),
+          ...pending.map(
+            (reservation) => _buildReservationCard(context, theme, reservation),
+          ),
           const SizedBox(height: 24),
         ],
         if (past.isNotEmpty) ...[
           _buildSectionHeader(theme, 'Past Trips', Icons.history, past.length),
           const SizedBox(height: 8),
-          ...past.map((reservation) => _buildReservationCard(context, theme, reservation)),
+          ...past.map(
+            (reservation) => _buildReservationCard(context, theme, reservation),
+          ),
         ],
       ],
     );
   }
 
-  Widget _buildSectionHeader(ThemeData theme, String title, IconData icon, int count) {
+  Widget _buildSectionHeader(
+    ThemeData theme,
+    String title,
+    IconData icon,
+    int count,
+  ) {
     return Row(
       children: [
         Icon(icon, color: theme.colorScheme.primary, size: 20),
@@ -251,7 +282,11 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
     );
   }
 
-  Widget _buildReservationCard(BuildContext context, ThemeData theme, Reservation reservation) {
+  Widget _buildReservationCard(
+    BuildContext context,
+    ThemeData theme,
+    Reservation reservation,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -279,7 +314,7 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              
+
               // Park name and location
               Row(
                 children: [
@@ -301,9 +336,9 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // Date range and site info
               Row(
                 children: [
@@ -312,7 +347,10 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _formatDateRange(reservation.startDate, reservation.endDate),
+                          _formatDateRange(
+                            reservation.startDate,
+                            reservation.endDate,
+                          ),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
@@ -398,9 +436,21 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
   }
 
   String _formatDateRange(DateTime start, DateTime end) {
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
     if (start.month == end.month) {
       return '${months[start.month - 1]} ${start.day}-${end.day}, ${start.year}';
     } else {
@@ -419,11 +469,17 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
           children: [
             _buildDetailRow('Park:', reservation.parkName),
             _buildDetailRow('Location:', reservation.state),
-            _buildDetailRow('Dates:', _formatDateRange(reservation.startDate, reservation.endDate)),
+            _buildDetailRow(
+              'Dates:',
+              _formatDateRange(reservation.startDate, reservation.endDate),
+            ),
             _buildDetailRow('Site:', reservation.siteNumber),
             _buildDetailRow('Nights:', '${reservation.nights}'),
             _buildDetailRow('Status:', reservation.status.toUpperCase()),
-            _buildDetailRow('Total Cost:', '\$${reservation.cost.toStringAsFixed(2)}'),
+            _buildDetailRow(
+              'Total Cost:',
+              '\$${reservation.cost.toStringAsFixed(2)}',
+            ),
             if (reservation.status == 'confirmed') ...[
               const SizedBox(height: 16),
               const Text(
@@ -442,7 +498,8 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Close'),
           ),
-          if (reservation.status == 'confirmed' && reservation.startDate.isAfter(DateTime.now()))
+          if (reservation.status == 'confirmed' &&
+              reservation.startDate.isAfter(DateTime.now()))
             FilledButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -475,9 +532,7 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Text(value),
-          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );

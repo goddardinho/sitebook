@@ -30,7 +30,7 @@ class ReservationSummarySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -40,38 +40,38 @@ class ReservationSummarySection extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         Text(
           'Please review all details before submitting your reservation.',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        
+
         const SizedBox(height: 24),
-        
+
         // Campground details
         _buildCampgroundDetails(theme),
-        
+
         const SizedBox(height: 20),
-        
+
         // Stay details
         _buildStayDetails(theme),
-        
+
         const SizedBox(height: 20),
-        
+
         // Guest information
         _buildGuestInformation(theme),
-        
+
         const SizedBox(height: 20),
-        
+
         // Pricing breakdown
         _buildPricingBreakdown(theme),
-        
+
         const SizedBox(height: 24),
-        
+
         // Terms and conditions
         _buildTermsAndConditions(theme),
       ],
@@ -92,9 +92,9 @@ class ReservationSummarySection extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          
+
           const SizedBox(height: 4),
-          
+
           Row(
             children: [
               Icon(
@@ -111,7 +111,7 @@ class ReservationSummarySection extends StatelessWidget {
               ),
             ],
           ),
-          
+
           if (campground.description.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
@@ -132,7 +132,7 @@ class ReservationSummarySection extends StatelessWidget {
     final nights = checkInDate != null && checkOutDate != null
         ? checkOutDate!.difference(checkInDate!).inDays
         : 0;
-        
+
     return _SummaryCard(
       theme: theme,
       title: 'Stay Details',
@@ -141,29 +141,29 @@ class ReservationSummarySection extends StatelessWidget {
         children: [
           _SummaryRow(
             label: 'Check-in',
-            value: checkInDate != null 
+            value: checkInDate != null
                 ? _formatDate(checkInDate!)
                 : 'Not selected',
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           _SummaryRow(
             label: 'Check-out',
-            value: checkOutDate != null 
+            value: checkOutDate != null
                 ? _formatDate(checkOutDate!)
                 : 'Not selected',
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           _SummaryRow(
             label: 'Duration',
             value: '$nights night${nights != 1 ? 's' : ''}',
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           _SummaryRow(
             label: 'Campsite Type',
             value: campsiteType ?? 'Not selected',
@@ -184,28 +184,19 @@ class ReservationSummarySection extends StatelessWidget {
             label: 'Number of Guests',
             value: '$numberOfGuests guest${numberOfGuests != 1 ? 's' : ''}',
           ),
-          
+
           const SizedBox(height: 8),
-          
-          _SummaryRow(
-            label: 'Primary Contact',
-            value: '$firstName $lastName',
-          ),
-          
+
+          _SummaryRow(label: 'Primary Contact', value: '$firstName $lastName'),
+
           const SizedBox(height: 8),
-          
-          _SummaryRow(
-            label: 'Email',
-            value: email,
-          ),
-          
+
+          _SummaryRow(label: 'Email', value: email),
+
           const SizedBox(height: 8),
-          
-          _SummaryRow(
-            label: 'Phone',
-            value: phone,
-          ),
-          
+
+          _SummaryRow(label: 'Phone', value: phone),
+
           if (specialRequests.isNotEmpty) ...[
             const SizedBox(height: 8),
             _SummaryRow(
@@ -223,18 +214,18 @@ class ReservationSummarySection extends StatelessWidget {
     if (checkInDate == null || checkOutDate == null || campsiteType == null) {
       return const SizedBox.shrink();
     }
-    
+
     final nights = checkOutDate!.difference(checkInDate!).inDays;
     final basePrice = _getCampsiteTypePrice(campsiteType!);
     final subtotal = basePrice * nights;
-    final extraGuestFee = numberOfGuests > 4 
+    final extraGuestFee = numberOfGuests > 4
         ? (numberOfGuests - 4) * 5.0 * nights
         : 0.0;
     final reservationFee = 5.0;
     final taxRate = 0.08; // 8% tax
     final taxAmount = (subtotal + extraGuestFee + reservationFee) * taxRate;
     final total = subtotal + extraGuestFee + reservationFee + taxAmount;
-    
+
     return _SummaryCard(
       theme: theme,
       title: 'Pricing Breakdown',
@@ -246,7 +237,7 @@ class ReservationSummarySection extends StatelessWidget {
             amount: subtotal,
             theme: theme,
           ),
-          
+
           if (extraGuestFee > 0) ...[
             const SizedBox(height: 8),
             _PricingRow(
@@ -255,25 +246,21 @@ class ReservationSummarySection extends StatelessWidget {
               theme: theme,
             ),
           ],
-          
+
           const SizedBox(height: 8),
-          
+
           _PricingRow(
             label: 'Reservation fee',
             amount: reservationFee,
             theme: theme,
           ),
-          
+
           const SizedBox(height: 8),
-          
-          _PricingRow(
-            label: 'Taxes & fees',
-            amount: taxAmount,
-            theme: theme,
-          ),
-          
+
+          _PricingRow(label: 'Taxes & fees', amount: taxAmount, theme: theme),
+
           const SizedBox(height: 16),
-          
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -311,9 +298,7 @@ class ReservationSummarySection extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer.withAlpha(128),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withAlpha(77),
-        ),
+        border: Border.all(color: theme.colorScheme.outline.withAlpha(77)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,9 +320,9 @@ class ReservationSummarySection extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Text(
             '• Cancellations must be made at least 48 hours before check-in\n'
             '• Check-in time is 3:00 PM, check-out is 11:00 AM\n'
@@ -349,9 +334,9 @@ class ReservationSummarySection extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Text(
             'By submitting this reservation, you agree to the campground\'s terms and conditions.',
             style: theme.textTheme.bodySmall?.copyWith(
@@ -388,13 +373,23 @@ class ReservationSummarySection extends StatelessWidget {
   String _formatDate(DateTime date) {
     final weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
-    
+
     final weekday = weekdays[date.weekday - 1];
     final month = months[date.month - 1];
-    
+
     return '$weekday, $month ${date.day}';
   }
 }
@@ -420,20 +415,14 @@ class _SummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer.withAlpha(128),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withAlpha(77),
-        ),
+        border: Border.all(color: theme.colorScheme.outline.withAlpha(77)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: theme.colorScheme.primary,
-                size: 20,
-              ),
+              Icon(icon, color: theme.colorScheme.primary, size: 20),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -444,9 +433,9 @@ class _SummaryCard extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           child,
         ],
       ),
@@ -468,7 +457,7 @@ class _SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     if (isMultiline) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,14 +470,11 @@ class _SummaryRow extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text(value, style: theme.textTheme.bodyMedium),
         ],
       );
     }
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -529,10 +515,7 @@ class _PricingRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: theme.textTheme.bodyMedium,
-        ),
+        Text(label, style: theme.textTheme.bodyMedium),
         Text(
           '\$${amount.toStringAsFixed(2)}',
           style: theme.textTheme.bodyMedium?.copyWith(

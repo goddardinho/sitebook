@@ -11,16 +11,15 @@ import 'widgets/campground_action_buttons.dart';
 class CampgroundDetailsScreen extends ConsumerStatefulWidget {
   final Campground campground;
 
-  const CampgroundDetailsScreen({
-    super.key,
-    required this.campground,
-  });
+  const CampgroundDetailsScreen({super.key, required this.campground});
 
   @override
-  ConsumerState<CampgroundDetailsScreen> createState() => _CampgroundDetailsScreenState();
+  ConsumerState<CampgroundDetailsScreen> createState() =>
+      _CampgroundDetailsScreenState();
 }
 
-class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScreen> {
+class _CampgroundDetailsScreenState
+    extends ConsumerState<CampgroundDetailsScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isAppBarCollapsed = false;
 
@@ -68,9 +67,9 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
                     campgroundName: campground.name,
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Action Buttons
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -81,12 +80,12 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
                     onSharePressed: _handleSharePressed,
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Information Sections
                 CampgroundInfoSection(campground: campground),
-                
+
                 // Safe area padding at bottom
                 SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
               ],
@@ -103,7 +102,7 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
       floating: true,
       pinned: true,
       elevation: _isAppBarCollapsed ? 4 : 0,
-      backgroundColor: _isAppBarCollapsed 
+      backgroundColor: _isAppBarCollapsed
           ? theme.colorScheme.surface
           : Colors.transparent,
       foregroundColor: _isAppBarCollapsed
@@ -140,10 +139,14 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
           child: IconButton(
             icon: Icon(
               campground.isMonitored ? Icons.visibility : Icons.visibility_off,
-              color: campground.isMonitored ? theme.colorScheme.primary : Colors.white,
+              color: campground.isMonitored
+                  ? theme.colorScheme.primary
+                  : Colors.white,
             ),
             onPressed: _toggleMonitoring,
-            tooltip: campground.isMonitored ? 'Stop monitoring' : 'Start monitoring',
+            tooltip: campground.isMonitored
+                ? 'Stop monitoring'
+                : 'Start monitoring',
           ),
         ),
       ],
@@ -152,12 +155,15 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
 
   void _toggleMonitoring() {
     final actions = ref.read(campgroundActionsProvider);
-    actions.toggleMonitoring(widget.campground.id, !widget.campground.isMonitored);
-    
+    actions.toggleMonitoring(
+      widget.campground.id,
+      !widget.campground.isMonitored,
+    );
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          widget.campground.isMonitored 
+          widget.campground.isMonitored
               ? 'Stopped monitoring ${widget.campground.name}'
               : 'Started monitoring ${widget.campground.name}',
         ),
@@ -170,9 +176,8 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
     // Navigate to reservation form
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ReservationFormScreen(
-          campground: widget.campground,
-        ),
+        builder: (context) =>
+            ReservationFormScreen(campground: widget.campground),
       ),
     );
   }
@@ -180,24 +185,13 @@ class _CampgroundDetailsScreenState extends ConsumerState<CampgroundDetailsScree
   void _handleDirectionsPressed() {
     final latitude = widget.campground.latitude;
     final longitude = widget.campground.longitude;
-    
-    if (latitude != null && longitude != null) {
-      NavigationUtils.openDirections(latitude, longitude, context);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Location not available for ${widget.campground.name}'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-    }
+
+    NavigationUtils.openDirections(latitude, longitude, context);
   }
-  
+
   void _handleSharePressed() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Sharing ${widget.campground.name}...'),
-      ),
+      SnackBar(content: Text('Sharing ${widget.campground.name}...')),
     );
   }
 }

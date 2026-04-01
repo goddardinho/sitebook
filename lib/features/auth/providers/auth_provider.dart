@@ -45,7 +45,9 @@ class AuthNotifier extends Notifier<AuthState> {
       state = authState;
     } catch (e) {
       print('❌ AuthNotifier: Error during initialization - $e');
-      state = const AuthState.unauthenticated('Error loading authentication state');
+      state = const AuthState.unauthenticated(
+        'Error loading authentication state',
+      );
     }
   }
 
@@ -55,14 +57,14 @@ class AuthNotifier extends Notifier<AuthState> {
       print('⚠️ AuthNotifier: Sign in already in progress');
       return;
     }
-    
+
     try {
       print('🔐 AuthNotifier: Starting sign in process');
       state = const AuthState.authenticating();
-      
+
       final result = await _authRepository.signIn(email, password);
       state = result;
-      
+
       if (result.isAuthenticated) {
         print('✅ AuthNotifier: Sign in successful');
       } else {
@@ -75,19 +77,29 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   /// Sign up with user details
-  Future<void> signUp(String name, String email, String password, {String? location}) async {
+  Future<void> signUp(
+    String name,
+    String email,
+    String password, {
+    String? location,
+  }) async {
     if (state.isAuthenticating) {
       print('⚠️ AuthNotifier: Sign up already in progress');
       return;
     }
-    
+
     try {
       print('📝 AuthNotifier: Starting sign up process');
       state = const AuthState.authenticating();
-      
-      final result = await _authRepository.signUp(name, email, password, location: location);
+
+      final result = await _authRepository.signUp(
+        name,
+        email,
+        password,
+        location: location,
+      );
       state = result;
-      
+
       if (result.isAuthenticated) {
         print('✅ AuthNotifier: Sign up successful');
       } else {
@@ -103,10 +115,10 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> signOut() async {
     try {
       print('👋 AuthNotifier: Starting sign out process');
-      
+
       final result = await _authRepository.signOut();
       state = result;
-      
+
       print('✅ AuthNotifier: Sign out completed');
     } catch (e) {
       print('❌ AuthNotifier: Error during sign out - $e');
@@ -119,10 +131,10 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> refreshToken() async {
     try {
       print('🔄 AuthNotifier: Refreshing access token');
-      
+
       final result = await _authRepository.refreshAccessToken();
       state = result;
-      
+
       if (result.isAuthenticated) {
         print('✅ AuthNotifier: Token refresh successful');
       } else {
@@ -130,7 +142,9 @@ class AuthNotifier extends Notifier<AuthState> {
       }
     } catch (e) {
       print('❌ AuthNotifier: Error during token refresh - $e');
-      state = const AuthState.unauthenticated('Session expired. Please sign in again.');
+      state = const AuthState.unauthenticated(
+        'Session expired. Please sign in again.',
+      );
     }
   }
 
@@ -140,13 +154,13 @@ class AuthNotifier extends Notifier<AuthState> {
       print('⚠️ AuthNotifier: Cannot update profile - user not authenticated');
       return;
     }
-    
+
     try {
       print('📝 AuthNotifier: Updating user profile');
-      
+
       final result = await _authRepository.updateProfile(updates);
       state = result;
-      
+
       if (result.isAuthenticated && result.errorMessage == null) {
         print('✅ AuthNotifier: Profile update successful');
       } else {
@@ -190,17 +204,24 @@ final authActionsProvider = Provider<AuthActions>((ref) {
 /// Helper class to provide authentication actions without state watching
 class AuthActions {
   final AuthNotifier _notifier;
-  
+
   AuthActions(this._notifier);
 
-  Future<void> signIn(String email, String password) => _notifier.signIn(email, password);
-  Future<void> signUp(String name, String email, String password, {String? location}) => 
-      _notifier.signUp(name, email, password, location: location);
+  Future<void> signIn(String email, String password) =>
+      _notifier.signIn(email, password);
+  Future<void> signUp(
+    String name,
+    String email,
+    String password, {
+    String? location,
+  }) => _notifier.signUp(name, email, password, location: location);
   Future<void> signOut() => _notifier.signOut();
   Future<void> refreshToken() => _notifier.refreshToken();
-  Future<void> updateProfile(Map<String, dynamic> updates) => _notifier.updateProfile(updates);
+  Future<void> updateProfile(Map<String, dynamic> updates) =>
+      _notifier.updateProfile(updates);
   void clearError() => _notifier.clearError();
   Future<void> refresh() => _notifier.refresh();
   Future<String?> getAccessToken() => _notifier.getAccessToken();
-  Future<Map<String, String?>> debugGetStorageData() => _notifier.debugGetStorageData();
+  Future<Map<String, String?>> debugGetStorageData() =>
+      _notifier.debugGetStorageData();
 }

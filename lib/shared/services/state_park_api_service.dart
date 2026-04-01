@@ -3,7 +3,7 @@ import 'package:logger/logger.dart';
 import '../models/campground.dart';
 
 /// Generic State Park API Service
-/// 
+///
 /// This service provides a flexible foundation for integrating with various
 /// state park reservation systems. Each state may have different API endpoints
 /// and data structures, so this class can be extended or configured.
@@ -13,10 +13,9 @@ class StateParkApiService {
   final String baseUrl;
   final Map<String, String> defaultHeaders;
 
-  StateParkApiService({
-    required this.baseUrl,
-    this.defaultHeaders = const {},
-  }) : _dio = Dio(BaseOptions(
+  StateParkApiService({required this.baseUrl, this.defaultHeaders = const {}})
+    : _dio = Dio(
+        BaseOptions(
           baseUrl: baseUrl,
           connectTimeout: const Duration(seconds: 30),
           receiveTimeout: const Duration(seconds: 30),
@@ -25,25 +24,22 @@ class StateParkApiService {
             'Accept': 'application/json',
             ...defaultHeaders,
           },
-        ));
+        ),
+      );
 
   /// California State Parks API implementation
   static StateParkApiService california() {
     return StateParkApiService(
       baseUrl: 'https://www.reserveamerica.com/webservice/search/search',
-      defaultHeaders: {
-        'User-Agent': 'SiteBook/1.0',
-      },
+      defaultHeaders: {'User-Agent': 'SiteBook/1.0'},
     );
   }
 
-  /// Texas State Parks API implementation  
+  /// Texas State Parks API implementation
   static StateParkApiService texas() {
     return StateParkApiService(
       baseUrl: 'https://texasstateparks.reserveamerica.com/webservice',
-      defaultHeaders: {
-        'User-Agent': 'SiteBook/1.0',
-      },
+      defaultHeaders: {'User-Agent': 'SiteBook/1.0'},
     );
   }
 
@@ -51,18 +47,20 @@ class StateParkApiService {
   Future<List<Campground>> getCampgroundsByState(String stateCode) async {
     try {
       _logger.i('Fetching campgrounds for state: $stateCode');
-      
+
       // This is a template implementation
       // Each state API will need specific endpoint and parameter mapping
-      final response = await _dio.get('/facilities', queryParameters: {
-        'state': stateCode,
-        'facilityType': 'camping',
-      });
+      final response = await _dio.get(
+        '/facilities',
+        queryParameters: {'state': stateCode, 'facilityType': 'camping'},
+      );
 
       if (response.statusCode == 200) {
         return _parseCampgroundsResponse(response.data, stateCode);
       } else {
-        throw Exception('Failed to fetch campgrounds: ${response.statusMessage}');
+        throw Exception(
+          'Failed to fetch campgrounds: ${response.statusMessage}',
+        );
       }
     } on DioException catch (e) {
       _logger.e('State park API error for $stateCode', error: e);
@@ -78,20 +76,27 @@ class StateParkApiService {
     String? stateCode,
   }) async {
     try {
-      _logger.i('Searching campgrounds near ($latitude, $longitude) within $radiusMiles miles');
+      _logger.i(
+        'Searching campgrounds near ($latitude, $longitude) within $radiusMiles miles',
+      );
 
-      final response = await _dio.get('/search', queryParameters: {
-        'lat': latitude,
-        'lng': longitude,
-        'radius': radiusMiles,
-        'type': 'camping',
-        'state': ?stateCode,
-      });
+      final response = await _dio.get(
+        '/search',
+        queryParameters: {
+          'lat': latitude,
+          'lng': longitude,
+          'radius': radiusMiles,
+          'type': 'camping',
+          'state': ?stateCode,
+        },
+      );
 
       if (response.statusCode == 200) {
         return _parseCampgroundsResponse(response.data, stateCode ?? 'Unknown');
       } else {
-        throw Exception('Failed to search campgrounds: ${response.statusMessage}');
+        throw Exception(
+          'Failed to search campgrounds: ${response.statusMessage}',
+        );
       }
     } on DioException catch (e) {
       _logger.e('State park search API error', error: e);
@@ -111,7 +116,9 @@ class StateParkApiService {
       } else if (response.statusCode == 404) {
         return null;
       } else {
-        throw Exception('Failed to fetch campground details: ${response.statusMessage}');
+        throw Exception(
+          'Failed to fetch campground details: ${response.statusMessage}',
+        );
       }
     } on DioException catch (e) {
       _logger.e('State park details API error for $campgroundId', error: e);
@@ -126,33 +133,50 @@ class StateParkApiService {
     required DateTime endDate,
   }) async {
     try {
-      _logger.i('Checking availability for $campgroundId from $startDate to $endDate');
+      _logger.i(
+        'Checking availability for $campgroundId from $startDate to $endDate',
+      );
 
-      final response = await _dio.get('/availability/$campgroundId', queryParameters: {
-        'start_date': _formatDate(startDate),
-        'end_date': _formatDate(endDate),
-      });
+      final response = await _dio.get(
+        '/availability/$campgroundId',
+        queryParameters: {
+          'start_date': _formatDate(startDate),
+          'end_date': _formatDate(endDate),
+        },
+      );
 
       if (response.statusCode == 200) {
         return _parseAvailabilityResponse(response.data);
       } else {
-        throw Exception('Failed to check availability: ${response.statusMessage}');
+        throw Exception(
+          'Failed to check availability: ${response.statusMessage}',
+        );
       }
     } on DioException catch (e) {
-      _logger.e('State park availability API error for $campgroundId', error: e);
+      _logger.e(
+        'State park availability API error for $campgroundId',
+        error: e,
+      );
       throw _handleApiError(e);
     }
   }
 
   /// Parse campgrounds response - template implementation
-  List<Campground> _parseCampgroundsResponse(dynamic data, String defaultState) {
+  List<Campground> _parseCampgroundsResponse(
+    dynamic data,
+    String defaultState,
+  ) {
     try {
       // This is a generic parser - each state API will need specific parsing logic
       if (data is Map<String, dynamic> && data.containsKey('facilities')) {
         final facilities = data['facilities'] as List;
-        return facilities.map((facility) => _parseStateParkFacility(facility, defaultState)).toList();
+        return facilities
+            .map((facility) => _parseStateParkFacility(facility, defaultState))
+            .toList();
       } else if (data is List) {
-        return data.map((facility) => _parseStateParkFacility(facility, defaultState)).toList();
+        return data
+            .map((facility) => _parseStateParkFacility(facility, defaultState))
+            .toList();
       } else {
         _logger.w('Unexpected campgrounds response format');
         return [];
@@ -166,7 +190,7 @@ class StateParkApiService {
   /// Parse individual campground facility
   Campground _parseStateParkFacility(dynamic facility, String defaultState) {
     final facilityMap = facility as Map<String, dynamic>;
-    
+
     return Campground(
       id: facilityMap['id']?.toString() ?? '',
       name: facilityMap['name'] ?? 'Unknown Campground',
@@ -175,7 +199,8 @@ class StateParkApiService {
       longitude: _parseDouble(facilityMap['longitude']),
       state: facilityMap['state'] ?? defaultState,
       parkName: facilityMap['parkName'] ?? facilityMap['agency'],
-      reservationUrl: facilityMap['reservationUrl'] ?? facilityMap['bookingUrl'],
+      reservationUrl:
+          facilityMap['reservationUrl'] ?? facilityMap['bookingUrl'],
       phoneNumber: facilityMap['phone'] ?? facilityMap['phoneNumber'],
       email: facilityMap['email'],
       amenities: _parseStringList(facilityMap['amenities']),
@@ -203,14 +228,15 @@ class StateParkApiService {
   Map<String, bool> _parseAvailabilityResponse(dynamic data) {
     try {
       final Map<String, bool> availability = {};
-      
+
       if (data is Map<String, dynamic> && data.containsKey('availability')) {
         final availData = data['availability'] as Map<String, dynamic>;
         for (final entry in availData.entries) {
-          availability[entry.key] = entry.value == true || entry.value == 'available';
+          availability[entry.key] =
+              entry.value == true || entry.value == 'available';
         }
       }
-      
+
       return availability;
     } catch (e) {
       _logger.e('Error parsing availability response', error: e);
@@ -231,7 +257,11 @@ class StateParkApiService {
       return value.map((item) => item.toString()).toList();
     } else if (value is String) {
       // Handle comma-separated strings
-      return value.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+      return value
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
     }
     return [];
   }
@@ -244,9 +274,13 @@ class StateParkApiService {
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.receiveTimeout:
-        return Exception('Request timeout. Please check your internet connection.');
+        return Exception(
+          'Request timeout. Please check your internet connection.',
+        );
       case DioExceptionType.connectionError:
-        return Exception('Connection error. Please check your internet connection.');
+        return Exception(
+          'Connection error. Please check your internet connection.',
+        );
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode;
         return Exception('Server error ($statusCode). Please try again later.');
@@ -258,12 +292,11 @@ class StateParkApiService {
 
 /// State-specific implementations can extend this base class
 class CaliforniaStateParksService extends StateParkApiService {
-  CaliforniaStateParksService() : super(
-    baseUrl: 'https://public-api.reservecalifornia.com/api',
-    defaultHeaders: {
-      'User-Agent': 'SiteBook-California/1.0',
-    },
-  );
+  CaliforniaStateParksService()
+    : super(
+        baseUrl: 'https://public-api.reservecalifornia.com/api',
+        defaultHeaders: {'User-Agent': 'SiteBook-California/1.0'},
+      );
 
   /// Get California-specific campgrounds
   Future<List<Campground>> getCaliforniaCampgrounds() async {
@@ -272,12 +305,11 @@ class CaliforniaStateParksService extends StateParkApiService {
 }
 
 class TexasStateParksService extends StateParkApiService {
-  TexasStateParksService() : super(
-    baseUrl: 'https://texasstateparks.reserveamerica.com/api',
-    defaultHeaders: {
-      'User-Agent': 'SiteBook-Texas/1.0',
-    },
-  );
+  TexasStateParksService()
+    : super(
+        baseUrl: 'https://texasstateparks.reserveamerica.com/api',
+        defaultHeaders: {'User-Agent': 'SiteBook-Texas/1.0'},
+      );
 
   /// Get Texas-specific campgrounds
   Future<List<Campground>> getTexasCampgrounds() async {

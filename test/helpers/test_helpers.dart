@@ -13,7 +13,8 @@ class TestData {
     id: 'test-camp-1',
     name: 'Pine Valley Campground',
     state: 'CA',
-    description: 'A beautiful campground nestled in the pine forests with stunning mountain views. Perfect for families and outdoor enthusiasts.',
+    description:
+        'A beautiful campground nestled in the pine forests with stunning mountain views. Perfect for families and outdoor enthusiasts.',
     imageUrls: [
       'https://example.com/pine-valley-1.jpg',
       'https://example.com/pine-valley-2.jpg',
@@ -31,14 +32,14 @@ class TestData {
       'Fire Pits',
       'Picnic Tables',
       'Hiking Trails',
-      'Lake Access'
+      'Lake Access',
     ],
     activities: [
       'Hiking',
       'Fishing',
       'Swimming',
       'Kayaking',
-      'Nature Photography'
+      'Nature Photography',
     ],
     isMonitored: false,
     createdAt: DateTime(2026, 2, 27),
@@ -111,11 +112,7 @@ class TestUtils {
   /// Wrap a widget with necessary providers and Material app
   static Widget wrapWithApp(Widget child) {
     return ProviderScope(
-      child: MaterialApp(
-        home: Scaffold(
-          body: child,
-        ),
-      ),
+      child: MaterialApp(home: Scaffold(body: child)),
     );
   }
 
@@ -149,14 +146,14 @@ class TestUtils {
   }) {
     double basePrice = _getSiteTypeBasePrice(siteType);
     double subtotal = basePrice * nights;
-    
+
     double extraGuestFee = guests > 4 ? (guests - 4) * 5.0 * nights : 0.0;
     double reservationFee = 5.0;
-    
+
     double beforeTax = subtotal + extraGuestFee + reservationFee;
-    
+
     if (!includeTax) return beforeTax;
-    
+
     double tax = beforeTax * 0.08; // 8% tax rate
     return beforeTax + tax;
   }
@@ -184,7 +181,7 @@ class TestUtils {
 
   /// Validate email format
   static bool isValidEmail(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+    return RegExp(r'^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
   /// Validate phone number format (XXX) XXX-XXXX
@@ -221,7 +218,11 @@ class CustomMatchers {
   }
 
   /// Check if pricing calculation is within expected range
-  static bool isPricingValid(double actual, double expected, {double tolerance = 0.01}) {
+  static bool isPricingValid(
+    double actual,
+    double expected, {
+    double tolerance = 0.01,
+  }) {
     return (actual - expected).abs() <= tolerance;
   }
 }

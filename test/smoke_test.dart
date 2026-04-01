@@ -13,14 +13,13 @@ import 'helpers/test_helpers.dart';
 
 void main() {
   group('Smoke Tests - Component Instantiation', () {
-    
-    testWidgets('ReservationFormScreen can be instantiated', (WidgetTester tester) async {
+    testWidgets('ReservationFormScreen can be instantiated', (
+      WidgetTester tester,
+    ) async {
       // This test verifies the screen can be created without crashing
       await tester.pumpWidget(
         TestUtils.wrapWithNavigatorApp(
-          ReservationFormScreen(
-            campground: TestData.testCampground,
-          ),
+          ReservationFormScreen(campground: TestData.testCampground),
         ),
       );
 
@@ -28,7 +27,9 @@ void main() {
       expect(find.byType(ReservationFormScreen), findsOneWidget);
     });
 
-    testWidgets('DateSelectionSection can be instantiated', (WidgetTester tester) async {
+    testWidgets('DateSelectionSection can be instantiated', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         TestUtils.wrapWithApp(
           SingleChildScrollView(
@@ -46,7 +47,9 @@ void main() {
       expect(find.text('When would you like to stay?'), findsOneWidget);
     });
 
-    testWidgets('GuestSelectionSection can be instantiated', (WidgetTester tester) async {
+    testWidgets('GuestSelectionSection can be instantiated', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         TestUtils.wrapWithApp(
           SingleChildScrollView(
@@ -64,7 +67,9 @@ void main() {
       expect(find.text('Tell us about your group'), findsOneWidget);
     });
 
-    testWidgets('ContactInformationSection can be instantiated', (WidgetTester tester) async {
+    testWidgets('ContactInformationSection can be instantiated', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         TestUtils.wrapWithApp(
           SingleChildScrollView(
@@ -90,7 +95,6 @@ void main() {
   });
 
   group('Business Logic Tests', () {
-    
     test('Pricing calculation - standard scenario', () {
       final price = TestUtils.calculateExpectedPrice(
         siteType: 'Standard Site',
@@ -98,7 +102,7 @@ void main() {
         guests: 4,
         includeTax: false,
       );
-      
+
       // Base: $25 * 2 nights = $50
       // Extra guests: none (4 guests is at limit)
       // Reservation fee: $5
@@ -113,7 +117,7 @@ void main() {
         guests: 6,
         includeTax: false,
       );
-      
+
       // Base: $55 * 3 nights = $165
       // Extra guests: 2 guests * $5 * 3 nights = $30
       // Reservation fee: $5
@@ -130,7 +134,10 @@ void main() {
     });
 
     test('Phone number formatting works correctly', () {
-      expect(TestUtils.formatPhoneNumber('5551234567'), equals('(555) 123-4567'));
+      expect(
+        TestUtils.formatPhoneNumber('5551234567'),
+        equals('(555) 123-4567'),
+      );
       expect(TestUtils.isValidPhoneNumber('(555) 123-4567'), isTrue);
       expect(TestUtils.isValidPhoneNumber('555-123-4567'), isFalse);
       expect(TestUtils.isValidPhoneNumber('5551234567'), isFalse);
@@ -140,7 +147,7 @@ void main() {
       final today = DateTime.now();
       final tomorrow = today.add(const Duration(days: 1));
       final nextWeek = today.add(const Duration(days: 7));
-      
+
       expect(CustomMatchers.isInFuture(tomorrow), isTrue);
       expect(CustomMatchers.isValidDateRange(tomorrow, nextWeek), isTrue);
       expect(CustomMatchers.isValidDateRange(nextWeek, tomorrow), isFalse);
@@ -148,10 +155,9 @@ void main() {
   });
 
   group('Test Data Integrity', () {
-    
     test('Test campground data is valid', () {
       final campground = TestData.testCampground;
-      
+
       expect(campground.id, isNotEmpty);
       expect(campground.name, isNotEmpty);
       expect(campground.state, isNotEmpty);
@@ -172,7 +178,7 @@ void main() {
       final weekend = TestScenarios.weekendStay;
       final checkIn = weekend['checkIn'] as DateTime;
       final checkOut = weekend['checkOut'] as DateTime;
-      
+
       expect(checkIn.isBefore(checkOut), isTrue);
       expect(weekend['guests'], greaterThan(0));
       expect(weekend['siteType'], isNotNull);

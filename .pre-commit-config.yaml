@@ -1,0 +1,31 @@
+# Pre-commit hooks for Flutter project
+# Install with: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+        exclude: \.md$
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  - repo: local
+    hooks:
+      - id: flutter-format
+        name: Flutter Format
+        entry: dart format --set-exit-if-changed lib/ test/ integration_test/
+        language: system
+        pass_filenames: false
+
+      - id: flutter-analyze
+        name: Flutter Analyze
+        entry: flutter analyze --no-fatal-infos
+        language: system
+        pass_filenames: false

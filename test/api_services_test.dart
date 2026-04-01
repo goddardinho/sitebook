@@ -4,16 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:sitebook_flutter/shared/services/state_park_api_service.dart';
 import 'package:sitebook_flutter/shared/models/campground.dart';
 
-import 'api_services_test.mocks.dart';
-
 @GenerateMocks([Dio])
 void main() {
   group('StateParkApiService Tests', () {
-    late MockDio mockDio;
     late StateParkApiService apiService;
 
     setUp(() {
-      mockDio = MockDio();
       // Create service with custom Dio instance
       apiService = StateParkApiService(
         baseUrl: 'https://test-api.example.com',
@@ -95,14 +91,15 @@ void main() {
       test('should handle timeout errors gracefully', () async {
         // This test would require mocking the actual HTTP calls
         // For now, we validate the error handling structure exists
-        expect(() => apiService.getCampgroundsByState('CA'), 
-               returnsNormally);
+        expect(() => apiService.getCampgroundsByState('CA'), returnsNormally);
       });
 
       test('should handle invalid state codes', () async {
         // Act & Assert
-        expect(() => apiService.getCampgroundsByState('INVALID'),
-               returnsNormally);
+        expect(
+          () => apiService.getCampgroundsByState('INVALID'),
+          returnsNormally,
+        );
       });
 
       test('should handle empty API responses', () async {
@@ -118,8 +115,10 @@ void main() {
         final testDate2 = DateTime(2026, 12, 31);
 
         // Act - Test internal date formatting logic
-        final formatted1 = '${testDate1.year}-${testDate1.month.toString().padLeft(2, '0')}-${testDate1.day.toString().padLeft(2, '0')}';
-        final formatted2 = '${testDate2.year}-${testDate2.month.toString().padLeft(2, '0')}-${testDate2.day.toString().padLeft(2, '0')}';
+        final formatted1 =
+            '${testDate1.year}-${testDate1.month.toString().padLeft(2, '0')}-${testDate1.day.toString().padLeft(2, '0')}';
+        final formatted2 =
+            '${testDate2.year}-${testDate2.month.toString().padLeft(2, '0')}-${testDate2.day.toString().padLeft(2, '0')}';
 
         // Assert
         expect(formatted1, equals('2026-03-27'));
@@ -143,9 +142,9 @@ void main() {
       test('should handle edge case coordinates', () {
         // Test boundary coordinates
         const edgeCases = [
-          {'lat': 90.0, 'lng': 180.0},   // North Pole, Date Line
+          {'lat': 90.0, 'lng': 180.0}, // North Pole, Date Line
           {'lat': -90.0, 'lng': -180.0}, // South Pole, Date Line
-          {'lat': 0.0, 'lng': 0.0},      // Equator, Prime Meridian
+          {'lat': 0.0, 'lng': 0.0}, // Equator, Prime Meridian
         ];
 
         for (final coords in edgeCases) {
@@ -178,13 +177,9 @@ void main() {
             'name': 'Test Campground',
             'latitude': 37.7749,
             'longitude': -122.4194,
-          }
+          },
         ],
-        'metadata': {
-          'total': 1,
-          'limit': 50,
-          'offset': 0,
-        }
+        'metadata': {'total': 1, 'limit': 50, 'offset': 0},
       };
 
       // Validate response structure
@@ -197,7 +192,7 @@ void main() {
       // Test data type parsing scenarios
       final testData = {
         'string_field': 'test',
-        'int_field': 123,  
+        'int_field': 123,
         'double_field': 45.67,
         'bool_field': true,
         'null_field': null,

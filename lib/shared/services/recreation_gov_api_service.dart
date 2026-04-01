@@ -55,10 +55,7 @@ class RecreationGovResponse<T> {
   final List<T> data;
   final RecreationGovMetadata metadata;
 
-  RecreationGovResponse({
-    required this.data,
-    required this.metadata,
-  });
+  RecreationGovResponse({required this.data, required this.metadata});
 
   factory RecreationGovResponse.fromJson(
     Map<String, dynamic> json,
@@ -84,7 +81,9 @@ class RecreationGovMetadata {
 
   factory RecreationGovMetadata.fromJson(Map<String, dynamic> json) {
     return RecreationGovMetadata(
-      searchParameters: RecreationGovSearchParameters.fromJson(json['SEARCH_PARAMETERS']),
+      searchParameters: RecreationGovSearchParameters.fromJson(
+        json['SEARCH_PARAMETERS'],
+      ),
       resultInfo: RecreationGovResultInfo.fromJson(json['RESULT_INFO']),
     );
   }
@@ -94,10 +93,7 @@ class RecreationGovSearchParameters {
   final int limit;
   final int offset;
 
-  RecreationGovSearchParameters({
-    required this.limit,
-    required this.offset,
-  });
+  RecreationGovSearchParameters({required this.limit, required this.offset});
 
   factory RecreationGovSearchParameters.fromJson(Map<String, dynamic> json) {
     return RecreationGovSearchParameters(
@@ -173,7 +169,7 @@ class RecreationGovFacility {
   Campground toCampground() {
     final address = addresses.isNotEmpty ? addresses.first : null;
     final state = address?.addressStateCode ?? '';
-    
+
     return Campground(
       id: facilityId,
       name: facilityName,
@@ -232,10 +228,7 @@ class RecreationGovActivity {
   final String activityId;
   final String activityName;
 
-  RecreationGovActivity({
-    required this.activityId,
-    required this.activityName,
-  });
+  RecreationGovActivity({required this.activityId, required this.activityName});
 
   factory RecreationGovActivity.fromJson(Map<String, dynamic> json) {
     return RecreationGovActivity(
@@ -275,14 +268,12 @@ class RecreationGovCampsite {
 class RecreationGovAvailabilityResponse {
   final Map<String, dynamic> availability;
 
-  RecreationGovAvailabilityResponse({
-    required this.availability,
-  });
+  RecreationGovAvailabilityResponse({required this.availability});
 
-  factory RecreationGovAvailabilityResponse.fromJson(Map<String, dynamic> json) {
-    return RecreationGovAvailabilityResponse(
-      availability: json,
-    );
+  factory RecreationGovAvailabilityResponse.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return RecreationGovAvailabilityResponse(availability: json);
   }
 
   Map<String, dynamic> toJson() => availability;

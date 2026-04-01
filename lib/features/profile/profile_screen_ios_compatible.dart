@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../monitoring/monitoring_settings_screen.dart';
 // Temporarily disabled: import '../notifications/notification_preferences_screen.dart';
-import '../../shared/providers/campground_providers_ios_compatible.dart';
 
 // Demo user profile data
 class UserProfile {
@@ -63,7 +62,7 @@ class AppSettings {
 // Demo data providers
 final userProfileProvider = FutureProvider<UserProfile>((ref) async {
   await Future.delayed(const Duration(milliseconds: 600));
-  
+
   return const UserProfile(
     name: 'Alex Thompson',
     email: 'alex.thompson@example.com',
@@ -125,7 +124,8 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
                   ),
                   child: SafeArea(
                     child: userProfileAsync.when(
-                      loading: () => const Center(child: CircularProgressIndicator()),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
                       error: (_, __) => const SizedBox(),
                       data: (profile) => _buildProfileHeader(theme, profile),
                     ),
@@ -191,7 +191,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
                           child: Text(
                             profile.location,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                              color: theme.colorScheme.onPrimary.withOpacity(
+                                0.8,
+                              ),
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -230,10 +232,7 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
             color: theme.colorScheme.error,
           ),
           const SizedBox(height: 16),
-          Text(
-            'Unable to load profile',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('Unable to load profile', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             'Please check your connection and try again',
@@ -245,7 +244,12 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileContent(BuildContext context, ThemeData theme, WidgetRef ref, UserProfile profile) {
+  Widget _buildProfileContent(
+    BuildContext context,
+    ThemeData theme,
+    WidgetRef ref,
+    UserProfile profile,
+  ) {
     final settings = ref.watch(appSettingsProvider);
 
     return SingleChildScrollView(
@@ -255,23 +259,23 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
         children: [
           // Stats cards
           _buildStatsSection(theme, profile),
-          
+
           const SizedBox(height: 24),
-          
+
           // Account section
           _buildSectionHeader(theme, 'Account'),
           const SizedBox(height: 12),
           _buildAccountSection(context, theme, profile),
-          
+
           const SizedBox(height: 24),
-          
+
           // Settings section
           _buildSectionHeader(theme, 'Settings'),
           const SizedBox(height: 12),
           _buildSettingsSection(context, theme, ref, settings),
-          
+
           const SizedBox(height: 24),
-          
+
           // Support section
           _buildSectionHeader(theme, 'Support & Info'),
           const SizedBox(height: 12),
@@ -285,31 +289,47 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
     return Row(
       children: [
         Expanded(
-          child: _buildStatCard(theme, '${profile.totalReservations}', 'Total\nReservations', Icons.event_available),
+          child: _buildStatCard(
+            theme,
+            '${profile.totalReservations}',
+            'Total\nReservations',
+            Icons.event_available,
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _buildStatCard(theme, '${profile.totalNights}', 'Nights\nCamped', Icons.nights_stay),
+          child: _buildStatCard(
+            theme,
+            '${profile.totalNights}',
+            'Nights\nCamped',
+            Icons.nights_stay,
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _buildStatCard(theme, '${profile.favoriteParks}', 'Parks\nVisited', Icons.park),
+          child: _buildStatCard(
+            theme,
+            '${profile.favoriteParks}',
+            'Parks\nVisited',
+            Icons.park,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(ThemeData theme, String value, String label, IconData icon) {
+  Widget _buildStatCard(
+    ThemeData theme,
+    String value,
+    String label,
+    IconData icon,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: theme.colorScheme.primary,
-              size: 28,
-            ),
+            Icon(icon, color: theme.colorScheme.primary, size: 28),
             const SizedBox(height: 8),
             Text(
               value,
@@ -335,13 +355,15 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
   Widget _buildSectionHeader(ThemeData theme, String title) {
     return Text(
       title,
-      style: theme.textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.w600,
-      ),
+      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
     );
   }
 
-  Widget _buildAccountSection(BuildContext context, ThemeData theme, UserProfile profile) {
+  Widget _buildAccountSection(
+    BuildContext context,
+    ThemeData theme,
+    UserProfile profile,
+  ) {
     return Card(
       child: Column(
         children: [
@@ -373,7 +395,12 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
     );
   }
 
-  Widget _buildSettingsSection(BuildContext context, ThemeData theme, WidgetRef ref, AppSettings settings) {
+  Widget _buildSettingsSection(
+    BuildContext context,
+    ThemeData theme,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
     return Card(
       child: Column(
         children: [
@@ -417,7 +444,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    value ? 'Notifications enabled (demo)' : 'Notifications disabled (demo)',
+                    value
+                        ? 'Notifications enabled (demo)'
+                        : 'Notifications disabled (demo)',
                   ),
                 ),
               );
@@ -434,7 +463,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    value ? 'Location enabled (demo)' : 'Location disabled (demo)',
+                    value
+                        ? 'Location enabled (demo)'
+                        : 'Location disabled (demo)',
                   ),
                 ),
               );
@@ -452,7 +483,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
           _buildListTile(
             icon: Icons.thermostat_outlined,
             title: 'Temperature Unit',
-            subtitle: settings.temperatureUnit == 'celsius' ? 'Celsius (°C)' : 'Fahrenheit (°F)',
+            subtitle: settings.temperatureUnit == 'celsius'
+                ? 'Celsius (°C)'
+                : 'Fahrenheit (°F)',
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showTemperatureUnitDialog(context, ref, settings),
           ),
@@ -626,7 +659,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
             onPressed: () {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Add payment method coming soon!')),
+                const SnackBar(
+                  content: Text('Add payment method coming soon!'),
+                ),
               );
             },
             child: const Text('Add Card'),
@@ -636,7 +671,11 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
     );
   }
 
-  void _showDistanceUnitDialog(BuildContext context, WidgetRef ref, AppSettings settings) {
+  void _showDistanceUnitDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -651,7 +690,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
               onChanged: (value) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Distance unit set to Kilometers (demo)')),
+                  const SnackBar(
+                    content: Text('Distance unit set to Kilometers (demo)'),
+                  ),
                 );
               },
             ),
@@ -662,7 +703,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
               onChanged: (value) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Distance unit set to Miles (demo)')),
+                  const SnackBar(
+                    content: Text('Distance unit set to Miles (demo)'),
+                  ),
                 );
               },
             ),
@@ -672,7 +715,11 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
     );
   }
 
-  void _showTemperatureUnitDialog(BuildContext context, WidgetRef ref, AppSettings settings) {
+  void _showTemperatureUnitDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -687,7 +734,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
               onChanged: (value) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Temperature unit set to Celsius (demo)')),
+                  const SnackBar(
+                    content: Text('Temperature unit set to Celsius (demo)'),
+                  ),
                 );
               },
             ),
@@ -698,7 +747,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
               onChanged: (value) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Temperature unit set to Fahrenheit (demo)')),
+                  const SnackBar(
+                    content: Text('Temperature unit set to Fahrenheit (demo)'),
+                  ),
                 );
               },
             ),
@@ -745,7 +796,9 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
       applicationVersion: '1.0.0 (iOS Compatible)',
       applicationIcon: const FlutterLogo(),
       children: const [
-        Text('Your camping companion for finding and booking the perfect campsite.'),
+        Text(
+          'Your camping companion for finding and booking the perfect campsite.',
+        ),
         SizedBox(height: 16),
         Text('Built with Flutter for iOS and Android.'),
       ],
@@ -792,16 +845,16 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out of your account?'),
+        content: const Text(
+          'Are you sure you want to sign out of your account?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -833,9 +886,7 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Text(value),
-          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );

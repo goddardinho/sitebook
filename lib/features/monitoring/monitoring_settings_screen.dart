@@ -13,7 +13,7 @@ class MonitoringSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final backgroundStatusAsync = ref.watch(backgroundMonitoringStatusProvider);
     final monitoringControls = ref.read(monitoringControlsProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Availability Monitoring'),
@@ -21,7 +21,8 @@ class MonitoringSettingsScreen extends ConsumerWidget {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: backgroundStatusAsync.when(
-        data: (status) => _buildContent(context, status, monitoringControls, ref),
+        data: (status) =>
+            _buildContent(context, status, monitoringControls, ref),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -62,16 +63,23 @@ class MonitoringSettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusCard(BuildContext context, BackgroundMonitoringStatus status) {
+  Widget _buildStatusCard(
+    BuildContext context,
+    BackgroundMonitoringStatus status,
+  ) {
     final theme = Theme.of(context);
-    
+
     Color statusColor = Colors.grey;
     IconData statusIcon = Icons.pause_circle_outline;
-    
-    if (status.hasMonitoredCampgrounds && status.isActive && status.notificationsEnabled) {
+
+    if (status.hasMonitoredCampgrounds &&
+        status.isActive &&
+        status.notificationsEnabled) {
       statusColor = Colors.green;
       statusIcon = Icons.check_circle;
-    } else if (status.hasMonitoredCampgrounds && status.isActive && !status.notificationsEnabled) {
+    } else if (status.hasMonitoredCampgrounds &&
+        status.isActive &&
+        !status.notificationsEnabled) {
       statusColor = Colors.orange;
       statusIcon = Icons.warning;
     } else if (status.hasMonitoredCampgrounds && !status.isActive) {
@@ -127,7 +135,9 @@ class MonitoringSettingsScreen extends ConsumerWidget {
                   child: _buildStatusItem(
                     'Notifications',
                     status.notificationsEnabled ? 'Enabled' : 'Disabled',
-                    status.notificationsEnabled ? Icons.notifications : Icons.notifications_off,
+                    status.notificationsEnabled
+                        ? Icons.notifications
+                        : Icons.notifications_off,
                     theme,
                   ),
                 ),
@@ -160,7 +170,12 @@ class MonitoringSettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusItem(String title, String value, IconData icon, ThemeData theme) {
+  Widget _buildStatusItem(
+    String title,
+    String value,
+    IconData icon,
+    ThemeData theme,
+  ) {
     return Column(
       children: [
         Icon(icon, size: 20, color: theme.colorScheme.primary),
@@ -182,7 +197,10 @@ class MonitoringSettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickActionsCard(BuildContext context, MonitoringControls controls) {
+  Widget _buildQuickActionsCard(
+    BuildContext context,
+    MonitoringControls controls,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -191,9 +209,9 @@ class MonitoringSettingsScreen extends ConsumerWidget {
           children: [
             Text(
               'Quick Actions',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Wrap(
@@ -239,7 +257,7 @@ class MonitoringSettingsScreen extends ConsumerWidget {
 
   Widget _buildMonitoredCampgroundsCard(BuildContext context, WidgetRef ref) {
     final monitoredCampgrounds = DemoDataProvider.getMonitoredCampgrounds();
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -248,9 +266,9 @@ class MonitoringSettingsScreen extends ConsumerWidget {
           children: [
             Text(
               'Monitored Campgrounds (${monitoredCampgrounds.length})',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             if (monitoredCampgrounds.isEmpty)
@@ -265,8 +283,9 @@ class MonitoringSettingsScreen extends ConsumerWidget {
                 ),
               )
             else
-              ...monitoredCampgrounds.map((campground) => 
-                _buildMonitoredCampgroundItem(context, campground, ref)
+              ...monitoredCampgrounds.map(
+                (campground) =>
+                    _buildMonitoredCampgroundItem(context, campground, ref),
               ),
           ],
         ),
@@ -274,9 +293,13 @@ class MonitoringSettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMonitoredCampgroundItem(BuildContext context, Campground campground, WidgetRef ref) {
+  Widget _buildMonitoredCampgroundItem(
+    BuildContext context,
+    Campground campground,
+    WidgetRef ref,
+  ) {
     final campgroundActions = ref.read(campgroundActionsProvider);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -293,15 +316,15 @@ class MonitoringSettingsScreen extends ConsumerWidget {
               children: [
                 Text(
                   campground.name,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 Text(
                   campground.parkName ?? 'Unknown Park',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -319,7 +342,11 @@ class MonitoringSettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSettingsCard(BuildContext context, BackgroundMonitoringStatus status, MonitoringControls controls) {
+  Widget _buildSettingsCard(
+    BuildContext context,
+    BackgroundMonitoringStatus status,
+    MonitoringControls controls,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -328,31 +355,32 @@ class MonitoringSettingsScreen extends ConsumerWidget {
           children: [
             Text(
               'Notification Settings',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(
-                status.notificationsEnabled 
-                  ? Icons.notifications_active 
-                  : Icons.notifications_off,
+                status.notificationsEnabled
+                    ? Icons.notifications_active
+                    : Icons.notifications_off,
                 color: status.notificationsEnabled ? Colors.green : Colors.red,
               ),
               title: const Text('Push Notifications'),
               subtitle: Text(
-                status.notificationsEnabled 
-                  ? 'You\'ll receive alerts when availability is found'
-                  : 'Enable notifications to receive availability alerts',
+                status.notificationsEnabled
+                    ? 'You\'ll receive alerts when availability is found'
+                    : 'Enable notifications to receive availability alerts',
               ),
-              trailing: status.notificationsEnabled 
-                ? const Icon(Icons.check_circle, color: Colors.green)
-                : ElevatedButton(
-                    onPressed: () => controls.requestNotificationPermissions(),
-                    child: const Text('Enable'),
-                  ),
+              trailing: status.notificationsEnabled
+                  ? const Icon(Icons.check_circle, color: Colors.green)
+                  : ElevatedButton(
+                      onPressed: () =>
+                          controls.requestNotificationPermissions(),
+                      child: const Text('Enable'),
+                    ),
             ),
           ],
         ),
@@ -369,9 +397,9 @@ class MonitoringSettingsScreen extends ConsumerWidget {
           children: [
             Text(
               'How It Works',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             const Text(
@@ -411,7 +439,7 @@ class MonitoringSettingsScreen extends ConsumerWidget {
   String _formatLastCheck(DateTime lastCheck) {
     final now = DateTime.now();
     final difference = now.difference(lastCheck);
-    
+
     if (difference.inMinutes < 1) {
       return 'Just now';
     } else if (difference.inMinutes < 60) {

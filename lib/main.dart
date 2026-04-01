@@ -11,35 +11,33 @@ import 'shared/services/notification_preferences_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  debugPrint('🚀 SiteBook startup - iOS compatible with availability monitoring');
-  
+
+  debugPrint(
+    '🚀 SiteBook startup - iOS compatible with availability monitoring',
+  );
+
   // Initialize availability monitoring and notification services
   await _initializeServices();
-  
-  runApp(
-    const ProviderScope(
-      child: SiteBookApp(),
-    ),
-  );
+
+  runApp(const ProviderScope(child: SiteBookApp()));
 }
 
 /// Initialize background services for availability monitoring
 Future<void> _initializeServices() async {
   try {
     debugPrint('🔧 Initializing availability monitoring services...');
-    
+
     // Initialize enhanced notification service
     await EnhancedNotificationService.initialize();
-    
+
     // Initialize notification preferences service
     final prefsService = NotificationPreferencesService();
     await prefsService.initialize();
     debugPrint('⚙️ Notification preferences service initialized');
-    
+
     // Initialize availability monitoring service
     await AvailabilityMonitoringService.initialize();
-    
+
     debugPrint('✅ All services initialized successfully');
   } catch (e) {
     debugPrint('❌ Error initializing services: $e');
@@ -69,9 +67,7 @@ class SiteBookApp extends ConsumerWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: const AuthWrapperScreen(
-        authenticatedChild: StableMainScreen(),
-      ),
+      home: const AuthWrapperScreen(authenticatedChild: StableMainScreen()),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -106,10 +102,7 @@ class _StableMainScreenState extends State<StableMainScreen> {
           });
         },
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.nature),
-            label: 'Campgrounds',
-          ),
+          NavigationDestination(icon: Icon(Icons.nature), label: 'Campgrounds'),
           NavigationDestination(
             icon: Icon(Icons.book_outlined),
             selectedIcon: Icon(Icons.book),
@@ -242,7 +235,7 @@ class ProfilePlaceholder extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: Theme.of(context).colorScheme.primary,   
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: const Center(

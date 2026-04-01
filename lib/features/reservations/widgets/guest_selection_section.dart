@@ -32,7 +32,7 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,31 +42,30 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         Text(
           'How many people will be staying and what type of campsite do you need?',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        
+
         const SizedBox(height: 24),
-        
+
         // Guest count selection
         _buildGuestCountSection(theme),
-        
+
         const SizedBox(height: 32),
-        
+
         // Campsite type selection
         _buildCampsiteTypeSection(theme),
-        
+
         const SizedBox(height: 24),
-        
+
         // Pricing estimate (if type is selected)
-        if (widget.selectedCampsiteType != null)
-          _buildPricingEstimate(theme),
+        if (widget.selectedCampsiteType != null) _buildPricingEstimate(theme),
       ],
     );
   }
@@ -81,26 +80,21 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: theme.colorScheme.outline.withAlpha(128),
-            ),
+            border: Border.all(color: theme.colorScheme.outline.withAlpha(128)),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
-              Icon(
-                Icons.group,
-                color: theme.colorScheme.primary,
-              ),
-              
+              Icon(Icons.group, color: theme.colorScheme.primary),
+
               const SizedBox(width: 16),
-              
+
               Expanded(
                 child: Text(
                   'Guests',
@@ -109,20 +103,25 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
                   ),
                 ),
               ),
-              
+
               // Guest count controls
               Row(
                 children: [
                   IconButton(
-                    onPressed: widget.numberOfGuests > 1 
-                        ? () => widget.onGuestCountChanged(widget.numberOfGuests - 1)
+                    onPressed: widget.numberOfGuests > 1
+                        ? () => widget.onGuestCountChanged(
+                            widget.numberOfGuests - 1,
+                          )
                         : null,
                     icon: const Icon(Icons.remove_circle_outline),
                     visualDensity: VisualDensity.compact,
                   ),
-                  
+
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primaryContainer.withAlpha(128),
                       borderRadius: BorderRadius.circular(8),
@@ -135,10 +134,12 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
                       ),
                     ),
                   ),
-                  
+
                   IconButton(
-                    onPressed: widget.numberOfGuests < 20 
-                        ? () => widget.onGuestCountChanged(widget.numberOfGuests + 1)
+                    onPressed: widget.numberOfGuests < 20
+                        ? () => widget.onGuestCountChanged(
+                            widget.numberOfGuests + 1,
+                          )
                         : null,
                     icon: const Icon(Icons.add_circle_outline),
                     visualDensity: VisualDensity.compact,
@@ -148,7 +149,7 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
             ],
           ),
         ),
-        
+
         if (widget.numberOfGuests > 8)
           Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -174,14 +175,14 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // Campsite type options
         Column(
           children: campsiteTypes.map((type) {
             final isSelected = widget.selectedCampsiteType == type;
-            
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: InkWell(
@@ -191,12 +192,12 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: isSelected 
+                      color: isSelected
                           ? theme.colorScheme.primary
                           : theme.colorScheme.outline.withAlpha(128),
                     ),
                     borderRadius: BorderRadius.circular(12),
-                    color: isSelected 
+                    color: isSelected
                         ? theme.colorScheme.primaryContainer.withAlpha(77)
                         : theme.colorScheme.surface,
                   ),
@@ -208,12 +209,12 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isSelected 
+                            color: isSelected
                                 ? theme.colorScheme.primary
                                 : theme.colorScheme.onSurfaceVariant,
                             width: 2,
                           ),
-                          color: isSelected 
+                          color: isSelected
                               ? theme.colorScheme.primary
                               : Colors.transparent,
                         ),
@@ -225,9 +226,9 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
                               )
                             : null,
                       ),
-                      
+
                       const SizedBox(width: 16),
-                      
+
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,14 +237,14 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
                               type,
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.w500,
-                                color: isSelected 
+                                color: isSelected
                                     ? theme.colorScheme.onSurface
                                     : theme.colorScheme.onSurface,
                               ),
                             ),
-                            
+
                             const SizedBox(height: 4),
-                            
+
                             Text(
                               _getCampsiteTypeDescription(type),
                               style: theme.textTheme.bodySmall?.copyWith(
@@ -253,7 +254,7 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
                           ],
                         ),
                       ),
-                      
+
                       // Pricing info
                       Text(
                         _getCampsiteTypePrice(type),
@@ -275,25 +276,20 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
 
   Widget _buildPricingEstimate(ThemeData theme) {
     final basePrice = _getCampsiteTypePriceValue(widget.selectedCampsiteType!);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer.withAlpha(128),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.primary.withAlpha(128),
-        ),
+        border: Border.all(color: theme.colorScheme.primary.withAlpha(128)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.attach_money,
-                color: theme.colorScheme.primary,
-              ),
+              Icon(Icons.attach_money, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 'Pricing Estimate',
@@ -304,16 +300,13 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Base rate per night:',
-                style: theme.textTheme.bodyMedium,
-              ),
+              Text('Base rate per night:', style: theme.textTheme.bodyMedium),
               Text(
                 '\$${basePrice.toStringAsFixed(2)}',
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -322,7 +315,7 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
               ),
             ],
           ),
-          
+
           if (widget.numberOfGuests > 4)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -342,9 +335,9 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
                 ],
               ),
             ),
-          
+
           const Divider(height: 24),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -363,9 +356,9 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           Text(
             'Final pricing may include additional fees and taxes',
             style: theme.textTheme.bodySmall?.copyWith(
@@ -427,7 +420,7 @@ class _GuestSelectionSectionState extends State<GuestSelectionSection> {
 
   double _calculateTotalPerNight() {
     final basePrice = _getCampsiteTypePriceValue(widget.selectedCampsiteType!);
-    final extraGuestFee = widget.numberOfGuests > 4 
+    final extraGuestFee = widget.numberOfGuests > 4
         ? (widget.numberOfGuests - 4) * 5.0
         : 0.0;
     return basePrice + extraGuestFee;

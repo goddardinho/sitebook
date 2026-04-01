@@ -1,7 +1,7 @@
 import '../models/campground.dart';
 
 /// Abstract repository interface for campground data access
-/// 
+///
 /// This interface defines the contract for accessing campground data
 /// from various sources (APIs, local database, cache).
 abstract class CampgroundRepository {

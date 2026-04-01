@@ -52,8 +52,10 @@ void main() {
 
         // Assert
         expect(allCampgrounds.length, equals(3));
-        expect(allCampgrounds.map((c) => c.name).toSet(),
-            equals({'Campground 1', 'Campground 2', 'Campground 3'}));
+        expect(
+          allCampgrounds.map((c) => c.name).toSet(),
+          equals({'Campground 1', 'Campground 2', 'Campground 3'}),
+        );
       });
 
       test('should update existing campground on duplicate save', () async {
@@ -157,19 +159,19 @@ void main() {
           _createTestCampground(
             id: 'nearby',
             name: 'Nearby Camp',
-            latitude: 37.7749,  // San Francisco
+            latitude: 37.7749, // San Francisco
             longitude: -122.4194,
           ),
           _createTestCampground(
             id: 'medium',
             name: 'Medium Distance Camp',
-            latitude: 37.4419,  // Palo Alto (~30 miles)
+            latitude: 37.4419, // Palo Alto (~30 miles)
             longitude: -122.1430,
           ),
           _createTestCampground(
             id: 'far',
-            name: 'Far Camp', 
-            latitude: 36.7378,  // San Jose (~50 miles)
+            name: 'Far Camp',
+            latitude: 36.7378, // San Jose (~50 miles)
             longitude: -119.7871,
           ),
         ];
@@ -186,8 +188,10 @@ void main() {
 
         // Assert
         expect(results.length, equals(2));
-        expect(results.map((c) => c.name).toSet(),
-            equals({'Nearby Camp', 'Medium Distance Camp'}));
+        expect(
+          results.map((c) => c.name).toSet(),
+          equals({'Nearby Camp', 'Medium Distance Camp'}),
+        );
       });
 
       test('should sort results by distance', () async {
@@ -206,13 +210,15 @@ void main() {
 
       test('should filter by state within radius', () async {
         // Add out-of-state campground at similar distance
-        await database.saveCampground(_createTestCampground(
-          id: 'nevada',
-          name: 'Nevada Camp',
-          state: 'NV',
-          latitude: 37.4419,
-          longitude: -122.1430,
-        ));
+        await database.saveCampground(
+          _createTestCampground(
+            id: 'nevada',
+            name: 'Nevada Camp',
+            state: 'NV',
+            latitude: 37.4419,
+            longitude: -122.1430,
+          ),
+        );
 
         // Act - Search with state filter
         final results = await database.searchNearby(
@@ -231,8 +237,16 @@ void main() {
       test('should update and retrieve monitored campgrounds', () async {
         // Arrange
         final campgrounds = [
-          _createTestCampground(id: '1', name: 'Regular Camp', isMonitored: false),
-          _createTestCampground(id: '2', name: 'Monitored Camp', isMonitored: true),
+          _createTestCampground(
+            id: '1',
+            name: 'Regular Camp',
+            isMonitored: false,
+          ),
+          _createTestCampground(
+            id: '2',
+            name: 'Monitored Camp',
+            isMonitored: true,
+          ),
         ];
         await database.saveCampgrounds(campgrounds);
 

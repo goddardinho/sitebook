@@ -8,10 +8,12 @@ class NotificationPreferencesScreen extends ConsumerStatefulWidget {
   const NotificationPreferencesScreen({super.key});
 
   @override
-  ConsumerState<NotificationPreferencesScreen> createState() => _NotificationPreferencesScreenState();
+  ConsumerState<NotificationPreferencesScreen> createState() =>
+      _NotificationPreferencesScreenState();
 }
 
-class _NotificationPreferencesScreenState extends ConsumerState<NotificationPreferencesScreen> {
+class _NotificationPreferencesScreenState
+    extends ConsumerState<NotificationPreferencesScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -33,29 +35,38 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
           children: [
             // Master toggle for notifications
             _buildMasterToggleSection(theme, notificationsEnabled),
-            
+
             const SizedBox(height: 24),
-            
+
             // Notification Types section
             _buildNotificationTypesSection(theme, notificationsEnabled),
-            
+
             const SizedBox(height: 24),
-            
+
             // Timing and Frequency section
-            _buildTimingSection(theme, notificationsEnabled, quietHours, checkFrequency),
-            
+            _buildTimingSection(
+              theme,
+              notificationsEnabled,
+              quietHours,
+              checkFrequency,
+            ),
+
             const SizedBox(height: 24),
-            
+
             // Alert Style section
             _buildAlertStyleSection(theme, notificationsEnabled),
-            
+
             const SizedBox(height: 24),
-            
+
             // Campground-specific section
-            _buildCampgroundSpecificSection(theme, notificationsEnabled, monitoredCampgrounds),
-            
+            _buildCampgroundSpecificSection(
+              theme,
+              notificationsEnabled,
+              monitoredCampgrounds,
+            ),
+
             const SizedBox(height: 24),
-            
+
             // Reset section
             _buildResetSection(theme),
           ],
@@ -81,13 +92,15 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
             SwitchListTile(
               title: const Text('Enable Notifications'),
               subtitle: Text(
-                notificationsEnabled 
-                  ? 'Receive notifications about campsite availability'
-                  : 'All notifications are disabled',
+                notificationsEnabled
+                    ? 'Receive notifications about campsite availability'
+                    : 'All notifications are disabled',
               ),
               value: notificationsEnabled,
               onChanged: (value) async {
-                final service = ref.read(notificationPreferencesServiceProvider);
+                final service = ref.read(
+                  notificationPreferencesServiceProvider,
+                );
                 await service.setNotificationsEnabled(value);
                 // Refresh the UI
                 ref.invalidate(notificationsEnabledProvider);
@@ -99,7 +112,10 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
     );
   }
 
-  Widget _buildNotificationTypesSection(ThemeData theme, bool notificationsEnabled) {
+  Widget _buildNotificationTypesSection(
+    ThemeData theme,
+    bool notificationsEnabled,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -150,34 +166,35 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
     // For now, use local state - in a complete implementation, these would have their own providers
     return ListTile(
       leading: Icon(icon, color: enabled ? null : Colors.grey),
-      title: Text(
-        title,
-        style: TextStyle(color: enabled ? null : Colors.grey),
-      ),
+      title: Text(title, style: TextStyle(color: enabled ? null : Colors.grey)),
       subtitle: Text(
         subtitle,
         style: TextStyle(color: enabled ? null : Colors.grey),
       ),
       trailing: Switch(
         value: enabled, // This would be from the specific provider
-        onChanged: enabled ? (value) {
-          // Implementation would update the specific provider
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${title.toLowerCase()} ${value ? 'enabled' : 'disabled'}'),
-              duration: const Duration(seconds: 1),
-            ),
-          );
-        } : null,
+        onChanged: enabled
+            ? (value) {
+                // Implementation would update the specific provider
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '${title.toLowerCase()} ${value ? 'enabled' : 'disabled'}',
+                    ),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              }
+            : null,
       ),
     );
   }
 
   Widget _buildTimingSection(
-    ThemeData theme, 
-    bool notificationsEnabled, 
-    Map<String, int> quietHours, 
-    int checkFrequency
+    ThemeData theme,
+    bool notificationsEnabled,
+    Map<String, int> quietHours,
+    int checkFrequency,
   ) {
     return Card(
       child: Padding(
@@ -192,7 +209,7 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Check Frequency
             ListTile(
               leading: const Icon(Icons.schedule),
@@ -206,27 +223,33 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
                     child: Text('$hours hours'),
                   );
                 }).toList(),
-                onChanged: notificationsEnabled ? (value) async {
-                  if (value != null) {
-                    final service = ref.read(notificationPreferencesServiceProvider);
-                    await service.setCheckFrequencyHours(value);
-                    ref.invalidate(checkFrequencyProvider);
-                  }
-                } : null,
+                onChanged: notificationsEnabled
+                    ? (value) async {
+                        if (value != null) {
+                          final service = ref.read(
+                            notificationPreferencesServiceProvider,
+                          );
+                          await service.setCheckFrequencyHours(value);
+                          ref.invalidate(checkFrequencyProvider);
+                        }
+                      }
+                    : null,
               ),
             ),
-            
+
             const Divider(),
-            
+
             // Quiet Hours
             ListTile(
               leading: const Icon(Icons.bedtime),
               title: const Text('Quiet Hours'),
               subtitle: Text(
-                'No notifications from ${_formatHour(quietHours['start']!)} to ${_formatHour(quietHours['end']!)}'
+                'No notifications from ${_formatHour(quietHours['start']!)} to ${_formatHour(quietHours['end']!)}',
               ),
               trailing: TextButton(
-                onPressed: notificationsEnabled ? () => _showQuietHoursDialog(context, quietHours) : null,
+                onPressed: notificationsEnabled
+                    ? () => _showQuietHoursDialog(context, quietHours)
+                    : null,
                 child: const Text('Change'),
               ),
             ),
@@ -255,28 +278,36 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
               title: const Text('Vibration'),
               subtitle: const Text('Vibrate device for notifications'),
               value: notificationsEnabled,
-              onChanged: notificationsEnabled ? (value) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Vibration ${value ? 'enabled' : 'disabled'}'),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              } : null,
+              onChanged: notificationsEnabled
+                  ? (value) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Vibration ${value ? 'enabled' : 'disabled'}',
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  : null,
             ),
             SwitchListTile(
               secondary: const Icon(Icons.volume_up),
               title: const Text('Sound'),
               subtitle: const Text('Play sound for notifications'),
               value: notificationsEnabled,
-              onChanged: notificationsEnabled ? (value) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Sound ${value ? 'enabled' : 'disabled'}'),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              } : null,
+              onChanged: notificationsEnabled
+                  ? (value) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Sound ${value ? 'enabled' : 'disabled'}',
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  : null,
             ),
           ],
         ),
@@ -285,9 +316,9 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
   }
 
   Widget _buildCampgroundSpecificSection(
-    ThemeData theme, 
-    bool notificationsEnabled, 
-    AsyncValue<List<Campground>> monitoredCampgroundsAsync
+    ThemeData theme,
+    bool notificationsEnabled,
+    AsyncValue<List<Campground>> monitoredCampgroundsAsync,
   ) {
     return monitoredCampgroundsAsync.when(
       data: (monitoredCampgrounds) => Card(
@@ -317,12 +348,19 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                   title: const Text('No monitored campgrounds'),
-                  subtitle: const Text('Add campgrounds to monitoring to configure individual settings'),
+                  subtitle: const Text(
+                    'Add campgrounds to monitoring to configure individual settings',
+                  ),
                 )
               else
-                ...monitoredCampgrounds.take(5).map((campground) => 
-                  _buildCampgroundNotificationSwitch(campground, notificationsEnabled)
-                ),
+                ...monitoredCampgrounds
+                    .take(5)
+                    .map(
+                      (campground) => _buildCampgroundNotificationSwitch(
+                        campground,
+                        notificationsEnabled,
+                      ),
+                    ),
               if (monitoredCampgrounds.length > 5)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -340,9 +378,7 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
       loading: () => const Card(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: Center(child: CircularProgressIndicator()),
         ),
       ),
       error: (error, stack) => Card(
@@ -354,7 +390,10 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
     );
   }
 
-  Widget _buildCampgroundNotificationSwitch(Campground campground, bool globalEnabled) {
+  Widget _buildCampgroundNotificationSwitch(
+    Campground campground,
+    bool globalEnabled,
+  ) {
     return SwitchListTile(
       title: Text(
         campground.name,
@@ -362,21 +401,23 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        campground.state ?? 'Unknown state',
+        campground.state,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       value: globalEnabled, // This would be from campground-specific provider
-      onChanged: globalEnabled ? (value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Notifications for ${campground.name} ${value ? 'enabled' : 'disabled'}',
-            ),
-            duration: const Duration(seconds: 1),
-          ),
-        );
-      } : null,
+      onChanged: globalEnabled
+          ? (value) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Notifications for ${campground.name} ${value ? 'enabled' : 'disabled'}',
+                  ),
+                  duration: const Duration(seconds: 1),
+                ),
+              );
+            }
+          : null,
     );
   }
 
@@ -397,7 +438,9 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
             ListTile(
               leading: const Icon(Icons.restore, color: Colors.orange),
               title: const Text('Reset to Defaults'),
-              subtitle: const Text('Reset all notification preferences to default values'),
+              subtitle: const Text(
+                'Reset all notification preferences to default values',
+              ),
               trailing: OutlinedButton(
                 onPressed: () => _showResetConfirmationDialog(context),
                 child: const Text('Reset'),
@@ -416,7 +459,10 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
     return '${hour - 12}:00 PM';
   }
 
-  void _showQuietHoursDialog(BuildContext context, Map<String, int> quietHours) {
+  void _showQuietHoursDialog(
+    BuildContext context,
+    Map<String, int> quietHours,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -431,13 +477,18 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
                 const Text('Start: '),
                 DropdownButton<int>(
                   value: quietHours['start'],
-                  items: List.generate(24, (index) => DropdownMenuItem(
-                    value: index,
-                    child: Text(_formatHour(index)),
-                  )),
+                  items: List.generate(
+                    24,
+                    (index) => DropdownMenuItem(
+                      value: index,
+                      child: Text(_formatHour(index)),
+                    ),
+                  ),
                   onChanged: (value) async {
                     if (value != null) {
-                      final service = ref.read(notificationPreferencesServiceProvider);
+                      final service = ref.read(
+                        notificationPreferencesServiceProvider,
+                      );
                       await service.setQuietHoursStart(value);
                       ref.invalidate(quietHoursProvider);
                       Navigator.of(context).pop();
@@ -451,13 +502,18 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
                 const Text('End: '),
                 DropdownButton<int>(
                   value: quietHours['end'],
-                  items: List.generate(24, (index) => DropdownMenuItem(
-                    value: index,
-                    child: Text(_formatHour(index)),
-                  )),
+                  items: List.generate(
+                    24,
+                    (index) => DropdownMenuItem(
+                      value: index,
+                      child: Text(_formatHour(index)),
+                    ),
+                  ),
                   onChanged: (value) async {
                     if (value != null) {
-                      final service = ref.read(notificationPreferencesServiceProvider);
+                      final service = ref.read(
+                        notificationPreferencesServiceProvider,
+                      );
                       await service.setQuietHoursEnd(value);
                       ref.invalidate(quietHoursProvider);
                       Navigator.of(context).pop();
@@ -484,7 +540,7 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
       builder: (context) => AlertDialog(
         title: const Text('Reset Notification Preferences'),
         content: const Text(
-          'This will reset all notification preferences to their default values. This action cannot be undone.'
+          'This will reset all notification preferences to their default values. This action cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -493,7 +549,9 @@ class _NotificationPreferencesScreenState extends ConsumerState<NotificationPref
           ),
           FilledButton(
             onPressed: () {
-              ref.read(notificationPreferencesServiceProvider).resetToDefaults();
+              ref
+                  .read(notificationPreferencesServiceProvider)
+                  .resetToDefaults();
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
