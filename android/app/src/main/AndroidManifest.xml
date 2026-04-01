@@ -14,9 +14,9 @@
     <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
     
     <application
-        android:label="sitebook_flutter"
+        android:label="SiteBook"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
