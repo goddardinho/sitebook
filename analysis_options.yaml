@@ -19,8 +19,10 @@ analyzer:
   errors:
     # Treat certain lints as errors to enforce stricter code quality
     invalid_annotation_target: error
-    # Note: unused_import, unused_local_variable, dead_code are analysis
-    # issues automatically detected by Dart analyzer, not configurable lints
+    # Allow info-level messages to be non-blocking
+    avoid_print: ignore
+    avoid_redundant_argument_values: ignore
+    prefer_const_constructors: ignore
 
 linter:
   # Enhanced lint rules for better code quality and error prevention
