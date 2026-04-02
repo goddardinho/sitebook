@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/campgrounds/campgrounds_screen_ios_compatible.dart';
 import 'features/reservations/reservations_screen_ios_compatible.dart';
 import 'features/maps/map_screen_ios_compatible.dart';
-import 'features/profile/authenticated_profile_screen.dart';
-import 'features/credentials/screens/reservation_systems_screen.dart';
+import '../features/settings/settings_screen.dart';
 import 'shared/services/availability_monitoring_service.dart';
 import 'shared/services/enhanced_notification_service.dart';
 import 'shared/services/notification_preferences_service.dart';
@@ -82,9 +81,7 @@ class _StableMainScreenState extends State<StableMainScreen> {
     CampgroundsScreenIOSCompatible(),
     ReservationsScreenIOSCompatible(),
     MapScreenIOSCompatible(),
-    AuthenticatedProfileScreen(),
-    // Add Reservation Systems screen
-    ReservationSystemsScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -111,11 +108,10 @@ class _StableMainScreenState extends State<StableMainScreen> {
             label: 'Map',
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outlined),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Settings',
           ),
-          NavigationDestination(icon: Icon(Icons.vpn_key), label: 'Systems'),
         ],
       ),
     );
