@@ -9,10 +9,10 @@ import '../../shared/models/campground.dart';
 class CampgroundDatabase {
   static const String _databaseName = 'sitebook_campgrounds.db';
   static const int _databaseVersion = 1;
-  
+
   // Table names
   static const String _campgroundsTable = 'campgrounds';
-  
+
   Database? _database;
   final Logger _logger = Logger();
 
@@ -64,16 +64,24 @@ class CampgroundDatabase {
     ''');
 
     // Create indexes for better query performance
-    await db.execute('CREATE INDEX idx_campgrounds_state ON $_campgroundsTable (state)');
-    await db.execute('CREATE INDEX idx_campgrounds_monitored ON $_campgroundsTable (is_monitored)');
-    await db.execute('CREATE INDEX idx_campgrounds_location ON $_campgroundsTable (latitude, longitude)');
-    await db.execute('CREATE INDEX idx_campgrounds_name ON $_campgroundsTable (name)');
+    await db.execute(
+      'CREATE INDEX idx_campgrounds_state ON $_campgroundsTable (state)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_campgrounds_monitored ON $_campgroundsTable (is_monitored)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_campgrounds_location ON $_campgroundsTable (latitude, longitude)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_campgrounds_name ON $_campgroundsTable (name)',
+    );
   }
 
   /// Handle database upgrades
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     _logger.i('Upgrading database from version $oldVersion to $newVersion');
-    
+
     // Handle future database schema changes here
     if (oldVersion < 2) {
       // Example: Add new columns in version 2
@@ -174,13 +182,13 @@ class CampgroundDatabase {
     try {
       final db = await database;
       final searchTerm = '%${query.toLowerCase()}%';
-      
+
       final List<Map<String, dynamic>> maps = await db.query(
         _campgroundsTable,
         where: '''
-          LOWER(name) LIKE ? OR 
-          LOWER(description) LIKE ? OR 
-          LOWER(state) LIKE ? OR 
+          LOWER(name) LIKE ? OR
+          LOWER(description) LIKE ? OR
+          LOWER(state) LIKE ? OR
           LOWER(park_name) LIKE ?
         ''',
         whereArgs: [searchTerm, searchTerm, searchTerm, searchTerm],
@@ -203,19 +211,19 @@ class CampgroundDatabase {
   }) async {
     try {
       final db = await database;
-      
+
       // Convert miles to degrees (rough approximation)
       // 1 degree ≈ 69 miles, but we'll use a simple bounding box
       final latDelta = radiusMiles / 69.0;
       final lonDelta = radiusMiles / 69.0;
-      
+
       final minLat = latitude - latDelta;
       final maxLat = latitude + latDelta;
       final minLon = longitude - lonDelta;
       final maxLon = longitude + lonDelta;
 
       String whereClause = '''
-        latitude BETWEEN ? AND ? AND 
+        latitude BETWEEN ? AND ? AND
         longitude BETWEEN ? AND ?
       ''';
       List<dynamic> whereArgs = [minLat, maxLat, minLon, maxLon];
@@ -234,19 +242,31 @@ class CampgroundDatabase {
 
       // Filter by actual distance and sort by proximity
       final results = maps.map((map) => _mapToCampground(map)).toList();
-      
+
       results.removeWhere((campground) {
         final distance = _calculateDistance(
-          latitude, longitude,
-          campground.latitude, campground.longitude,
+          latitude,
+          longitude,
+          campground.latitude,
+          campground.longitude,
         );
         return distance > radiusMiles;
       });
 
       // Sort by distance
       results.sort((a, b) {
-        final distanceA = _calculateDistance(latitude, longitude, a.latitude, a.longitude);
-        final distanceB = _calculateDistance(latitude, longitude, b.latitude, b.longitude);
+        final distanceA = _calculateDistance(
+          latitude,
+          longitude,
+          a.latitude,
+          a.longitude,
+        );
+        final distanceB = _calculateDistance(
+          latitude,
+          longitude,
+          b.latitude,
+          b.longitude,
+        );
         return distanceA.compareTo(distanceB);
       });
 
@@ -275,7 +295,10 @@ class CampgroundDatabase {
   }
 
   /// Update campground monitoring status
-  Future<void> updateMonitoringStatus(String campgroundId, bool isMonitored) async {
+  Future<void> updateMonitoringStatus(
+    String campgroundId,
+    bool isMonitored,
+  ) async {
     try {
       final db = await database;
       await db.update(
@@ -321,12 +344,14 @@ class CampgroundDatabase {
   Future<Map<String, int>> getStats() async {
     try {
       final db = await database;
-      
-      final totalResult = await db.rawQuery('SELECT COUNT(*) as count FROM $_campgroundsTable');
-      final monitoredResult = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_campgroundsTable WHERE is_monitored = 1'
+
+      final totalResult = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM $_campgroundsTable',
       );
-      
+      final monitoredResult = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM $_campgroundsTable WHERE is_monitored = 1',
+      );
+
       return {
         'total': totalResult.first['count'] as int,
         'monitored': monitoredResult.first['count'] as int,
@@ -387,11 +412,11 @@ class CampgroundDatabase {
       activities: _parseJsonStringList(map['activities'] as String),
       imageUrls: _parseJsonStringList(map['image_urls'] as String),
       isMonitored: (map['is_monitored'] as int) == 1,
-      createdAt: map['created_at'] != null 
-          ? DateTime.tryParse(map['created_at'] as String) 
+      createdAt: map['created_at'] != null
+          ? DateTime.tryParse(map['created_at'] as String)
           : null,
-      updatedAt: map['updated_at'] != null 
-          ? DateTime.tryParse(map['updated_at'] as String) 
+      updatedAt: map['updated_at'] != null
+          ? DateTime.tryParse(map['updated_at'] as String)
           : null,
     );
   }
@@ -408,17 +433,23 @@ class CampgroundDatabase {
   }
 
   /// Calculate distance between two points in miles
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+  double _calculateDistance(
+    double lat1,
+    double lon1,
+    double lat2,
+    double lon2,
+  ) {
     const double radiusOfEarth = 3959.0; // miles
-    
+
     final double lat1Rad = lat1 * (math.pi / 180);
     final double lat2Rad = lat2 * (math.pi / 180);
     final double deltaLat = (lat2 - lat1) * (math.pi / 180);
     final double deltaLon = (lon2 - lon1) * (math.pi / 180);
 
-    final double a = 0.5 * (1 - math.cos(deltaLat)) + 
+    final double a =
+        0.5 * (1 - math.cos(deltaLat)) +
         math.cos(lat1Rad) * math.cos(lat2Rad) * 0.5 * (1 - math.cos(deltaLon));
-    
+
     return radiusOfEarth * 2 * math.asin(math.sqrt(a));
   }
 

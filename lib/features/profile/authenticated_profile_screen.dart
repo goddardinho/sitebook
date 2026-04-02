@@ -23,10 +23,7 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
             children: [
               CircularProgressIndicator(color: theme.colorScheme.primary),
               const SizedBox(height: 16),
-              Text(
-                'Loading profile...',
-                style: theme.textTheme.bodyLarge,
-              ),
+              Text('Loading profile...', style: theme.textTheme.bodyLarge),
             ],
           ),
         ),
@@ -120,14 +117,18 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
                           Icon(
                             Icons.location_on_outlined,
                             size: 16,
-                            color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                            color: theme.colorScheme.onPrimary.withValues(
+                              alpha: 0.7,
+                            ),
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               user.location!,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                                color: theme.colorScheme.onPrimary.withValues(
+                                  alpha: 0.8,
+                                ),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -139,7 +140,9 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
                     Text(
                       user.email,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                        color: theme.colorScheme.onPrimary.withValues(
+                          alpha: 0.7,
+                        ),
                       ),
                     ),
                   ],
@@ -147,10 +150,7 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
               ),
               IconButton(
                 onPressed: () => _showEditProfileDialog(context, theme, user),
-                icon: Icon(
-                  Icons.edit,
-                  color: theme.colorScheme.onPrimary,
-                ),
+                icon: Icon(Icons.edit, color: theme.colorScheme.onPrimary),
               ),
             ],
           ),
@@ -159,7 +159,12 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileContent(BuildContext context, ThemeData theme, User user, AuthActions authActions) {
+  Widget _buildProfileContent(
+    BuildContext context,
+    ThemeData theme,
+    User user,
+    AuthActions authActions,
+  ) {
     final userProfile = user.profile;
 
     return SingleChildScrollView(
@@ -229,17 +234,18 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatCard(ThemeData theme, String value, String label, IconData icon) {
+  Widget _buildStatCard(
+    ThemeData theme,
+    String value,
+    String label,
+    IconData icon,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: theme.colorScheme.primary,
-              size: 28,
-            ),
+            Icon(icon, color: theme.colorScheme.primary, size: 28),
             const SizedBox(height: 8),
             Text(
               value,
@@ -265,13 +271,16 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
   Widget _buildSectionHeader(ThemeData theme, String title) {
     return Text(
       title,
-      style: theme.textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.w600,
-      ),
+      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
     );
   }
 
-  Widget _buildAccountSection(BuildContext context, ThemeData theme, User user, AuthActions authActions) {
+  Widget _buildAccountSection(
+    BuildContext context,
+    ThemeData theme,
+    User user,
+    AuthActions authActions,
+  ) {
     return Card(
       child: Column(
         children: [
@@ -350,7 +359,11 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSupportSection(BuildContext context, ThemeData theme, AuthActions authActions) {
+  Widget _buildSupportSection(
+    BuildContext context,
+    ThemeData theme,
+    AuthActions authActions,
+  ) {
     return Card(
       child: Column(
         children: [
@@ -415,7 +428,11 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
   }
 
   // Dialog methods
-  void _showEditProfileDialog(BuildContext context, ThemeData theme, User user) {
+  void _showEditProfileDialog(
+    BuildContext context,
+    ThemeData theme,
+    User user,
+  ) {
     final nameController = TextEditingController(text: user.name);
     final locationController = TextEditingController(text: user.location ?? '');
 
@@ -452,7 +469,9 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
             onPressed: () {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profile updated successfully! (Demo)')),
+                const SnackBar(
+                  content: Text('Profile updated successfully! (Demo)'),
+                ),
               );
             },
             child: const Text('Save'),
@@ -593,7 +612,9 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
             Text('Version: 1.0.0'),
             Text('Build: 2026.03.31'),
             SizedBox(height: 16),
-            Text('SiteBook helps you find and book the perfect campsite for your outdoor adventures.'),
+            Text(
+              'SiteBook helps you find and book the perfect campsite for your outdoor adventures.',
+            ),
             SizedBox(height: 16),
             Text(
               '© 2026 SiteBook App. All rights reserved.',
@@ -616,7 +637,9 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out of your account?'),
+        content: const Text(
+          'Are you sure you want to sign out of your account?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -627,9 +650,7 @@ class AuthenticatedProfileScreen extends ConsumerWidget {
               Navigator.of(context).pop();
               authActions.signOut();
             },
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Sign Out'),
           ),
         ],

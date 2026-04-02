@@ -42,7 +42,8 @@ class Campground {
     this.updatedAt,
   });
 
-  factory Campground.fromJson(Map<String, dynamic> json) => _$CampgroundFromJson(json);
+  factory Campground.fromJson(Map<String, dynamic> json) =>
+      _$CampgroundFromJson(json);
   Map<String, dynamic> toJson() => _$CampgroundToJson(this);
 
   Campground copyWith({

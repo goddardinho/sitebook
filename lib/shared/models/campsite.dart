@@ -30,7 +30,8 @@ class Campsite {
     this.nextAvailableDate,
   });
 
-  factory Campsite.fromJson(Map<String, dynamic> json) => _$CampsiteFromJson(json);
+  factory Campsite.fromJson(Map<String, dynamic> json) =>
+      _$CampsiteFromJson(json);
   Map<String, dynamic> toJson() => _$CampsiteToJson(this);
 
   Campsite copyWith({

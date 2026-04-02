@@ -82,11 +82,15 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                             const SizedBox(height: 8),
                             Consumer(
                               builder: (context, ref, child) {
-                                final monitoredCountAsync = ref.watch(monitoredCountProvider);
+                                final monitoredCountAsync = ref.watch(
+                                  monitoredCountProvider,
+                                );
                                 return monitoredCountAsync.when(
-                                  data: (count) => _buildHeaderStats(theme, count),
+                                  data: (count) =>
+                                      _buildHeaderStats(theme, count),
                                   loading: () => _buildHeaderStats(theme, 0),
-                                  error: (error, stack) => _buildHeaderStats(theme, 0),
+                                  error: (error, stack) =>
+                                      _buildHeaderStats(theme, 0),
                                 );
                               },
                             ),
@@ -126,12 +130,21 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
             Consumer(
               builder: (context, ref, child) {
                 if (searchQuery.isNotEmpty) {
-                  final filteredCampgroundsAsync = ref.watch(searchResultsProvider);
+                  final filteredCampgroundsAsync = ref.watch(
+                    searchResultsProvider,
+                  );
                   return filteredCampgroundsAsync.when(
                     data: (campgrounds) => SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: _buildSearchResults(theme, campgrounds.length, searchQuery.query),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: _buildSearchResults(
+                          theme,
+                          campgrounds.length,
+                          searchQuery.query,
+                        ),
                       ),
                     ),
                     loading: () => const SliverToBoxAdapter(
@@ -193,7 +206,10 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
         ),
       ),
     );
@@ -298,11 +314,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
   Widget _buildSearchResults(ThemeData theme, int resultCount, String query) {
     return Row(
       children: [
-        Icon(
-          Icons.search,
-          size: 16,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+        Icon(Icons.search, size: 16, color: theme.colorScheme.onSurfaceVariant),
         const SizedBox(width: 8),
         Text(
           '$resultCount results for "$query"',
@@ -332,7 +344,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
     final searchQuery = ref.watch(searchQueryProvider);
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -346,7 +358,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              searchQuery.isNotEmpty 
+              searchQuery.isNotEmpty
                   ? 'No campgrounds found'
                   : 'No campgrounds available',
               style: theme.textTheme.headlineSmall?.copyWith(
@@ -379,9 +391,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
   void _openMapsView() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const MapsScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const MapsScreen()),
     );
   }
 
@@ -433,7 +443,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
   void _showMonitoredOnly() {
     final actions = ref.read(campgroundActionsProvider);
     actions.updateSearchQuery(''); // Clear search first
-    
+
     // TODO: Add monitored-only filter to providers
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(

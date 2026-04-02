@@ -36,7 +36,8 @@ class UserPreference {
     this.updatedAt,
   });
 
-  factory UserPreference.fromJson(Map<String, dynamic> json) => _$UserPreferenceFromJson(json);
+  factory UserPreference.fromJson(Map<String, dynamic> json) =>
+      _$UserPreferenceFromJson(json);
   Map<String, dynamic> toJson() => _$UserPreferenceToJson(this);
 
   UserPreference copyWith({

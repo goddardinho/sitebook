@@ -13,27 +13,25 @@ import 'helpers/test_helpers.dart';
 void main() {
   testWidgets('SiteBook app launches correctly', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: SiteBookApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: SiteBookApp()));
 
     await tester.pumpAndSettle();
 
     // Verify that the main screen displays
     expect(find.text('Campgrounds'), findsOneWidget);
-    
+
     // Verify bottom navigation is present
     expect(find.byType(BottomNavigationBar), findsOneWidget);
-    
+
     // Verify search functionality exists
     expect(find.byIcon(Icons.search), findsOneWidget);
   });
 
-  testWidgets('Main screen structure and navigation', (WidgetTester tester) async {
+  testWidgets('Main screen structure and navigation', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
-      TestUtils.wrapWithNavigatorApp(const MainScreen()),
+      TestUtils.wrapWithNavigatorApp(const StableMainScreen()),
     );
 
     await tester.pumpAndSettle();
@@ -56,7 +54,9 @@ void main() {
     }
   });
 
-  testWidgets('Campgrounds screen displays correctly', (WidgetTester tester) async {
+  testWidgets('Campgrounds screen displays correctly', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       TestUtils.wrapWithNavigatorApp(const CampgroundsScreen()),
     );
@@ -75,29 +75,27 @@ void main() {
   });
 
   testWidgets('App theme and styling', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: SiteBookApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: SiteBookApp()));
 
     await tester.pumpAndSettle();
 
     // Find the MaterialApp widget to verify theme
     final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
-    
+
     // Verify Material 3 is enabled
     expect(materialApp.theme?.useMaterial3, isTrue);
-    
+
     // Verify color scheme is based on green
     expect(materialApp.theme?.colorScheme.primary, isNotNull);
-    
+
     // Verify dark theme exists
     expect(materialApp.darkTheme, isNotNull);
     expect(materialApp.darkTheme?.useMaterial3, isTrue);
   });
 
-  testWidgets('App handles empty states gracefully', (WidgetTester tester) async {
+  testWidgets('App handles empty states gracefully', (
+    WidgetTester tester,
+  ) async {
     // Test with empty data or loading states
     await tester.pumpWidget(
       TestUtils.wrapWithNavigatorApp(const CampgroundsScreen()),
@@ -110,11 +108,7 @@ void main() {
   });
 
   testWidgets('Navigation between screens works', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: SiteBookApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: SiteBookApp()));
 
     await tester.pumpAndSettle();
 

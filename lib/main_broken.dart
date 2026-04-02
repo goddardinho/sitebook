@@ -3,17 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   debugPrint('🚀 SiteBook startup - stable iOS version');
-  
+
   // TODO: Gradually re-enable services and widgets once iOS stability is confirmed
   // Services and complex widgets temporarily disabled for iOS compatibility
-  
-  runApp(
-    const ProviderScope(
-      child: SiteBookApp(),
-    ),
-  );
+
+  runApp(const ProviderScope(child: SiteBookApp()));
 }
 
 class SiteBookApp extends ConsumerWidget {
@@ -73,10 +69,7 @@ class _StableMainScreenState extends State<StableMainScreen> {
           });
         },
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.nature),
-            label: 'Campgrounds',
-          ),
+          NavigationDestination(icon: Icon(Icons.nature), label: 'Campgrounds'),
           NavigationDestination(
             icon: Icon(Icons.book_outlined),
             selectedIcon: Icon(Icons.book),
@@ -209,7 +202,7 @@ class ProfilePlaceholder extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: Theme.of(context).colorScheme.primary,   
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: const Center(
@@ -267,7 +260,9 @@ class SiteBookApp extends ConsumerWidget {
         return MaterialPageRoute(builder: (_) => const MainScreen());
       case '/maps':
         final campground = settings.arguments as Campground?;
-        return MaterialPageRoute(builder: (_) => MapsScreen(focusCampground: campground));
+        return MaterialPageRoute(
+          builder: (_) => MapsScreen(focusCampground: campground),
+        );
       default:
         return null;
     }
@@ -303,10 +298,7 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.nature),
-            label: 'Campgrounds',
-          ),
+          NavigationDestination(icon: Icon(Icons.nature), label: 'Campgrounds'),
           NavigationDestination(
             icon: Icon(Icons.book_outlined),
             selectedIcon: Icon(Icons.book),
@@ -350,10 +342,7 @@ class ReservationsPlaceholder extends StatelessWidget {
               'Reservations Screen',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            Text(
-              'Manage your reservations',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('Manage your reservations', style: TextStyle(fontSize: 16)),
           ],
         ),
       ),
@@ -382,10 +371,7 @@ class MapPlaceholder extends StatelessWidget {
               'Map Screen',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            Text(
-              'Find campgrounds near you',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('Find campgrounds near you', style: TextStyle(fontSize: 16)),
           ],
         ),
       ),

@@ -4,10 +4,7 @@ import '../../../../shared/models/campground.dart';
 class CampgroundInfoSection extends StatelessWidget {
   final Campground campground;
 
-  const CampgroundInfoSection({
-    super.key,
-    required this.campground,
-  });
+  const CampgroundInfoSection({super.key, required this.campground});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +28,7 @@ class CampgroundInfoSection extends StatelessWidget {
 
   Widget _buildHeaderSection(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -83,7 +80,10 @@ class CampgroundInfoSection extends StatelessWidget {
               const Spacer(),
               if (campground.isMonitored)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(16),
@@ -116,7 +116,7 @@ class CampgroundInfoSection extends StatelessWidget {
 
   Widget _buildDescriptionSection(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -131,9 +131,7 @@ class CampgroundInfoSection extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             campground.description,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              height: 1.5,
-            ),
+            style: theme.textTheme.bodyLarge?.copyWith(height: 1.5),
           ),
         ],
       ),
@@ -142,7 +140,7 @@ class CampgroundInfoSection extends StatelessWidget {
 
   Widget _buildLocationSection(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -168,10 +166,7 @@ class CampgroundInfoSection extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.my_location,
-                      color: theme.colorScheme.primary,
-                    ),
+                    Icon(Icons.my_location, color: theme.colorScheme.primary),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -221,9 +216,9 @@ class CampgroundInfoSection extends StatelessWidget {
 
   Widget _buildAmenitiesSection(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     if (campground.amenities.isEmpty) return const SizedBox.shrink();
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -241,7 +236,10 @@ class CampgroundInfoSection extends StatelessWidget {
             runSpacing: 8,
             children: campground.amenities.map((amenity) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(20),
@@ -277,9 +275,9 @@ class CampgroundInfoSection extends StatelessWidget {
 
   Widget _buildActivitiesSection(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     if (campground.activities.isEmpty) return const SizedBox.shrink();
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -297,7 +295,10 @@ class CampgroundInfoSection extends StatelessWidget {
             runSpacing: 8,
             children: campground.activities.map((activity) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.secondaryContainer,
                   borderRadius: BorderRadius.circular(20),
@@ -333,13 +334,14 @@ class CampgroundInfoSection extends StatelessWidget {
 
   Widget _buildContactSection(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final hasContact = campground.phoneNumber != null || 
-                      campground.email != null || 
-                      campground.reservationUrl != null;
-    
+
+    final hasContact =
+        campground.phoneNumber != null ||
+        campground.email != null ||
+        campground.reservationUrl != null;
+
     if (!hasContact) return const SizedBox.shrink();
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -378,7 +380,8 @@ class CampgroundInfoSection extends StatelessWidget {
                       );
                     },
                   ),
-                  if (campground.email != null || campground.reservationUrl != null)
+                  if (campground.email != null ||
+                      campground.reservationUrl != null)
                     const Divider(height: 32),
                 ],
                 if (campground.email != null) ...[
@@ -391,7 +394,9 @@ class CampgroundInfoSection extends StatelessWidget {
                       // TODO: Launch email
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Opening email to ${campground.email}...'),
+                          content: Text(
+                            'Opening email to ${campground.email}...',
+                          ),
                         ),
                       );
                     },
@@ -430,7 +435,7 @@ class CampgroundInfoSection extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -438,10 +443,7 @@ class CampgroundInfoSection extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: theme.colorScheme.primary,
-            ),
+            Icon(icon, color: theme.colorScheme.primary),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

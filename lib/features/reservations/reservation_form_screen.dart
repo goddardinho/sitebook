@@ -9,19 +9,17 @@ import 'widgets/reservation_summary_section.dart';
 class ReservationFormScreen extends ConsumerStatefulWidget {
   final Campground campground;
 
-  const ReservationFormScreen({
-    super.key,
-    required this.campground,
-  });
+  const ReservationFormScreen({super.key, required this.campground});
 
   @override
-  ConsumerState<ReservationFormScreen> createState() => _ReservationFormScreenState();
+  ConsumerState<ReservationFormScreen> createState() =>
+      _ReservationFormScreenState();
 }
 
 class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
-  
+
   // Form data
   DateTime? _checkInDate;
   DateTime? _checkOutDate;
@@ -46,7 +44,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Make Reservation'),
@@ -60,7 +58,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
           children: [
             // Progress indicator
             _buildProgressIndicator(theme),
-            
+
             // Form content
             Expanded(
               child: SingleChildScrollView(
@@ -71,9 +69,9 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
                   children: [
                     // Campground info header
                     _buildCampgroundHeader(theme),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Form sections based on current step
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
@@ -83,7 +81,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
                 ),
               ),
             ),
-            
+
             // Bottom action bar
             _buildBottomActionBar(theme),
           ],
@@ -98,9 +96,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         border: Border(
-          bottom: BorderSide(
-            color: theme.colorScheme.outline.withAlpha(77),
-          ),
+          bottom: BorderSide(color: theme.colorScheme.outline.withAlpha(77)),
         ),
       ),
       child: Column(
@@ -118,19 +114,17 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
             children: List.generate(4, (index) {
               final isActive = index <= _currentStep;
               final isCompleted = index < _currentStep;
-              
+
               return Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(
-                    right: index < 3 ? 8 : 0,
-                  ),
+                  margin: EdgeInsets.only(right: index < 3 ? 8 : 0),
                   height: 4,
                   decoration: BoxDecoration(
-                    color: isCompleted 
+                    color: isCompleted
                         ? theme.colorScheme.primary
-                        : isActive 
-                            ? theme.colorScheme.primary.withAlpha(128)
-                            : theme.colorScheme.outline.withAlpha(77),
+                        : isActive
+                        ? theme.colorScheme.primary.withAlpha(128)
+                        : theme.colorScheme.outline.withAlpha(77),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -155,9 +149,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withAlpha(77),
-        ),
+        border: Border.all(color: theme.colorScheme.outline.withAlpha(77)),
       ),
       child: Row(
         children: [
@@ -175,15 +167,15 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
                     child: Image.network(
                       widget.campground.imageUrls.first,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => 
+                      errorBuilder: (context, error, stackTrace) =>
                           Icon(Icons.nature, color: theme.colorScheme.primary),
                     ),
                   )
                 : Icon(Icons.nature, color: theme.colorScheme.primary),
           ),
-          
+
           const SizedBox(width: 16),
-          
+
           // Campground info
           Expanded(
             child: Column(
@@ -237,8 +229,10 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
           key: const ValueKey('guests'),
           numberOfGuests: _numberOfGuests,
           selectedCampsiteType: _selectedCampsiteType,
-          onGuestCountChanged: (count) => setState(() => _numberOfGuests = count),
-          onCampsiteTypeChanged: (type) => setState(() => _selectedCampsiteType = type),
+          onGuestCountChanged: (count) =>
+              setState(() => _numberOfGuests = count),
+          onCampsiteTypeChanged: (type) =>
+              setState(() => _selectedCampsiteType = type),
         );
       case 2:
         return ContactInformationSection(
@@ -252,7 +246,8 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
           onLastNameChanged: (value) => setState(() => _lastName = value),
           onEmailChanged: (value) => setState(() => _email = value),
           onPhoneChanged: (value) => setState(() => _phone = value),
-          onSpecialRequestsChanged: (value) => setState(() => _specialRequests = value),
+          onSpecialRequestsChanged: (value) =>
+              setState(() => _specialRequests = value),
         );
       case 3:
         return ReservationSummarySection(
@@ -279,9 +274,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
-          top: BorderSide(
-            color: theme.colorScheme.outline.withAlpha(77),
-          ),
+          top: BorderSide(color: theme.colorScheme.outline.withAlpha(77)),
         ),
       ),
       child: SafeArea(
@@ -293,9 +286,9 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
                 onPressed: _goToPreviousStep,
                 child: const Text('Back'),
               ),
-            
+
             const Spacer(),
-            
+
             // Next/Submit button
             FilledButton(
               onPressed: _isSubmitting ? null : _handleNextOrSubmit,
@@ -335,10 +328,10 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
       case 1:
         return _numberOfGuests > 0;
       case 2:
-        return _firstName.isNotEmpty && 
-               _lastName.isNotEmpty && 
-               _email.isNotEmpty && 
-               _phone.isNotEmpty;
+        return _firstName.isNotEmpty &&
+            _lastName.isNotEmpty &&
+            _email.isNotEmpty &&
+            _phone.isNotEmpty;
       case 3:
         return true;
       default:
@@ -358,9 +351,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
   void _handleNextOrSubmit() {
     if (!_canProceedToNextStep()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please complete all required fields'),
-        ),
+        const SnackBar(content: Text('Please complete all required fields')),
       );
       return;
     }
@@ -401,7 +392,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        
+
         Navigator.of(context).pop(); // Return to previous screen
       }
     } catch (error) {

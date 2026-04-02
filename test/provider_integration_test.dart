@@ -38,9 +38,9 @@ void main() {
 
       test('should handle search query state changes', () {
         // Act
-        final initialQuery = container.read(searchQueryProvider);
-        container.read(searchQueryProvider.notifier).state = 'test query';
-        final updatedQuery = container.read(searchQueryProvider);
+        final initialQuery = container.read(searchQueryProvider).query;
+        container.read(searchQueryProvider).updateQuery('test query');
+        final updatedQuery = container.read(searchQueryProvider).query;
 
         // Assert
         expect(initialQuery, equals(''));
@@ -55,16 +55,19 @@ void main() {
           _createTestCampground(id: '1', name: 'Camp 1'),
           _createTestCampground(id: '2', name: 'Camp 2'),
         ];
-        when(mockRepository.getAllCampgrounds())
-            .thenAnswer((_) async => testCampgrounds);
+        when(
+          mockRepository.getAllCampgrounds(),
+        ).thenAnswer((_) async => testCampgrounds);
 
         // Act
         final asyncValue = await container.read(campgroundsProvider.future);
 
         // Assert
         expect(asyncValue, hasLength(2));
-        expect(asyncValue.map((c) => c.name).toSet(),
-            equals({'Camp 1', 'Camp 2'}));
+        expect(
+          asyncValue.map((c) => c.name).toSet(),
+          equals({'Camp 1', 'Camp 2'}),
+        );
         verify(mockRepository.getAllCampgrounds()).called(1);
       });
 
@@ -73,11 +76,14 @@ void main() {
         final californiaCampgrounds = [
           _createTestCampground(id: 'ca1', name: 'CA Camp', state: 'CA'),
         ];
-        when(mockRepository.getCampgroundsByState('CA'))
-            .thenAnswer((_) async => californiaCampgrounds);
+        when(
+          mockRepository.getCampgroundsByState('CA'),
+        ).thenAnswer((_) async => californiaCampgrounds);
 
         // Act
-        final asyncValue = await container.read(campgroundsByStateProvider('CA').future);
+        final asyncValue = await container.read(
+          campgroundsByStateProvider('CA').future,
+        );
 
         // Assert
         expect(asyncValue, hasLength(1));
@@ -88,13 +94,20 @@ void main() {
       test('should load monitored campgrounds', () async {
         // Arrange
         final monitoredCampgrounds = [
-          _createTestCampground(id: 'm1', name: 'Monitored Camp', isMonitored: true),
+          _createTestCampground(
+            id: 'm1',
+            name: 'Monitored Camp',
+            isMonitored: true,
+          ),
         ];
-        when(mockRepository.getMonitoredCampgrounds())
-            .thenAnswer((_) async => monitoredCampgrounds);
+        when(
+          mockRepository.getMonitoredCampgrounds(),
+        ).thenAnswer((_) async => monitoredCampgrounds);
 
         // Act
-        final asyncValue = await container.read(monitoredCampgroundsProvider.future);
+        final asyncValue = await container.read(
+          monitoredCampgroundsProvider.future,
+        );
 
         // Assert
         expect(asyncValue, hasLength(1));
@@ -108,8 +121,9 @@ void main() {
           _createTestCampground(id: 'm1', isMonitored: true),
           _createTestCampground(id: 'm2', isMonitored: true),
         ];
-        when(mockRepository.getMonitoredCampgrounds())
-            .thenAnswer((_) async => monitoredCampgrounds);
+        when(
+          mockRepository.getMonitoredCampgrounds(),
+        ).thenAnswer((_) async => monitoredCampgrounds);
 
         // Act
         final count = await container.read(monitoredCountProvider.future);
@@ -120,39 +134,43 @@ void main() {
     });
 
     group('Search Functionality', () {
-      test('should return all campgrounds when search query is empty', () async {
-        // Arrange
-        final allCampgrounds = [
-          _createTestCampground(id: '1', name: 'All Camp 1'),
-          _createTestCampground(id: '2', name: 'All Camp 2'),
-        ];
-        when(mockRepository.getAllCampgrounds())
-            .thenAnswer((_) async => allCampgrounds);
-        when(mockRepository.searchByQuery(any))
-            .thenAnswer((_) async => []);
+      test(
+        'should return all campgrounds when search query is empty',
+        () async {
+          // Arrange
+          final allCampgrounds = [
+            _createTestCampground(id: '1', name: 'All Camp 1'),
+            _createTestCampground(id: '2', name: 'All Camp 2'),
+          ];
+          when(
+            mockRepository.getAllCampgrounds(),
+          ).thenAnswer((_) async => allCampgrounds);
+          when(mockRepository.searchByQuery(any)).thenAnswer((_) async => []);
 
-        // Ensure search query is empty
-        container.read(searchQueryProvider.notifier).state = '';
+          // Ensure search query is empty
+          container.read(searchQueryProvider).updateQuery('');
 
-        // Act
-        final results = await container.read(searchResultsProvider.future);
+          // Act
+          final results = await container.read(searchResultsProvider.future);
 
-        // Assert
-        expect(results, hasLength(2));
-        verify(mockRepository.getAllCampgrounds()).called(1);
-        verifyNever(mockRepository.searchByQuery(any));
-      });
+          // Assert
+          expect(results, hasLength(2));
+          verify(mockRepository.getAllCampgrounds()).called(1);
+          verifyNever(mockRepository.searchByQuery(any));
+        },
+      );
 
       test('should search by query when query is not empty', () async {
         // Arrange
         final searchResults = [
           _createTestCampground(id: 'search1', name: 'Search Result'),
         ];
-        when(mockRepository.searchByQuery('yosemite'))
-            .thenAnswer((_) async => searchResults);
+        when(
+          mockRepository.searchByQuery('yosemite'),
+        ).thenAnswer((_) async => searchResults);
 
         // Set search query
-        container.read(searchQueryProvider.notifier).state = 'yosemite';
+        container.read(searchQueryProvider).updateQuery('yosemite');
 
         // Act
         final results = await container.read(searchResultsProvider.future);
@@ -166,17 +184,19 @@ void main() {
 
       test('should update search results when query changes', () async {
         // Arrange
-        when(mockRepository.searchByQuery('query1'))
-            .thenAnswer((_) async => [_createTestCampground(name: 'Result 1')]);
-        when(mockRepository.searchByQuery('query2'))
-            .thenAnswer((_) async => [_createTestCampground(name: 'Result 2')]);
+        when(
+          mockRepository.searchByQuery('query1'),
+        ).thenAnswer((_) async => [_createTestCampground(name: 'Result 1')]);
+        when(
+          mockRepository.searchByQuery('query2'),
+        ).thenAnswer((_) async => [_createTestCampground(name: 'Result 2')]);
 
         // Act - First search
-        container.read(searchQueryProvider.notifier).state = 'query1';
+        container.read(searchQueryProvider).updateQuery('query1');
         final results1 = await container.read(searchResultsProvider.future);
 
         // Act - Second search
-        container.read(searchQueryProvider.notifier).state = 'query2';
+        container.read(searchQueryProvider).updateQuery('query2');
         final results2 = await container.read(searchResultsProvider.future);
 
         // Assert
@@ -192,12 +212,14 @@ void main() {
           id: 'detail_test',
           name: 'Detail Test Camp',
         );
-        when(mockRepository.getCampgroundById('detail_test'))
-            .thenAnswer((_) async => testCampground);
+        when(
+          mockRepository.getCampgroundById('detail_test'),
+        ).thenAnswer((_) async => testCampground);
 
         // Act
         final result = await container.read(
-            campgroundDetailsProvider('detail_test').future);
+          campgroundDetailsProvider('detail_test').future,
+        );
 
         // Assert
         expect(result, isNotNull);
@@ -208,12 +230,14 @@ void main() {
 
       test('should return null for non-existent campground', () async {
         // Arrange
-        when(mockRepository.getCampgroundById('nonexistent'))
-            .thenAnswer((_) async => null);
+        when(
+          mockRepository.getCampgroundById('nonexistent'),
+        ).thenAnswer((_) async => null);
 
         // Act
         final result = await container.read(
-            campgroundDetailsProvider('nonexistent').future);
+          campgroundDetailsProvider('nonexistent').future,
+        );
 
         // Assert
         expect(result, isNull);
@@ -240,25 +264,31 @@ void main() {
           ),
         ];
 
-        when(mockRepository.searchNearby(
-          latitude: 37.7749,
-          longitude: -122.4194,
-          radiusMiles: 25.0,
-          stateFilter: 'CA',
-        )).thenAnswer((_) async => nearbyResults);
+        when(
+          mockRepository.searchNearby(
+            latitude: 37.7749,
+            longitude: -122.4194,
+            radiusMiles: 25.0,
+            stateFilter: 'CA',
+          ),
+        ).thenAnswer((_) async => nearbyResults);
 
         // Act
-        final results = await container.read(nearbySearchProvider(nearbyParams).future);
+        final results = await container.read(
+          nearbySearchProvider(nearbyParams).future,
+        );
 
         // Assert
         expect(results, hasLength(1));
         expect(results.first.name, equals('Nearby Camp'));
-        verify(mockRepository.searchNearby(
-          latitude: 37.7749,
-          longitude: -122.4194,
-          radiusMiles: 25.0,
-          stateFilter: 'CA',
-        )).called(1);
+        verify(
+          mockRepository.searchNearby(
+            latitude: 37.7749,
+            longitude: -122.4194,
+            radiusMiles: 25.0,
+            stateFilter: 'CA',
+          ),
+        ).called(1);
       });
     });
 
@@ -278,25 +308,30 @@ void main() {
           '2026-06-04': true,
         };
 
-        when(mockRepository.checkAvailability(
-          campgroundId: 'test_camp',
-          startDate: DateTime(2026, 6, 1),
-          endDate: DateTime(2026, 6, 7),
-        )).thenAnswer((_) async => availabilityResult);
+        when(
+          mockRepository.checkAvailability(
+            campgroundId: 'test_camp',
+            startDate: DateTime(2026, 6, 1),
+            endDate: DateTime(2026, 6, 7),
+          ),
+        ).thenAnswer((_) async => availabilityResult);
 
         // Act
         final result = await container.read(
-            availabilityProvider(availabilityParams).future);
+          availabilityProvider(availabilityParams).future,
+        );
 
         // Assert
         expect(result, hasLength(4));
         expect(result['2026-06-01'], isTrue);
         expect(result['2026-06-03'], isFalse);
-        verify(mockRepository.checkAvailability(
-          campgroundId: 'test_camp',
-          startDate: DateTime(2026, 6, 1),
-          endDate: DateTime(2026, 6, 7),
-        )).called(1);
+        verify(
+          mockRepository.checkAvailability(
+            campgroundId: 'test_camp',
+            startDate: DateTime(2026, 6, 1),
+            endDate: DateTime(2026, 6, 7),
+          ),
+        ).called(1);
       });
     });
 
@@ -312,15 +347,18 @@ void main() {
 
       test('should handle monitoring toggle action', () async {
         // Arrange
-        when(mockRepository.updateMonitoringStatus('test_id', true))
-            .thenAnswer((_) async {});
+        when(
+          mockRepository.updateMonitoringStatus('test_id', true),
+        ).thenAnswer((_) async {});
 
         // Act
         final actions = container.read(campgroundActionsProvider);
         await actions.toggleMonitoring('test_id', true);
 
         // Assert
-        verify(mockRepository.updateMonitoringStatus('test_id', true)).called(1);
+        verify(
+          mockRepository.updateMonitoringStatus('test_id', true),
+        ).called(1);
       });
 
       test('should update search query through actions', () {
@@ -331,7 +369,7 @@ void main() {
         actions.updateSearchQuery('new search');
 
         // Assert
-        final currentQuery = container.read(searchQueryProvider);
+        final currentQuery = container.read(searchQueryProvider).query;
         expect(currentQuery, equals('new search'));
       });
     });
@@ -339,23 +377,29 @@ void main() {
     group('Error Handling', () {
       test('should handle repository errors in async providers', () async {
         // Arrange
-        when(mockRepository.getAllCampgrounds())
-            .thenThrow(Exception('Repository Error'));
+        when(
+          mockRepository.getAllCampgrounds(),
+        ).thenThrow(Exception('Repository Error'));
 
         // Act & Assert
-        expect(() => container.read(campgroundsProvider.future),
-               throwsException);
+        expect(
+          () => container.read(campgroundsProvider.future),
+          throwsException,
+        );
       });
 
       test('should handle errors in action providers', () async {
         // Arrange
-        when(mockRepository.updateMonitoringStatus(any, any))
-            .thenThrow(Exception('Update Error'));
+        when(
+          mockRepository.updateMonitoringStatus(any, any),
+        ).thenThrow(Exception('Update Error'));
 
         // Act & Assert
         final actions = container.read(campgroundActionsProvider);
-        expect(() => actions.toggleMonitoring('test_id', true),
-               throwsException);
+        expect(
+          () => actions.toggleMonitoring('test_id', true),
+          throwsException,
+        );
       });
     });
 
@@ -363,8 +407,9 @@ void main() {
       test('should cache provider results', () async {
         // Arrange
         final testCampgrounds = [_createTestCampground()];
-        when(mockRepository.getAllCampgrounds())
-            .thenAnswer((_) async => testCampgrounds);
+        when(
+          mockRepository.getAllCampgrounds(),
+        ).thenAnswer((_) async => testCampgrounds);
 
         // Act - Read twice
         await container.read(campgroundsProvider.future);
@@ -376,8 +421,9 @@ void main() {
 
       test('should refresh data when provider is invalidated', () async {
         // Arrange
-        when(mockRepository.getAllCampgrounds())
-            .thenAnswer((_) async => [_createTestCampground()]);
+        when(
+          mockRepository.getAllCampgrounds(),
+        ).thenAnswer((_) async => [_createTestCampground()]);
 
         // Act - Read, invalidate, read again
         await container.read(campgroundsProvider.future);

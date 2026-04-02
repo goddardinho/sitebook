@@ -16,26 +16,26 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Complete Reservation Flow', () {
-    testWidgets('Full user journey: Browse → Details → Reservation → Complete', 
-      (WidgetTester tester) async {
-      
+    testWidgets('Full user journey: Browse → Details → Reservation → Complete', (
+      WidgetTester tester,
+    ) async {
       // Start the app
       app.main();
       await tester.pumpAndSettle();
 
       // Step 1: Verify we're on the main campgrounds screen
       expect(find.text('Campgrounds'), findsOneWidget);
-      
+
       // Look for campground cards and tap the first one
       final campgroundCards = find.byType(Card);
       expect(campgroundCards, findsWidgets);
-      
+
       await tester.tap(campgroundCards.first);
       await tester.pumpAndSettle();
 
       // Step 2: Verify we're on campground details screen
       expect(find.text('Make Reservation'), findsOneWidget);
-      
+
       // Tap the "Make Reservation" button
       await tester.tap(find.text('Make Reservation'));
       await tester.pumpAndSettle();
@@ -73,13 +73,13 @@ void main() {
       // Mock selecting dates by manually triggering the app's date selection
       // In a real integration test, we'd interact with the actual date picker
       // For now, we'll test the form structure and navigation
-      
+
       // Step 4: Test navigation through the form steps
       // (Assuming dates were selected, test moving to guest selection)
-      
+
       // Verify guest selection elements would be present on step 2
       // This would require actual date selection which is complex in integration tests
-      
+
       print('✓ Campground listing displayed correctly');
       print('✓ Navigation to campground details works');
       print('✓ Reservation form opens correctly');
@@ -87,19 +87,18 @@ void main() {
       print('✓ Multi-step form structure is working');
     });
 
-    testWidgets('Reservation form step progression', (WidgetTester tester) async {
-      
+    testWidgets('Reservation form step progression', (
+      WidgetTester tester,
+    ) async {
       // Create a test scenario where we can test form progression
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
-            home: ReservationFormScreen(
-              campground: TestData.testCampground,
-            ),
+            home: ReservationFormScreen(campground: TestData.testCampground),
           ),
         ),
       );
-      
+
       await tester.pumpAndSettle();
 
       // Verify initial state
@@ -121,7 +120,6 @@ void main() {
     });
 
     testWidgets('Guest selection functionality', (WidgetTester tester) async {
-      
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -181,7 +179,6 @@ void main() {
     });
 
     testWidgets('Form input validation', (WidgetTester tester) async {
-      
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -206,7 +203,9 @@ void main() {
                       if (value == null || value.trim().isEmpty) {
                         return 'Email is required';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value.trim())) {
                         return 'Please enter a valid email address';
                       }
                       return null;
@@ -241,12 +240,18 @@ void main() {
       await tester.tap(find.text('Validate'));
       await tester.pump();
 
-      expect(find.text('First name must be at least 2 characters'), findsOneWidget);
+      expect(
+        find.text('First name must be at least 2 characters'),
+        findsOneWidget,
+      );
       expect(find.text('Please enter a valid email address'), findsOneWidget);
 
       // Test valid input
       await tester.enterText(find.byType(TextFormField).first, 'John');
-      await tester.enterText(find.byType(TextFormField).last, 'john@example.com');
+      await tester.enterText(
+        find.byType(TextFormField).last,
+        'john@example.com',
+      );
       await tester.tap(find.text('Validate'));
       await tester.pump();
 
@@ -260,23 +265,18 @@ void main() {
     });
 
     testWidgets('Responsive UI behavior', (WidgetTester tester) async {
-      
       // Test different screen sizes
       await tester.binding.setSurfaceSize(const Size(800, 600)); // Tablet size
-      
+
       await tester.pumpWidget(
-        ProviderScope(
-          child: const MaterialApp(
-            home: CampgroundsScreen(),
-          ),
-        ),
+        ProviderScope(child: const MaterialApp(home: CampgroundsScreen())),
       );
-      
+
       await tester.pumpAndSettle();
 
       // Verify the app renders correctly on larger screens
       expect(find.text('Campgrounds'), findsOneWidget);
-      
+
       // Switch to phone size
       await tester.binding.setSurfaceSize(const Size(400, 800)); // Phone size
       await tester.pumpAndSettle();

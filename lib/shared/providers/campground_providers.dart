@@ -16,13 +16,16 @@ final campgroundsProvider = FutureProvider<List<Campground>>((ref) async {
 });
 
 // Provider for campgrounds by state
-final campgroundsByStateProvider = FutureProvider.family<List<Campground>, String>((ref, stateCode) async {
-  final repository = ref.read(campgroundRepositoryProvider);
-  return await repository.getCampgroundsByState(stateCode);
-});
+final campgroundsByStateProvider =
+    FutureProvider.family<List<Campground>, String>((ref, stateCode) async {
+      final repository = ref.read(campgroundRepositoryProvider);
+      return await repository.getCampgroundsByState(stateCode);
+    });
 
 // Provider for monitored campgrounds
-final monitoredCampgroundsProvider = FutureProvider<List<Campground>>((ref) async {
+final monitoredCampgroundsProvider = FutureProvider<List<Campground>>((
+  ref,
+) async {
   final repository = ref.read(campgroundRepositoryProvider);
   return await repository.getMonitoredCampgrounds();
 });
@@ -32,15 +35,15 @@ final searchQueryProvider = Provider((ref) => SearchQueryNotifier());
 
 class SearchQueryNotifier {
   String _query = '';
-  
+
   String get query => _query;
   bool get isEmpty => _query.isEmpty;
   bool get isNotEmpty => _query.isNotEmpty;
-  
+
   void updateQuery(String newQuery) {
     _query = newQuery;
   }
-  
+
   @override
   String toString() => _query;
 }
@@ -50,45 +53,58 @@ final searchResultsProvider = FutureProvider<List<Campground>>((ref) async {
   final repository = ref.read(campgroundRepositoryProvider);
   final searchQueryNotifier = ref.watch(searchQueryProvider);
   final query = searchQueryNotifier.query;
-  
+
   if (query.isEmpty) {
     // Return all campgrounds when no search query
     return await repository.getAllCampgrounds();
   }
-  
+
   return await repository.searchByQuery(query);
 });
 
 // Provider for campground details by ID
-final campgroundDetailsProvider = FutureProvider.family<Campground?, String>((ref, campgroundId) async {
+final campgroundDetailsProvider = FutureProvider.family<Campground?, String>((
+  ref,
+  campgroundId,
+) async {
   final repository = ref.read(campgroundRepositoryProvider);
   return await repository.getCampgroundById(campgroundId);
 });
 
 // Provider for location-based search
-final nearbySearchProvider = FutureProvider.family<List<Campground>, NearbySearchParams>((ref, params) async {
-  final repository = ref.read(campgroundRepositoryProvider);
-  return await repository.searchNearby(
-    latitude: params.latitude,
-    longitude: params.longitude,
-    radiusMiles: params.radiusMiles,
-    stateFilter: params.stateFilter,
-  );
-});
+final nearbySearchProvider =
+    FutureProvider.family<List<Campground>, NearbySearchParams>((
+      ref,
+      params,
+    ) async {
+      final repository = ref.read(campgroundRepositoryProvider);
+      return await repository.searchNearby(
+        latitude: params.latitude,
+        longitude: params.longitude,
+        radiusMiles: params.radiusMiles,
+        stateFilter: params.stateFilter,
+      );
+    });
 
 // Provider for availability check
-final availabilityProvider = FutureProvider.family<Map<String, bool>, AvailabilityParams>((ref, params) async {
-  final repository = ref.read(campgroundRepositoryProvider);
-  return await repository.checkAvailability(
-    campgroundId: params.campgroundId,
-    startDate: params.startDate,
-    endDate: params.endDate,
-  );
-});
+final availabilityProvider =
+    FutureProvider.family<Map<String, bool>, AvailabilityParams>((
+      ref,
+      params,
+    ) async {
+      final repository = ref.read(campgroundRepositoryProvider);
+      return await repository.checkAvailability(
+        campgroundId: params.campgroundId,
+        startDate: params.startDate,
+        endDate: params.endDate,
+      );
+    });
 
 // Provider for monitoring count
 final monitoredCountProvider = FutureProvider<int>((ref) async {
-  final monitoredCampgrounds = await ref.watch(monitoredCampgroundsProvider.future);
+  final monitoredCampgrounds = await ref.watch(
+    monitoredCampgroundsProvider.future,
+  );
   return monitoredCampgrounds.length;
 });
 
@@ -103,9 +119,9 @@ final campgroundErrorProvider = Provider((ref) => ErrorStateNotifier());
 
 class UIStateNotifier {
   bool _loading = false;
-  
+
   bool get loading => _loading;
-  
+
   void setLoading(bool loading) {
     _loading = loading;
   }
@@ -113,9 +129,9 @@ class UIStateNotifier {
 
 class ErrorStateNotifier {
   String? _error;
-  
+
   String? get error => _error;
-  
+
   void setError(String? error) {
     _error = error;
   }
@@ -133,16 +149,18 @@ class CampgroundActions {
     try {
       _ref.read(campgroundLoadingProvider).setLoading(true);
       _ref.read(campgroundErrorProvider).setError(null);
-      
+
       await _repository.updateMonitoringStatus(campgroundId, isMonitored);
-      
+
       // Refresh monitored campgrounds
       _ref.invalidate(monitoredCampgroundsProvider);
-      
+
       _ref.read(campgroundLoadingProvider).setLoading(false);
     } catch (e) {
       _ref.read(campgroundLoadingProvider).setLoading(false);
-      _ref.read(campgroundErrorProvider).setError('Failed to update monitoring status: ${e.toString()}');
+      _ref
+          .read(campgroundErrorProvider)
+          .setError('Failed to update monitoring status: ${e.toString()}');
     }
   }
 
@@ -156,18 +174,20 @@ class CampgroundActions {
     try {
       _ref.read(campgroundLoadingProvider).setLoading(true);
       _ref.read(campgroundErrorProvider).setError(null);
-      
+
       await _repository.refresh();
-      
+
       // Refresh all providers
       _ref.invalidate(campgroundsProvider);
       _ref.invalidate(searchResultsProvider);
       _ref.invalidate(monitoredCampgroundsProvider);
-      
+
       _ref.read(campgroundLoadingProvider).setLoading(false);
     } catch (e) {
       _ref.read(campgroundLoadingProvider).setLoading(false);
-      _ref.read(campgroundErrorProvider).setError('Failed to refresh data: ${e.toString()}');
+      _ref
+          .read(campgroundErrorProvider)
+          .setError('Failed to refresh data: ${e.toString()}');
     }
   }
 
@@ -176,18 +196,20 @@ class CampgroundActions {
     try {
       _ref.read(campgroundLoadingProvider).setLoading(true);
       _ref.read(campgroundErrorProvider).setError(null);
-      
+
       await _repository.clearCache();
-      
+
       // Refresh all providers
       _ref.invalidate(campgroundsProvider);
       _ref.invalidate(searchResultsProvider);
       _ref.invalidate(monitoredCampgroundsProvider);
-      
+
       _ref.read(campgroundLoadingProvider).setLoading(false);
     } catch (e) {
       _ref.read(campgroundLoadingProvider).setLoading(false);
-      _ref.read(campgroundErrorProvider).setError('Failed to clear cache: ${e.toString()}');
+      _ref
+          .read(campgroundErrorProvider)
+          .setError('Failed to clear cache: ${e.toString()}');
     }
   }
 
@@ -222,7 +244,10 @@ class NearbySearchParams {
 
   @override
   int get hashCode =>
-      latitude.hashCode ^ longitude.hashCode ^ radiusMiles.hashCode ^ stateFilter.hashCode;
+      latitude.hashCode ^
+      longitude.hashCode ^
+      radiusMiles.hashCode ^
+      stateFilter.hashCode;
 }
 
 class AvailabilityParams {
@@ -246,5 +271,6 @@ class AvailabilityParams {
           endDate == other.endDate;
 
   @override
-  int get hashCode => campgroundId.hashCode ^ startDate.hashCode ^ endDate.hashCode;
+  int get hashCode =>
+      campgroundId.hashCode ^ startDate.hashCode ^ endDate.hashCode;
 }

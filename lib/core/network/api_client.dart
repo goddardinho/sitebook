@@ -4,22 +4,25 @@ import 'package:logger/logger.dart';
 
 class ApiClient {
   static const String _baseUrl = 'https://ridb.recreation.gov/api/v1';
-  static const String _apiKey = 'YOUR_API_KEY_HERE'; // TODO: Move to environment variable
-  
+  static const String _apiKey =
+      'YOUR_API_KEY_HERE'; // TODO: Move to environment variable
+
   late final Dio _dio;
   final Logger _logger = Logger();
 
   ApiClient() {
-    _dio = Dio(BaseOptions(
-      baseUrl: _baseUrl,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'apikey': _apiKey,
-      },
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: _baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'apikey': _apiKey,
+        },
+      ),
+    );
 
     _setupInterceptors();
   }
@@ -29,8 +32,6 @@ class ApiClient {
       _dio.interceptors.add(
         LogInterceptor(
           // SECURITY: Disabled request/response body logging to prevent API key exposure
-          requestBody: false,
-          responseBody: false,
           logPrint: (obj) => _logger.d(obj),
         ),
       );

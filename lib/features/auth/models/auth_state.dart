@@ -4,13 +4,13 @@ import 'user.dart';
 enum AuthStatus {
   /// Authentication state is unknown (app is initializing)
   unknown,
-  
+
   /// User is not authenticated
   unauthenticated,
-  
+
   /// User is authenticated
   authenticated,
-  
+
   /// Authentication is in progress
   authenticating,
 }
@@ -21,38 +21,24 @@ class AuthState {
   final User? user;
   final String? errorMessage;
 
-  const AuthState({
-    required this.status,
-    this.user,
-    this.errorMessage,
-  });
+  const AuthState({required this.status, this.user, this.errorMessage});
 
   /// Initial unknown state
   const AuthState.unknown() : this(status: AuthStatus.unknown);
 
   /// Unauthenticated state
-  const AuthState.unauthenticated([String? errorMessage]) 
-      : this(
-          status: AuthStatus.unauthenticated,
-          errorMessage: errorMessage,
-        );
+  const AuthState.unauthenticated([String? errorMessage])
+    : this(status: AuthStatus.unauthenticated, errorMessage: errorMessage);
 
   /// Authenticated state with user
-  const AuthState.authenticated(User user) 
-      : this(
-          status: AuthStatus.authenticated,
-          user: user,
-        );
+  const AuthState.authenticated(User user)
+    : this(status: AuthStatus.authenticated, user: user);
 
   /// Authenticating state
   const AuthState.authenticating() : this(status: AuthStatus.authenticating);
 
   /// Copy with new values
-  AuthState copyWith({
-    AuthStatus? status,
-    User? user,
-    String? errorMessage,
-  }) {
+  AuthState copyWith({AuthStatus? status, User? user, String? errorMessage}) {
     return AuthState(
       status: status ?? this.status,
       user: user ?? this.user,
@@ -61,7 +47,8 @@ class AuthState {
   }
 
   /// Convenience getters
-  bool get isAuthenticated => status == AuthStatus.authenticated && user != null;
+  bool get isAuthenticated =>
+      status == AuthStatus.authenticated && user != null;
   bool get isUnauthenticated => status == AuthStatus.unauthenticated;
   bool get isAuthenticating => status == AuthStatus.authenticating;
   bool get isUnknown => status == AuthStatus.unknown;
@@ -120,7 +107,7 @@ class AuthTokens {
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 
   /// Check if token expires soon (within 5 minutes)
-  bool get isExpiringSoon => 
+  bool get isExpiringSoon =>
       DateTime.now().add(const Duration(minutes: 5)).isAfter(expiresAt);
 
   @override
@@ -145,16 +132,10 @@ class LoginRequest {
   final String email;
   final String password;
 
-  const LoginRequest({
-    required this.email,
-    required this.password,
-  });
+  const LoginRequest({required this.email, required this.password});
 
   Map<String, dynamic> toJson() {
-    return {
-      'email': email,
-      'password': password,
-    };
+    return {'email': email, 'password': password};
   }
 }
 
@@ -187,10 +168,7 @@ class AuthResponse {
   final User user;
   final AuthTokens tokens;
 
-  const AuthResponse({
-    required this.user,
-    required this.tokens,
-  });
+  const AuthResponse({required this.user, required this.tokens});
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
     return AuthResponse(

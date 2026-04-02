@@ -3,15 +3,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 class NavigationUtils {
   static Future<void> openDirections(
-    double latitude, 
-    double longitude, 
-    BuildContext context
+    double latitude,
+    double longitude,
+    BuildContext context,
   ) async {
     try {
       final url = Uri.parse(
-        'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving'
+        'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving',
       );
-      
+
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {

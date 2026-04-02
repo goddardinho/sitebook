@@ -6,10 +6,12 @@ class CampgroundsScreenIOSCompatible extends ConsumerStatefulWidget {
   const CampgroundsScreenIOSCompatible({super.key});
 
   @override
-  ConsumerState<CampgroundsScreenIOSCompatible> createState() => _CampgroundsScreenIOSCompatibleState();
+  ConsumerState<CampgroundsScreenIOSCompatible> createState() =>
+      _CampgroundsScreenIOSCompatibleState();
 }
 
-class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScreenIOSCompatible> {
+class _CampgroundsScreenIOSCompatibleState
+    extends ConsumerState<CampgroundsScreenIOSCompatible> {
   final _searchController = TextEditingController();
   bool _isSearching = false;
 
@@ -30,7 +32,6 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
 
   @override
   Widget build(BuildContext context) {
-    final searchQuery = ref.watch(searchQueryProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -80,11 +81,15 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
                             const SizedBox(height: 8),
                             Consumer(
                               builder: (context, ref, child) {
-                                final monitoredCountAsync = ref.watch(monitoredCountProvider);
+                                final monitoredCountAsync = ref.watch(
+                                  monitoredCountProvider,
+                                );
                                 return monitoredCountAsync.when(
-                                  data: (count) => _buildHeaderStats(theme, count),
+                                  data: (count) =>
+                                      _buildHeaderStats(theme, count),
                                   loading: () => _buildHeaderStats(theme, 0),
-                                  error: (error, stack) => _buildHeaderStats(theme, 0),
+                                  error: (error, stack) =>
+                                      _buildHeaderStats(theme, 0),
                                 );
                               },
                             ),
@@ -117,12 +122,11 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
         body: Consumer(
           builder: (context, ref, child) {
             final searchResultsAsync = ref.watch(searchResultsProvider);
-            
+
             return searchResultsAsync.when(
-              data: (campgrounds) => _buildCampgroundsList(context, campgrounds),
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
-              ),
+              data: (campgrounds) =>
+                  _buildCampgroundsList(context, campgrounds),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -168,7 +172,7 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -186,7 +190,7 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
             vertical: 12,
           ),
           hintStyle: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ),
@@ -216,7 +220,7 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
     if (campgrounds.isEmpty) {
       final theme = Theme.of(context);
       final searchQuery = ref.watch(searchQueryProvider);
-      
+
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -228,7 +232,7 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
             ),
             const SizedBox(height: 16),
             Text(
-              searchQuery.isNotEmpty 
+              searchQuery.isNotEmpty
                   ? 'No campgrounds found'
                   : 'No campgrounds available',
               style: theme.textTheme.headlineSmall?.copyWith(
@@ -278,7 +282,7 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('State: ${campground.state}'),
-                                if (campground.parkName != null) 
+                                if (campground.parkName != null)
                                   Text('Park: ${campground.parkName}'),
                                 const SizedBox(height: 8),
                                 Text(campground.description),
@@ -311,9 +315,8 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
                             children: [
                               Text(
                                 campground.name,
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -323,21 +326,31 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
                                   Icon(
                                     Icons.location_on_outlined,
                                     size: 14,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     campground.state,
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                    ),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
                                   ),
                                   if (campground.parkName != null) ...[
                                     Text(
                                       ' • ${campground.parkName}',
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -351,13 +364,18 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
                         IconButton.filledTonal(
                           onPressed: () {
                             final actions = ref.read(campgroundActionsProvider);
-                            actions.toggleMonitoring(campground.id, !campground.isMonitored);
+                            actions.toggleMonitoring(
+                              campground.id,
+                              !campground.isMonitored,
+                            );
                           },
                           icon: Icon(
-                            campground.isMonitored ? Icons.visibility : Icons.visibility_off,
+                            campground.isMonitored
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                           ),
-                          tooltip: campground.isMonitored 
-                              ? 'Stop monitoring' 
+                          tooltip: campground.isMonitored
+                              ? 'Stop monitoring'
                               : 'Start monitoring',
                         ),
                       ],
@@ -375,13 +393,17 @@ class _CampgroundsScreenIOSCompatibleState extends ConsumerState<CampgroundsScre
                       Wrap(
                         spacing: 6,
                         runSpacing: 4,
-                        children: campground.amenities.take(3).map<Widget>((amenity) {
+                        children: campground.amenities.take(3).map<Widget>((
+                          amenity,
+                        ) {
                           return Chip(
                             label: Text(
                               amenity,
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
-                            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                             side: BorderSide.none,
                           );
                         }).toList(),

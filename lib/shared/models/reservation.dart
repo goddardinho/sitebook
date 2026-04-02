@@ -55,7 +55,8 @@ class Reservation {
     this.updatedAt,
   });
 
-  factory Reservation.fromJson(Map<String, dynamic> json) => _$ReservationFromJson(json);
+  factory Reservation.fromJson(Map<String, dynamic> json) =>
+      _$ReservationFromJson(json);
   Map<String, dynamic> toJson() => _$ReservationToJson(this);
 
   Reservation copyWith({
@@ -94,8 +95,12 @@ class Reservation {
     );
   }
 
-  bool get isActive => status == ReservationStatus.monitoring || status == ReservationStatus.confirmed;
-  bool get canCancel => status != ReservationStatus.cancelled && status != ReservationStatus.completed;
+  bool get isActive =>
+      status == ReservationStatus.monitoring ||
+      status == ReservationStatus.confirmed;
+  bool get canCancel =>
+      status != ReservationStatus.cancelled &&
+      status != ReservationStatus.completed;
 
   @override
   bool operator ==(Object other) {

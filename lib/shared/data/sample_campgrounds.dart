@@ -5,7 +5,8 @@ final sampleCampgrounds = [
   Campground(
     id: '1',
     name: 'Yellowstone National Park - Madison Campground',
-    description: 'Located along the Madison River with beautiful mountain views and wildlife viewing opportunities. Perfect for RVs and tent camping.',
+    description:
+        'Located along the Madison River with beautiful mountain views and wildlife viewing opportunities. Perfect for RVs and tent camping.',
     latitude: 44.6550,
     longitude: -110.8617,
     state: 'Wyoming',
@@ -13,8 +14,21 @@ final sampleCampgrounds = [
     reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232493',
     phoneNumber: '(307) 344-7381',
     email: 'yellowstone_info@nps.gov',
-    amenities: ['Restrooms', 'Potable Water', 'Fire Rings', 'Picnic Tables', 'Dump Station', 'Amphitheater'],
-    activities: ['Wildlife Viewing', 'Fishing', 'Hiking', 'Photography', 'Stargazing'],
+    amenities: [
+      'Restrooms',
+      'Potable Water',
+      'Fire Rings',
+      'Picnic Tables',
+      'Dump Station',
+      'Amphitheater',
+    ],
+    activities: [
+      'Wildlife Viewing',
+      'Fishing',
+      'Hiking',
+      'Photography',
+      'Stargazing',
+    ],
     imageUrls: [
       'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800',
       'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
@@ -26,7 +40,8 @@ final sampleCampgrounds = [
   Campground(
     id: '2',
     name: 'Grand Canyon National Park - Mather Campground',
-    description: 'Year-round camping on the South Rim of the Grand Canyon. Easy access to trails and breathtaking canyon views.',
+    description:
+        'Year-round camping on the South Rim of the Grand Canyon. Easy access to trails and breathtaking canyon views.',
     latitude: 36.0544,
     longitude: -112.1401,
     state: 'Arizona',
@@ -34,8 +49,21 @@ final sampleCampgrounds = [
     reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232449',
     phoneNumber: '(928) 638-7888',
     email: 'grca_info@nps.gov',
-    amenities: ['Restrooms', 'Showers', 'Potable Water', 'Fire Rings', 'Picnic Tables', 'Laundry'],
-    activities: ['Hiking', 'Photography', 'Stargazing', 'Ranger Programs', 'Biking'],
+    amenities: [
+      'Restrooms',
+      'Showers',
+      'Potable Water',
+      'Fire Rings',
+      'Picnic Tables',
+      'Laundry',
+    ],
+    activities: [
+      'Hiking',
+      'Photography',
+      'Stargazing',
+      'Ranger Programs',
+      'Biking',
+    ],
     imageUrls: [
       'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?w=800',
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
@@ -47,7 +75,8 @@ final sampleCampgrounds = [
   Campground(
     id: '3',
     name: 'Yosemite National Park - Upper Pines Campground',
-    description: 'Located in Yosemite Valley with easy access to hiking trails and iconic landmarks like Half Dome and El Capitan.',
+    description:
+        'Located in Yosemite Valley with easy access to hiking trails and iconic landmarks like Half Dome and El Capitan.',
     latitude: 37.7368,
     longitude: -119.5581,
     state: 'California',
@@ -55,8 +84,20 @@ final sampleCampgrounds = [
     reservationUrl: 'https://www.recreation.gov/camping/campgrounds/232447',
     phoneNumber: '(209) 372-8502',
     email: 'yose_info@nps.gov',
-    amenities: ['Restrooms', 'Potable Water', 'Fire Rings', 'Picnic Tables', 'Bear Boxes'],
-    activities: ['Rock Climbing', 'Hiking', 'Photography', 'Wildlife Viewing', 'Waterfall Viewing'],
+    amenities: [
+      'Restrooms',
+      'Potable Water',
+      'Fire Rings',
+      'Picnic Tables',
+      'Bear Boxes',
+    ],
+    activities: [
+      'Rock Climbing',
+      'Hiking',
+      'Photography',
+      'Wildlife Viewing',
+      'Waterfall Viewing',
+    ],
     imageUrls: [
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
       'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
@@ -68,7 +109,8 @@ final sampleCampgrounds = [
   Campground(
     id: '4',
     name: 'Olympic National Park - Kalaloch Campground',
-    description: 'Oceanfront camping with direct beach access. Perfect for tide pooling and enjoying Pacific Northwest coastal beauty.',
+    description:
+        'Oceanfront camping with direct beach access. Perfect for tide pooling and enjoying Pacific Northwest coastal beauty.',
     latitude: 47.6101,
     longitude: -124.3713,
     state: 'Washington',
@@ -77,7 +119,13 @@ final sampleCampgrounds = [
     phoneNumber: '(360) 565-3130',
     email: 'olym_info@nps.gov',
     amenities: ['Restrooms', 'Potable Water', 'Fire Rings', 'Picnic Tables'],
-    activities: ['Beach Combing', 'Tide Pooling', 'Storm Watching', 'Photography', 'Surfing'],
+    activities: [
+      'Beach Combing',
+      'Tide Pooling',
+      'Storm Watching',
+      'Photography',
+      'Surfing',
+    ],
     imageUrls: [
       'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
@@ -89,7 +137,8 @@ final sampleCampgrounds = [
   Campground(
     id: '5',
     name: 'Zion National Park - Watchman Campground',
-    description: 'Located near the Virgin River with stunning red rock formations. Gateway to famous hiking trails including Angels Landing.',
+    description:
+        'Located near the Virgin River with stunning red rock formations. Gateway to famous hiking trails including Angels Landing.',
     latitude: 37.2000,
     longitude: -113.0263,
     state: 'Utah',
@@ -97,8 +146,21 @@ final sampleCampgrounds = [
     reservationUrl: 'https://www.recreation.gov/camping/campgrounds/234052',
     phoneNumber: '(435) 772-3256',
     email: 'zion_info@nps.gov',
-    amenities: ['Restrooms', 'Showers', 'Potable Water', 'Fire Rings', 'Picnic Tables', 'Amphitheater'],
-    activities: ['Hiking', 'Rock Climbing', 'Photography', 'River Tubing', 'Ranger Programs'],
+    amenities: [
+      'Restrooms',
+      'Showers',
+      'Potable Water',
+      'Fire Rings',
+      'Picnic Tables',
+      'Amphitheater',
+    ],
+    activities: [
+      'Hiking',
+      'Rock Climbing',
+      'Photography',
+      'River Tubing',
+      'Ranger Programs',
+    ],
     imageUrls: [
       'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800',
       'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?w=800',

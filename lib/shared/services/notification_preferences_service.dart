@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +22,8 @@ class NotificationPreferencesService {
   }
 
   /// Get notifications enabled status
-  bool get notificationsEnabled => _prefs?.getBool(_keyNotificationsEnabled) ?? true;
+  bool get notificationsEnabled =>
+      _prefs?.getBool(_keyNotificationsEnabled) ?? true;
 
   /// Set notifications enabled status
   Future<void> setNotificationsEnabled(bool enabled) async {
@@ -55,7 +55,8 @@ class NotificationPreferencesService {
   }
 
   /// Get instant notifications enabled
-  bool get instantNotificationsEnabled => _prefs?.getBool(_keyInstantNotifications) ?? true;
+  bool get instantNotificationsEnabled =>
+      _prefs?.getBool(_keyInstantNotifications) ?? true;
 
   /// Set instant notifications enabled
   Future<void> setInstantNotificationsEnabled(bool enabled) async {
@@ -63,7 +64,8 @@ class NotificationPreferencesService {
   }
 
   /// Get summary notifications enabled
-  bool get summaryNotificationsEnabled => _prefs?.getBool(_keySummaryNotifications) ?? true;
+  bool get summaryNotificationsEnabled =>
+      _prefs?.getBool(_keySummaryNotifications) ?? true;
 
   /// Set summary notifications enabled
   Future<void> setSummaryNotificationsEnabled(bool enabled) async {
@@ -92,7 +94,10 @@ class NotificationPreferencesService {
   }
 
   /// Set campground-specific notification settings
-  Future<void> setCampgroundNotificationsEnabled(String campgroundId, bool enabled) async {
+  Future<void> setCampgroundNotificationsEnabled(
+    String campgroundId,
+    bool enabled,
+  ) async {
     await _prefs?.setBool('$_keyCampgroundSpecific$campgroundId', enabled);
   }
 
@@ -100,7 +105,7 @@ class NotificationPreferencesService {
   bool get isQuietHours {
     final now = DateTime.now();
     final currentHour = now.hour;
-    
+
     // Handle quiet hours that span midnight
     if (quietHoursStart > quietHoursEnd) {
       return currentHour >= quietHoursStart || currentHour < quietHoursEnd;
@@ -131,12 +136,13 @@ class NotificationPreferencesService {
 }
 
 /// Provider for notification preferences service
-final notificationPreferencesServiceProvider = Provider<NotificationPreferencesService>((ref) {
-  final service = NotificationPreferencesService();
-  // Initialize when first accessed
-  service.initialize();
-  return service;
-});
+final notificationPreferencesServiceProvider =
+    Provider<NotificationPreferencesService>((ref) {
+      final service = NotificationPreferencesService();
+      // Initialize when first accessed
+      service.initialize();
+      return service;
+    });
 
 /// Simple provider for notifications enabled status
 final notificationsEnabledProvider = Provider<bool>((ref) {
@@ -147,10 +153,7 @@ final notificationsEnabledProvider = Provider<bool>((ref) {
 /// Simple provider for quiet hours settings
 final quietHoursProvider = Provider<Map<String, int>>((ref) {
   final service = ref.watch(notificationPreferencesServiceProvider);
-  return {
-    'start': service.quietHoursStart,
-    'end': service.quietHoursEnd,
-  };
+  return {'start': service.quietHoursStart, 'end': service.quietHoursEnd};
 });
 
 /// Simple provider for check frequency

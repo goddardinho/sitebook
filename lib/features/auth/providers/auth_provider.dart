@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/auth_state.dart';
 import '../models/user.dart';
 import '../services/auth_repository.dart';
+import '../../../core/utils/app_logger.dart';
 
 /// Provider for the AuthRepository instance
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -40,61 +41,87 @@ class AuthNotifier extends Notifier<AuthState> {
   /// Initialize authentication state by checking stored credentials
   Future<void> _initialize() async {
     try {
-      print('🔄 AuthNotifier: Initializing authentication state');
+      AppLogger.info('AuthNotifier: Initializing authentication state');
       final authState = await _authRepository.initialize();
       state = authState;
     } catch (e) {
-      print('❌ AuthNotifier: Error during initialization - $e');
-      state = const AuthState.unauthenticated('Error loading authentication state');
+      AppLogger.error('AuthNotifier: Error during initialization', e);
+      state = const AuthState.unauthenticated(
+        'Error loading authentication state',
+      );
     }
   }
 
   /// Sign in with email and password
   Future<void> signIn(String email, String password) async {
     if (state.isAuthenticating) {
-      print('⚠️ AuthNotifier: Sign in already in progress');
+      AppLogger.warning('AuthNotifier: Sign in already in progress');
       return;
     }
-    
+
     try {
-      print('🔐 AuthNotifier: Starting sign in process');
+      AppLogger.auth('Starting sign in process', userId: email);
       state = const AuthState.authenticating();
-      
+
       final result = await _authRepository.signIn(email, password);
       state = result;
-      
+
       if (result.isAuthenticated) {
-        print('✅ AuthNotifier: Sign in successful');
+        AppLogger.auth(
+          'Sign in successful',
+          userId: result.user?.id,
+          isSuccess: true,
+        );
       } else {
-        print('❌ AuthNotifier: Sign in failed - ${result.errorMessage}');
+        AppLogger.auth(
+          'Sign in failed: ${result.errorMessage}',
+          isSuccess: false,
+        );
       }
     } catch (e) {
-      print('❌ AuthNotifier: Unexpected error during sign in - $e');
+      AppLogger.error('AuthNotifier: Unexpected error during sign in', e);
       state = const AuthState.unauthenticated('An unexpected error occurred');
     }
   }
 
   /// Sign up with user details
-  Future<void> signUp(String name, String email, String password, {String? location}) async {
+  Future<void> signUp(
+    String name,
+    String email,
+    String password, {
+    String? location,
+  }) async {
     if (state.isAuthenticating) {
-      print('⚠️ AuthNotifier: Sign up already in progress');
+      AppLogger.warning('AuthNotifier: Sign up already in progress');
       return;
     }
-    
+
     try {
-      print('📝 AuthNotifier: Starting sign up process');
+      AppLogger.auth('Starting sign up process', userId: email);
       state = const AuthState.authenticating();
-      
-      final result = await _authRepository.signUp(name, email, password, location: location);
+
+      final result = await _authRepository.signUp(
+        name,
+        email,
+        password,
+        location: location,
+      );
       state = result;
-      
+
       if (result.isAuthenticated) {
-        print('✅ AuthNotifier: Sign up successful');
+        AppLogger.auth(
+          'Sign up successful',
+          userId: result.user?.id,
+          isSuccess: true,
+        );
       } else {
-        print('❌ AuthNotifier: Sign up failed - ${result.errorMessage}');
+        AppLogger.auth(
+          'Sign up failed: ${result.errorMessage}',
+          isSuccess: false,
+        );
       }
     } catch (e) {
-      print('❌ AuthNotifier: Unexpected error during sign up - $e');
+      AppLogger.error('AuthNotifier: Unexpected error during sign up', e);
       state = const AuthState.unauthenticated('An unexpected error occurred');
     }
   }
@@ -102,14 +129,14 @@ class AuthNotifier extends Notifier<AuthState> {
   /// Sign out the current user
   Future<void> signOut() async {
     try {
-      print('👋 AuthNotifier: Starting sign out process');
-      
+      AppLogger.auth('Starting sign out process', userId: state.user?.id);
+
       final result = await _authRepository.signOut();
       state = result;
-      
-      print('✅ AuthNotifier: Sign out completed');
+
+      AppLogger.auth('Sign out completed', isSuccess: true);
     } catch (e) {
-      print('❌ AuthNotifier: Error during sign out - $e');
+      AppLogger.error('AuthNotifier: Error during sign out', e);
       // Still update state to signed out even if there was an error
       state = const AuthState.unauthenticated();
     }
@@ -118,42 +145,51 @@ class AuthNotifier extends Notifier<AuthState> {
   /// Refresh the access token
   Future<void> refreshToken() async {
     try {
-      print('🔄 AuthNotifier: Refreshing access token');
-      
+      AppLogger.auth('Refreshing access token');
+
       final result = await _authRepository.refreshAccessToken();
       state = result;
-      
+
       if (result.isAuthenticated) {
-        print('✅ AuthNotifier: Token refresh successful');
+        AppLogger.auth('Token refresh successful', isSuccess: true);
       } else {
-        print('❌ AuthNotifier: Token refresh failed - ${result.errorMessage}');
+        AppLogger.auth(
+          'Token refresh failed: ${result.errorMessage}',
+          isSuccess: false,
+        );
       }
     } catch (e) {
-      print('❌ AuthNotifier: Error during token refresh - $e');
-      state = const AuthState.unauthenticated('Session expired. Please sign in again.');
+      AppLogger.error('AuthNotifier: Error during token refresh', e);
+      state = const AuthState.unauthenticated(
+        'Session expired. Please sign in again.',
+      );
     }
   }
 
   /// Update user profile
   Future<void> updateProfile(Map<String, dynamic> updates) async {
     if (!state.isAuthenticated) {
-      print('⚠️ AuthNotifier: Cannot update profile - user not authenticated');
+      AppLogger.warning(
+        'AuthNotifier: Cannot update profile - user not authenticated',
+      );
       return;
     }
-    
+
     try {
-      print('📝 AuthNotifier: Updating user profile');
-      
+      AppLogger.info('AuthNotifier: Updating user profile');
+
       final result = await _authRepository.updateProfile(updates);
       state = result;
-      
+
       if (result.isAuthenticated && result.errorMessage == null) {
-        print('✅ AuthNotifier: Profile update successful');
+        AppLogger.info('AuthNotifier: Profile update successful');
       } else {
-        print('❌ AuthNotifier: Profile update failed - ${result.errorMessage}');
+        AppLogger.warning(
+          'AuthNotifier: Profile update failed - ${result.errorMessage}',
+        );
       }
     } catch (e) {
-      print('❌ AuthNotifier: Error during profile update - $e');
+      AppLogger.error('AuthNotifier: Error during profile update', e);
       state = state.copyWith(errorMessage: 'Failed to update profile');
     }
   }
@@ -190,17 +226,24 @@ final authActionsProvider = Provider<AuthActions>((ref) {
 /// Helper class to provide authentication actions without state watching
 class AuthActions {
   final AuthNotifier _notifier;
-  
+
   AuthActions(this._notifier);
 
-  Future<void> signIn(String email, String password) => _notifier.signIn(email, password);
-  Future<void> signUp(String name, String email, String password, {String? location}) => 
-      _notifier.signUp(name, email, password, location: location);
+  Future<void> signIn(String email, String password) =>
+      _notifier.signIn(email, password);
+  Future<void> signUp(
+    String name,
+    String email,
+    String password, {
+    String? location,
+  }) => _notifier.signUp(name, email, password, location: location);
   Future<void> signOut() => _notifier.signOut();
   Future<void> refreshToken() => _notifier.refreshToken();
-  Future<void> updateProfile(Map<String, dynamic> updates) => _notifier.updateProfile(updates);
+  Future<void> updateProfile(Map<String, dynamic> updates) =>
+      _notifier.updateProfile(updates);
   void clearError() => _notifier.clearError();
   Future<void> refresh() => _notifier.refresh();
   Future<String?> getAccessToken() => _notifier.getAccessToken();
-  Future<Map<String, String?>> debugGetStorageData() => _notifier.debugGetStorageData();
+  Future<Map<String, String?>> debugGetStorageData() =>
+      _notifier.debugGetStorageData();
 }

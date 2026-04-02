@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
-import '../models/campground.dart';
 import 'availability_monitoring_service.dart';
 
 /// Enhanced notification service with availability monitoring support (iOS-compatible version)
-/// 
+///
 /// Handles both welcome notifications and availability alerts from background monitoring
 /// For iOS compatibility, this version uses debug logging instead of actual notifications
 class EnhancedNotificationService {
@@ -14,7 +13,9 @@ class EnhancedNotificationService {
     if (_isInitialized) return;
 
     try {
-      debugPrint('✅ Enhanced notification service initialized (iOS-compatible logging mode)');
+      debugPrint(
+        '✅ Enhanced notification service initialized (iOS-compatible logging mode)',
+      );
       _isInitialized = true;
     } catch (e) {
       debugPrint('❌ Failed to initialize enhanced notification service: $e');
@@ -31,26 +32,32 @@ class EnhancedNotificationService {
       debugPrint('🔥 AVAILABILITY NOTIFICATION');
       debugPrint('🏕️ Campground: $campgroundName');
       debugPrint('🏞️ Park: $parkName');
-      debugPrint('📅 Available: ${availableDates.startDate.toString().split(' ')[0]} - ${availableDates.endDate.toString().split(' ')[0]}');
+      debugPrint(
+        '📅 Available: ${availableDates.startDate.toString().split(' ')[0]} - ${availableDates.endDate.toString().split(' ')[0]}',
+      );
       debugPrint('⏰ Notified at: ${DateTime.now()}');
-      
-      debugPrint('✅ Enhanced availability notification logged for $campgroundName');
+
+      debugPrint(
+        '✅ Enhanced availability notification logged for $campgroundName',
+      );
     } catch (e) {
       debugPrint('❌ Error logging enhanced availability notification: $e');
     }
   }
 
   /// Send availability found notification (legacy version for backward compatibility)
-  static Future<void> sendAvailabilityNotificationLegacy(CampgroundAvailability availability) async {
+  static Future<void> sendAvailabilityNotificationLegacy(
+    CampgroundAvailability availability,
+  ) async {
     try {
       final campground = availability.campground;
       final dateRange = availability.availableDates.first;
-      
+
       debugPrint('🔥 AVAILABILITY FOUND: ${campground.name}');
       debugPrint('📅 Available: ${dateRange.toString()}');
       debugPrint('🏞️ Park: ${campground.parkName}');
       debugPrint('⏰ Found at: ${availability.checkedAt}');
-      
+
       debugPrint('✅ Availability notification logged for ${campground.name}');
     } catch (e) {
       debugPrint('❌ Error logging availability notification: $e');
@@ -73,21 +80,30 @@ class EnhancedNotificationService {
     try {
       debugPrint('🎉 Welcome to SiteBook!');
       debugPrint('📱 Your campground monitoring is now active');
-      debugPrint('🔍 We\'ll check for availability every 6-24 hours and notify you');
+      debugPrint(
+        '🔍 We\'ll check for availability every 6-24 hours and notify you',
+      );
     } catch (e) {
       debugPrint('❌ Error sending welcome notification: $e');
     }
   }
 
   /// Send monitoring summary notification (daily digest)
-  static Future<void> sendMonitoringSummaryNotification(int monitoredCount, int availableCount) async {
+  static Future<void> sendMonitoringSummaryNotification(
+    int monitoredCount,
+    int availableCount,
+  ) async {
     if (monitoredCount == 0) return;
 
     try {
       if (availableCount > 0) {
-        debugPrint('🔥 Daily Summary: $availableCount campgrounds have availability!');
+        debugPrint(
+          '🔥 Daily Summary: $availableCount campgrounds have availability!',
+        );
       } else {
-        debugPrint('📊 Daily Summary: Monitoring $monitoredCount campgrounds - no availability yet');
+        debugPrint(
+          '📊 Daily Summary: Monitoring $monitoredCount campgrounds - no availability yet',
+        );
       }
     } catch (e) {
       debugPrint('❌ Error sending monitoring summary: $e');

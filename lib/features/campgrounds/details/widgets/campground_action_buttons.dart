@@ -18,7 +18,7 @@ class CampgroundActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       children: [
         // Primary action (Reserve)
@@ -33,9 +33,9 @@ class CampgroundActionButtons extends StatelessWidget {
             ),
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // Secondary actions
         Row(
           children: [
@@ -50,9 +50,9 @@ class CampgroundActionButtons extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(width: 12),
-            
+
             // Share
             Expanded(
               child: OutlinedButton.icon(
@@ -66,9 +66,9 @@ class CampgroundActionButtons extends StatelessWidget {
             ),
           ],
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Quick info chips
         Wrap(
           spacing: 8,
@@ -89,7 +89,7 @@ class CampgroundActionButtons extends StatelessWidget {
                 label: 'Email Contact',
                 color: theme.colorScheme.tertiary,
               ),
-            if (campground.amenities.contains('WiFi') || 
+            if (campground.amenities.contains('WiFi') ||
                 campground.amenities.contains('Internet'))
               _buildInfoChip(
                 context,
@@ -120,19 +120,12 @@ class CampgroundActionButtons extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withAlpha(51),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withAlpha(102),
-          width: 1,
-        ),
+        border: Border.all(color: color.withAlpha(102), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 14,
-            color: color,
-          ),
+          Icon(icon, size: 14, color: color),
           const SizedBox(width: 6),
           Text(
             label,

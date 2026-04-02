@@ -28,7 +28,7 @@ void main() {
       mockRecreationGovApi = MockRecreationGovApiService();
       mockStateParkApi = MockStateParkApiService();
       testDatabase = CampgroundDatabase();
-      
+
       repository = CampgroundRepositoryImpl(
         recreationGovApi: mockRecreationGovApi,
         stateParkApi: mockStateParkApi,
@@ -50,18 +50,22 @@ void main() {
         await testDatabase.saveCampgrounds(cachedCampgrounds);
 
         // Mock API failures
-        when(mockRecreationGovApi.getFacilities(state: anyNamed('state')))
-            .thenThrow(Exception('API Error'));
-        when(mockStateParkApi.getCampgroundsByState(any))
-            .thenThrow(Exception('API Error'));
+        when(
+          mockRecreationGovApi.getFacilities(state: anyNamed('state')),
+        ).thenThrow(Exception('API Error'));
+        when(
+          mockStateParkApi.getCampgroundsByState(any),
+        ).thenThrow(Exception('API Error'));
 
         // Act
         final result = await repository.getCampgroundsByState('CA');
 
         // Assert
         expect(result, hasLength(2));
-        expect(result.map((c) => c.name).toSet(),
-            equals({'Cached Campground 1', 'Cached Campground 2'}));
+        expect(
+          result.map((c) => c.name).toSet(),
+          equals({'Cached Campground 1', 'Cached Campground 2'}),
+        );
       });
 
       test('should prefer fresh API data over cached data', () async {
@@ -75,21 +79,18 @@ void main() {
         // Mock fresh API data
         final mockApiResponse = RecreationGovResponse<RecreationGovFacility>(
           data: [
-            _createMockRecGovFacility(
-              id: 'test_1',
-              name: 'Fresh API Name',
-            ),
+            _createMockRecGovFacility(id: 'test_1', name: 'Fresh API Name'),
           ],
           metadata: _createMockMetadata(),
         );
 
-        when(mockRecreationGovApi.getFacilities(
-          state: 'CA',
-          limit: 100,
-        )).thenAnswer((_) async => mockApiResponse);
+        when(
+          mockRecreationGovApi.getFacilities(state: 'CA', limit: 100),
+        ).thenAnswer((_) async => mockApiResponse);
 
-        when(mockStateParkApi.getCampgroundsByState('CA'))
-            .thenAnswer((_) async => []);
+        when(
+          mockStateParkApi.getCampgroundsByState('CA'),
+        ).thenAnswer((_) async => []);
 
         // Act
         final result = await repository.getCampgroundsByState('CA');
@@ -102,9 +103,7 @@ void main() {
       test('should combine data from multiple API sources', () async {
         // Arrange - Mock Recreation.gov response
         final recGovResponse = RecreationGovResponse<RecreationGovFacility>(
-          data: [
-            _createMockRecGovFacility(id: 'fed_1', name: 'Federal Camp'),
-          ],
+          data: [_createMockRecGovFacility(id: 'fed_1', name: 'Federal Camp')],
           metadata: _createMockMetadata(),
         );
 
@@ -113,13 +112,13 @@ void main() {
           _createTestCampground(id: 'state_1', name: 'State Park Camp'),
         ];
 
-        when(mockRecreationGovApi.getFacilities(
-          state: 'CA',
-          limit: 100,
-        )).thenAnswer((_) async => recGovResponse);
+        when(
+          mockRecreationGovApi.getFacilities(state: 'CA', limit: 100),
+        ).thenAnswer((_) async => recGovResponse);
 
-        when(mockStateParkApi.getCampgroundsByState('CA'))
-            .thenAnswer((_) async => stateParkCampgrounds);
+        when(
+          mockStateParkApi.getCampgroundsByState('CA'),
+        ).thenAnswer((_) async => stateParkCampgrounds);
 
         // Act - This will trigger refresh of state data
         await repository.refresh();
@@ -137,16 +136,18 @@ void main() {
         final initialSyncTime = await repository.getLastSyncTime();
 
         // Mock successful API response
-        when(mockRecreationGovApi.getFacilities(
-          state: 'CA',
-          limit: 100,
-        )).thenAnswer((_) async => RecreationGovResponse<RecreationGovFacility>(
-          data: [],
-          metadata: _createMockMetadata(),
-        ));
+        when(
+          mockRecreationGovApi.getFacilities(state: 'CA', limit: 100),
+        ).thenAnswer(
+          (_) async => RecreationGovResponse<RecreationGovFacility>(
+            data: [],
+            metadata: _createMockMetadata(),
+          ),
+        );
 
-        when(mockStateParkApi.getCampgroundsByState('CA'))
-            .thenAnswer((_) async => []);
+        when(
+          mockStateParkApi.getCampgroundsByState('CA'),
+        ).thenAnswer((_) async => []);
 
         // Act
         await repository.refresh();
@@ -162,18 +163,20 @@ void main() {
 
       test('should handle sync failures gracefully', () async {
         // Arrange - Mock API failures
-        when(mockRecreationGovApi.getFacilities(
-          activity: any,
-          state: any,
-          latitude: any,
-          longitude: any,
-          radius: any,
-          limit: any,
-          offset: any,
-        ))
-            .thenThrow(Exception('Network Error'));
-        when(mockStateParkApi.getCampgroundsByState(any))
-            .thenThrow(Exception('Network Error'));
+        when(
+          mockRecreationGovApi.getFacilities(
+            activity: any,
+            state: any,
+            latitude: any,
+            longitude: any,
+            radius: any,
+            limit: any,
+            offset: any,
+          ),
+        ).thenThrow(Exception('Network Error'));
+        when(
+          mockStateParkApi.getCampgroundsByState(any),
+        ).thenThrow(Exception('Network Error'));
 
         // Act & Assert - Should not throw
         expect(() => repository.refresh(), returnsNormally);
@@ -181,27 +184,30 @@ void main() {
     });
 
     group('Search Operations', () {
-      test('should perform location-based search across data sources', () async {
-        // Arrange - Setup test campgrounds at known locations
-        final nearbycamp = _createTestCampground(
-          id: 'nearby',
-          name: 'Nearby Camp',
-          latitude: 37.7749,  // San Francisco
-          longitude: -122.4194,
-        );
-        await testDatabase.saveCampground(nearbycamp);
+      test(
+        'should perform location-based search across data sources',
+        () async {
+          // Arrange - Setup test campgrounds at known locations
+          final nearbycamp = _createTestCampground(
+            id: 'nearby',
+            name: 'Nearby Camp',
+            latitude: 37.7749, // San Francisco
+            longitude: -122.4194,
+          );
+          await testDatabase.saveCampground(nearbycamp);
 
-        // Act
-        final results = await repository.searchNearby(
-          latitude: 37.7749,
-          longitude: -122.4194,
-          radiusMiles: 10.0,
-        );
+          // Act
+          final results = await repository.searchNearby(
+            latitude: 37.7749,
+            longitude: -122.4194,
+            radiusMiles: 10.0,
+          );
 
-        // Assert
-        expect(results, isNotEmpty);
-        expect(results.first.name, equals('Nearby Camp'));
-      });
+          // Assert
+          expect(results, isNotEmpty);
+          expect(results.first.name, equals('Nearby Camp'));
+        },
+      );
 
       test('should search by text query in cached data', () async {
         // Arrange
@@ -218,8 +224,10 @@ void main() {
 
         // Assert
         expect(valleyResults, hasLength(2));
-        expect(valleyResults.map((c) => c.name).toSet(),
-            equals({'Yosemite Valley', 'Death Valley'}));
+        expect(
+          valleyResults.map((c) => c.name).toSet(),
+          equals({'Yosemite Valley', 'Death Valley'}),
+        );
 
         expect(coastResults, hasLength(1));
         expect(coastResults.first.name, equals('Big Sur Coast'));
@@ -270,22 +278,26 @@ void main() {
 
       test('should handle mixed success/failure scenarios', () async {
         // Arrange - One API succeeds, one fails
-        when(mockRecreationGovApi.getFacilities(
-          activity: any,
-          state: any,
-          latitude: any,
-          longitude: any,
-          radius: any,
-          limit: any,
-          offset: any,
-        ))
-            .thenAnswer((_) async => RecreationGovResponse<RecreationGovFacility>(
-              data: [_createMockRecGovFacility()],
-              metadata: _createMockMetadata(),
-            ));
+        when(
+          mockRecreationGovApi.getFacilities(
+            activity: any,
+            state: any,
+            latitude: any,
+            longitude: any,
+            radius: any,
+            limit: any,
+            offset: any,
+          ),
+        ).thenAnswer(
+          (_) async => RecreationGovResponse<RecreationGovFacility>(
+            data: [_createMockRecGovFacility()],
+            metadata: _createMockMetadata(),
+          ),
+        );
 
-        when(mockStateParkApi.getCampgroundsByState(any))
-            .thenThrow(Exception('State API Error'));
+        when(
+          mockStateParkApi.getCampgroundsByState(any),
+        ).thenThrow(Exception('State API Error'));
 
         // Act - Should still process successful API data
         expect(() => repository.refresh(), returnsNormally);

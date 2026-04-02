@@ -6,17 +6,14 @@ import '../details/campground_details_screen.dart';
 
 class CampgroundCard extends ConsumerWidget {
   final Campground campground;
-  
-  const CampgroundCard({
-    super.key,
-    required this.campground,
-  });
+
+  const CampgroundCard({super.key, required this.campground});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final actions = ref.watch(campgroundActionsProvider);
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
@@ -64,28 +61,37 @@ class CampgroundCard extends ConsumerWidget {
                   top: 12,
                   right: 12,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: campground.isMonitored 
+                      color: campground.isMonitored
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.surfaceContainerHighest.withAlpha(200),
+                          : theme.colorScheme.surfaceContainerHighest.withAlpha(
+                              200,
+                            ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          campground.isMonitored ? Icons.visibility : Icons.visibility_off,
+                          campground.isMonitored
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           size: 14,
-                          color: campground.isMonitored 
+                          color: campground.isMonitored
                               ? theme.colorScheme.onPrimary
                               : theme.colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          campground.isMonitored ? 'Monitoring' : 'Not Monitored',
+                          campground.isMonitored
+                              ? 'Monitoring'
+                              : 'Not Monitored',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: campground.isMonitored 
+                            color: campground.isMonitored
                                 ? theme.colorScheme.onPrimary
                                 : theme.colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
@@ -97,7 +103,7 @@ class CampgroundCard extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             // Content section
             Padding(
               padding: const EdgeInsets.all(16),
@@ -145,9 +151,12 @@ class CampgroundCard extends ConsumerWidget {
                                   Expanded(
                                     child: Text(
                                       campground.parkName!,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.onSurfaceVariant,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: theme
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -161,19 +170,24 @@ class CampgroundCard extends ConsumerWidget {
                       const SizedBox(width: 8),
                       // Monitor button
                       IconButton.filledTonal(
-                        onPressed: () => actions.toggleMonitoring(campground.id, !campground.isMonitored),
-                        icon: Icon(
-                          campground.isMonitored ? Icons.visibility : Icons.visibility_off,
+                        onPressed: () => actions.toggleMonitoring(
+                          campground.id,
+                          !campground.isMonitored,
                         ),
-                        tooltip: campground.isMonitored 
-                            ? 'Stop monitoring' 
+                        icon: Icon(
+                          campground.isMonitored
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        tooltip: campground.isMonitored
+                            ? 'Stop monitoring'
                             : 'Start monitoring',
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // Description
                   Text(
                     campground.description,
@@ -181,9 +195,9 @@ class CampgroundCard extends ConsumerWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // Amenities chips (show first 3)
                   if (campground.amenities.isNotEmpty) ...[
                     const SizedBox(height: 8),
@@ -196,17 +210,19 @@ class CampgroundCard extends ConsumerWidget {
                             amenity,
                             style: theme.textTheme.labelSmall,
                           ),
-                          backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                          backgroundColor:
+                              theme.colorScheme.surfaceContainerHighest,
                           side: BorderSide.none,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                           visualDensity: VisualDensity.compact,
                         );
                       }).toList(),
                     ),
                   ],
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // Action buttons
                   Row(
                     children: [
@@ -220,7 +236,8 @@ class CampgroundCard extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: FilledButton.icon(
-                          onPressed: () => _makeReservation(context, campground),
+                          onPressed: () =>
+                              _makeReservation(context, campground),
                           icon: const Icon(Icons.book_online, size: 18),
                           label: const Text('Reserve'),
                         ),
@@ -235,7 +252,7 @@ class CampgroundCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   void _navigateToDetails(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -243,7 +260,7 @@ class CampgroundCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildPlaceholderImage(ThemeData theme) {
     return Container(
       width: double.infinity,
@@ -268,7 +285,7 @@ class CampgroundCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   void _viewDetails(BuildContext context, Campground campground) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -276,7 +293,7 @@ class CampgroundCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   void _makeReservation(BuildContext context, Campground campground) {
     // TODO: Navigate to reservation screen or open external URL
     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/auth_state.dart';
 import '../providers/auth_provider.dart';
 import 'login_screen.dart';
 
 class AuthWrapperScreen extends ConsumerWidget {
   final Widget authenticatedChild;
 
-  const AuthWrapperScreen({
-    super.key,
-    required this.authenticatedChild,
-  });
+  const AuthWrapperScreen({super.key, required this.authenticatedChild});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +20,7 @@ class AuthWrapperScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildChild(authState, ThemeData theme) {
+  Widget _buildChild(AuthState authState, ThemeData theme) {
     if (authState.status == AuthStatus.unknown) {
       return _buildLoadingScreen(theme);
     } else if (authState.status == AuthStatus.authenticating) {
@@ -54,16 +52,14 @@ class AuthWrapperScreen extends ConsumerWidget {
                 size: 50,
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Loading indicator
-            CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
-            
+            CircularProgressIndicator(color: theme.colorScheme.primary),
+
             const SizedBox(height: 16),
-            
+
             Text(
               'SiteBook',
               style: theme.textTheme.headlineMedium?.copyWith(
@@ -71,9 +67,9 @@ class AuthWrapperScreen extends ConsumerWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             Text(
               'Loading your camping experience...',
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -92,9 +88,7 @@ class AuthWrapperScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
+            CircularProgressIndicator(color: theme.colorScheme.primary),
             const SizedBox(height: 16),
             Text(
               'Signing you in...',

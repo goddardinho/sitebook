@@ -7,6 +7,21 @@ set -e  # Exit on any error
 PLATFORM=${1:-ios}
 BUILD_MODE=${2:-debug}
 
+echo "🔍 Running quality checks before build..."
+
+# Run quality checks first (but skip coverage for faster builds)
+if ! flutter analyze --fatal-warnings; then
+    echo "❌ Static analysis failed. Fix issues before building."
+    exit 1
+fi
+
+if ! dart format --output=none --set-exit-if-changed .; then
+    echo "❌ Code formatting issues found. Run: dart format ."
+    exit 1
+fi
+
+echo "✅ Quality checks passed"
+
 # Check if .env file exists
 if [ ! -f .env ]; then
     echo "❌ .env file not found!"

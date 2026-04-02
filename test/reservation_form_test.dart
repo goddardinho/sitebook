@@ -33,14 +33,14 @@ void main() {
       updatedAt: null,
     );
 
-    testWidgets('ReservationFormScreen displays correctly', (WidgetTester tester) async {
+    testWidgets('ReservationFormScreen displays correctly', (
+      WidgetTester tester,
+    ) async {
       // Build the reservation form screen
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
-            home: ReservationFormScreen(
-              campground: testCampground,
-            ),
+            home: ReservationFormScreen(campground: testCampground),
           ),
         ),
       );
@@ -65,13 +65,13 @@ void main() {
       expect(find.text('Check-out Date'), findsOneWidget);
     });
 
-    testWidgets('Form progression works correctly', (WidgetTester tester) async {
+    testWidgets('Form progression works correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
-            home: ReservationFormScreen(
-              campground: testCampground,
-            ),
+            home: ReservationFormScreen(campground: testCampground),
           ),
         ),
       );
@@ -164,10 +164,15 @@ void main() {
       // Verify campsite type options are present
       expect(find.text('Standard Site'), findsOneWidget);
       expect(find.text('Electric Hookup'), findsOneWidget);
-      expect(find.text('Full Hookup (Water + Electric + Sewer)'), findsOneWidget);
+      expect(
+        find.text('Full Hookup (Water + Electric + Sewer)'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('Contact information form validation', (WidgetTester tester) async {
+    testWidgets('Contact information form validation', (
+      WidgetTester tester,
+    ) async {
       String firstName = '';
       String lastName = '';
       String email = '';
@@ -228,38 +233,38 @@ void main() {
       test('Standard site pricing calculation', () {
         const basePrice = 25.0;
         const nights = 3;
-        const guests = 2;
-        
+
         final subtotal = basePrice * nights;
         expect(subtotal, equals(75.0));
-        
+
         // No extra guest fee for 2 guests (under limit of 4)
         const extraGuestFee = 0.0;
         expect(extraGuestFee, equals(0.0));
       });
 
       test('Premium site with extra guests pricing', () {
-        const basePrice = 55.0;  // Premium Site (Waterfront)
+        const basePrice = 55.0; // Premium Site (Waterfront)
         const nights = 2;
-        const guests = 6;  // 2 extra guests over limit of 4
-        
+        const guests = 6; // 2 extra guests over limit of 4
+
         final subtotal = basePrice * nights;
         expect(subtotal, equals(110.0));
-        
+
         final extraGuestFee = (guests - 4) * 5.0 * nights;
-        expect(extraGuestFee, equals(20.0));  // 2 extra guests * $5 * 2 nights
-        
-        final totalBeforeTax = subtotal + extraGuestFee + 5.0; // + reservation fee
+        expect(extraGuestFee, equals(20.0)); // 2 extra guests * $5 * 2 nights
+
+        final totalBeforeTax =
+            subtotal + extraGuestFee + 5.0; // + reservation fee
         expect(totalBeforeTax, equals(135.0));
       });
 
       test('Tax calculation', () {
         const subtotal = 100.0;
         const taxRate = 0.08;
-        
+
         final taxAmount = subtotal * taxRate;
         expect(taxAmount, equals(8.0));
-        
+
         final total = subtotal + taxAmount;
         expect(total, equals(108.0));
       });
@@ -269,7 +274,7 @@ void main() {
       test('Check-out date must be after check-in date', () {
         final checkIn = DateTime(2026, 3, 15);
         final checkOut = DateTime(2026, 3, 12); // Before check-in
-        
+
         expect(checkIn.isBefore(checkOut), isFalse);
         expect(checkOut.isAfter(checkIn), isFalse);
       });
@@ -277,7 +282,7 @@ void main() {
       test('Calculate nights correctly', () {
         final checkIn = DateTime(2026, 3, 15);
         final checkOut = DateTime(2026, 3, 18);
-        
+
         final nights = checkOut.difference(checkIn).inDays;
         expect(nights, equals(3));
       });
@@ -285,7 +290,7 @@ void main() {
       test('Past dates should not be allowed', () {
         final today = DateTime.now();
         final yesterday = today.subtract(const Duration(days: 1));
-        
+
         expect(yesterday.isBefore(today), isTrue);
       });
     });
