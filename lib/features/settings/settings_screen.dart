@@ -49,24 +49,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final authState = ref.watch(authStateProvider);
-    final authActions = ref.read(authActionsProvider);
-
-    // Show loading if user data is not available
-    if (!authState.isAuthenticated || authState.user == null) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(color: theme.colorScheme.primary),
-              const SizedBox(height: 16),
-              Text('Loading settings...', style: theme.textTheme.bodyLarge),
-            ],
-          ),
-        ),
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -89,16 +71,61 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
-            _buildProfileHeader(context, theme, authState.user!),
-            const SizedBox(height: 24),
-            _buildStatsSection(context, theme, authState.user!),
+            _buildLocalProfileHeader(context, theme),
             const SizedBox(height: 24),
             _buildReservationSystemsSection(context, theme),
             const SizedBox(height: 24),
             _buildAppPreferencesSection(context, theme),
             const SizedBox(height: 24),
-            _buildSupportSection(context, theme, authActions),
+            _buildSupportSection(context, theme),
             const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocalProfileHeader(BuildContext context, ThemeData theme) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: theme.colorScheme.primary,
+                  child: Icon(
+                    Icons.person,
+                    size: 32,
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'SiteBook Settings',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Manage your campground reservations',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -346,11 +373,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  Widget _buildSupportSection(
-    BuildContext context,
-    ThemeData theme,
-    AuthActions authActions,
-  ) {
+  Widget _buildSupportSection(BuildContext context, ThemeData theme) {
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -378,15 +401,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Version info and legal',
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showAboutDialog(context),
-          ),
-          const Divider(height: 1),
-          _buildListTile(
-            icon: Icons.logout,
-            title: 'Sign Out',
-            subtitle: 'Sign out of your account',
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showSignOutDialog(context, authActions),
-            titleColor: Colors.red,
           ),
         ],
       ),
@@ -499,29 +513,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           'Find and reserve the perfect campsite for your next outdoor adventure.',
         ),
       ],
-    );
-  }
-
-  void _showSignOutDialog(BuildContext context, AuthActions authActions) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              authActions.signOut();
-            },
-            child: const Text('Sign Out'),
-          ),
-        ],
-      ),
     );
   }
 }
