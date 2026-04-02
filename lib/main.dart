@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'features/auth/screens/auth_wrapper_screen.dart';
 import 'features/campgrounds/campgrounds_screen_ios_compatible.dart';
 import 'features/reservations/reservations_screen_ios_compatible.dart';
 import 'features/maps/map_screen_ios_compatible.dart';
 import 'features/profile/authenticated_profile_screen.dart';
+import 'features/credentials/screens/reservation_systems_screen.dart';
 import 'shared/services/availability_monitoring_service.dart';
 import 'shared/services/enhanced_notification_service.dart';
 import 'shared/services/notification_preferences_service.dart';
@@ -67,7 +67,7 @@ class SiteBookApp extends ConsumerWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: const AuthWrapperScreen(authenticatedChild: StableMainScreen()),
+      home: const StableMainScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -88,6 +88,8 @@ class _StableMainScreenState extends State<StableMainScreen> {
     ReservationsScreenIOSCompatible(),
     MapScreenIOSCompatible(),
     AuthenticatedProfileScreen(),
+    // Add Reservation Systems screen
+    ReservationSystemsScreen(),
   ];
 
   @override
@@ -118,6 +120,7 @@ class _StableMainScreenState extends State<StableMainScreen> {
             selectedIcon: Icon(Icons.person),
             label: 'Profile',
           ),
+          NavigationDestination(icon: Icon(Icons.vpn_key), label: 'Systems'),
         ],
       ),
     );

@@ -12,93 +12,36 @@ class AuthRepository {
     : _authService = authService ?? AuthService(),
       _storageService = storageService ?? AuthStorageService();
 
-  /// Initialize repository and check for existing authentication
+  /// Initialize repository and check for existing authentication (Demo User only)
   Future<AuthState> initialize() async {
-    try {
-      print('🚀 AuthRepository: Initializing authentication state');
-
-      // Check if we have stored tokens and user data
-      final hasTokens = await _storageService.hasStoredTokens();
-      final hasUser = await _storageService.hasStoredUser();
-
-      if (!hasTokens || !hasUser) {
-        print('ℹ️ AuthRepository: No stored authentication data found');
-        return const AuthState.unauthenticated();
-      }
-
-      // Get stored tokens and user data
-      final tokens = await _storageService.getTokens();
-      final user = await _storageService.getUser();
-
-      if (tokens == null || user == null) {
-        print(
-          '⚠️ AuthRepository: Failed to retrieve stored authentication data',
-        );
-        await _storageService.clearAll(); // Clear corrupted data
-        return const AuthState.unauthenticated();
-      }
-
-      // Check if tokens are expired
-      if (tokens.isExpired) {
-        print('🔄 AuthRepository: Access token expired, attempting refresh');
-
-        try {
-          final newTokens = await _authService.refreshToken(
-            tokens.refreshToken,
-          );
-          await _storageService.updateAccessToken(
-            newTokens.accessToken,
-            newTokens.expiresAt,
-          );
-
-          print('✅ AuthRepository: Token refreshed successfully');
-          return AuthState.authenticated(user);
-        } catch (e) {
-          print('❌ AuthRepository: Token refresh failed - $e');
-          await _storageService.clearAll();
-          return const AuthState.unauthenticated(
-            'Session expired. Please sign in again.',
-          );
-        }
-      }
-
-      print('✅ AuthRepository: User authenticated from stored data');
+    print(
+      '🚀 AuthRepository: Initializing authentication state (Demo User only)',
+    );
+    final hasUser = await _storageService.hasStoredUser();
+    final user = await _storageService.getUser();
+    if (hasUser && user != null && user.email == 'demo@sitebook.app') {
       return AuthState.authenticated(user);
-    } catch (e) {
-      print('❌ AuthRepository: Error during initialization - $e');
-      // Clear potentially corrupted data
-      await _storageService.clearAll();
-      return const AuthState.unauthenticated(
-        'Error loading authentication state',
-      );
     }
+    await _storageService.clearAll();
+    return const AuthState.unauthenticated();
   }
 
-  /// Sign in with email and password
+  /// Sign in with email and password (Demo User only)
   Future<AuthState> signIn(String email, String password) async {
-    try {
-      print('🔐 AuthRepository: Attempting sign in for $email');
-
-      final loginRequest = LoginRequest(email: email, password: password);
-      final authResponse = await _authService.login(loginRequest);
-
-      // Store authentication data
-      await Future.wait([
-        _storageService.storeTokens(authResponse.tokens),
-        _storageService.storeUser(authResponse.user),
-      ]);
-
-      print(
-        '✅ AuthRepository: Sign in successful for ${authResponse.user.email}',
+    print('🔐 AuthRepository: Attempting local sign in for $email');
+    if (email == 'demo@sitebook.app' && password == 'demo123') {
+      final user = User(
+        id: 'demo',
+        email: 'demo@sitebook.app',
+        name: 'Demo User',
+        createdAt: DateTime(2024, 1, 1),
       );
-      return AuthState.authenticated(authResponse.user);
-    } on AuthException catch (e) {
-      print('❌ AuthRepository: Sign in failed - ${e.message}');
-      return AuthState.unauthenticated(e.message);
-    } catch (e) {
-      print('❌ AuthRepository: Unexpected sign in error - $e');
+      await _storageService.storeUser(user);
+      return AuthState.authenticated(user);
+    } else {
+      await _storageService.clearAll();
       return const AuthState.unauthenticated(
-        'An unexpected error occurred during sign in',
+        'Only Demo User login is supported.',
       );
     }
   }
