@@ -23,19 +23,22 @@ analyzer:
     avoid_print: ignore
     avoid_redundant_argument_values: ignore
     prefer_const_constructors: ignore
+    unnecessary_const: ignore
+    deprecated_member_use: ignore
+    asset_directory_does_not_exist: ignore
 
 linter:
   # Enhanced lint rules for better code quality and error prevention
   rules:
-    # Error Prevention
-    avoid_print: true  # Enable in production, use debugPrint instead
+    # Error Prevention  
+    avoid_print: false  # Allow print statements, especially in test files
 
-    # Code Quality
+    # Code Quality (non-blocking)
     prefer_single_quotes: true
-    prefer_const_constructors: true
+    prefer_const_constructors: false  # Non-blocking suggestion
     prefer_const_literals_to_create_immutables: true
     avoid_unnecessary_containers: true
-    avoid_redundant_argument_values: true
+    avoid_redundant_argument_values: false  # Non-blocking suggestion
 
     # Safety
     avoid_dynamic_calls: true

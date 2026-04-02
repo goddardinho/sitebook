@@ -26,7 +26,6 @@ class AvailabilityMonitoringService {
       // Initialize WorkManager with callback dispatcher
       await Workmanager().initialize(
         callbackDispatcher,
-        isInDebugMode: kDebugMode,
       );
 
       debugPrint('✅ AvailabilityMonitoringService initialized');
