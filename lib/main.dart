@@ -53,18 +53,13 @@ class SiteBookApp extends ConsumerWidget {
     return MaterialApp(
       title: 'SiteBook - Full iOS Compatible',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.green,
           brightness: Brightness.dark,
         ),
-        useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
       home: const StableMainScreen(),

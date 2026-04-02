@@ -83,7 +83,6 @@ class NotificationService {
           'general_notifications',
           'General Notifications',
           description: 'General app notifications and updates',
-          importance: Importance.defaultImportance,
         );
 
     await _localNotifications

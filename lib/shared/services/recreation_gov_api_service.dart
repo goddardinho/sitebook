@@ -151,8 +151,8 @@ class RecreationGovFacility {
       facilityId: json['FacilityID'] ?? '',
       facilityName: json['FacilityName'] ?? '',
       facilityDescription: json['FacilityDescription'],
-      facilityLatitude: json['FacilityLatitude']?.toDouble(),
-      facilityLongitude: json['FacilityLongitude']?.toDouble(),
+      facilityLatitude: (json['FacilityLatitude'] as num?)?.toDouble(),
+      facilityLongitude: (json['FacilityLongitude'] as num?)?.toDouble(),
       facilityPhone: json['FacilityPhone'],
       facilityEmail: json['FacilityEmail'],
       facilityReservationURL: json['FacilityReservationURL'],
@@ -258,7 +258,7 @@ class RecreationGovCampsite {
       campsiteId: json['CampsiteID'] ?? '',
       campsiteName: json['CampsiteName'] ?? '',
       campsiteType: json['CampsiteType'],
-      campsiteLoop: json['Loop']?.toInt(),
+      campsiteLoop: (json['Loop'] as num?)?.toInt(),
       campsiteAccessible: json['CampsiteAccessible'] == 'Yes',
     );
   }

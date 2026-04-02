@@ -2,6 +2,7 @@ import '../models/auth_state.dart';
 import '../models/user.dart';
 import 'auth_service.dart';
 import 'auth_storage_service.dart';
+import '../../../core/utils/app_logger.dart';
 
 /// Repository that manages authentication state and operations
 class AuthRepository {
@@ -14,8 +15,8 @@ class AuthRepository {
 
   /// Initialize repository and check for existing authentication (Demo User only)
   Future<AuthState> initialize() async {
-    print(
-      '🚀 AuthRepository: Initializing authentication state (Demo User only)',
+    AppLogger.info(
+      'AuthRepository: Initializing authentication state (Demo User only)',
     );
     final hasUser = await _storageService.hasStoredUser();
     final user = await _storageService.getUser();
@@ -28,7 +29,7 @@ class AuthRepository {
 
   /// Sign in with email and password (Demo User only)
   Future<AuthState> signIn(String email, String password) async {
-    print('🔐 AuthRepository: Attempting local sign in for $email');
+    AppLogger.auth('Attempting local sign in', userId: email);
     if (email == 'demo@sitebook.app' && password == 'demo123') {
       final user = User(
         id: 'demo',
@@ -54,7 +55,7 @@ class AuthRepository {
     String? location,
   }) async {
     try {
-      print('📝 AuthRepository: Attempting sign up for $email');
+      AppLogger.auth('Attempting sign up', userId: email);
 
       final registerRequest = RegisterRequest(
         name: name,
@@ -71,15 +72,17 @@ class AuthRepository {
         _storageService.storeUser(authResponse.user),
       ]);
 
-      print(
-        '✅ AuthRepository: Sign up successful for ${authResponse.user.email}',
+      AppLogger.auth(
+        'Sign up successful',
+        userId: authResponse.user.id,
+        isSuccess: true,
       );
       return AuthState.authenticated(authResponse.user);
     } on AuthException catch (e) {
-      print('❌ AuthRepository: Sign up failed - ${e.message}');
+      AppLogger.auth('Sign up failed: ${e.message}', isSuccess: false);
       return AuthState.unauthenticated(e.message);
     } catch (e) {
-      print('❌ AuthRepository: Unexpected sign up error - $e');
+      AppLogger.error('AuthRepository: Unexpected sign up error', e);
       return const AuthState.unauthenticated(
         'An unexpected error occurred during sign up',
       );
@@ -89,7 +92,7 @@ class AuthRepository {
   /// Sign out the current user
   Future<AuthState> signOut() async {
     try {
-      print('👋 AuthRepository: Attempting sign out');
+      AppLogger.auth('Attempting sign out');
 
       // Get refresh token for server-side logout
       final tokens = await _storageService.getTokens();
@@ -100,10 +103,10 @@ class AuthRepository {
       // Clear all stored authentication data
       await _storageService.clearAll();
 
-      print('✅ AuthRepository: Sign out successful');
+      AppLogger.auth('Sign out successful', isSuccess: true);
       return const AuthState.unauthenticated();
     } catch (e) {
-      print('⚠️ AuthRepository: Error during sign out - $e');
+      AppLogger.warning('AuthRepository: Error during sign out', e);
       // Still clear local data even if server call fails
       await _storageService.clearAll();
       return const AuthState.unauthenticated();
@@ -113,11 +116,11 @@ class AuthRepository {
   /// Refresh the current access token
   Future<AuthState> refreshAccessToken() async {
     try {
-      print('🔄 AuthRepository: Refreshing access token');
+      AppLogger.auth('Refreshing access token');
 
       final currentTokens = await _storageService.getTokens();
       if (currentTokens == null) {
-        print('❌ AuthRepository: No tokens found for refresh');
+        AppLogger.warning('AuthRepository: No tokens found for refresh');
         return const AuthState.unauthenticated(
           'No authentication tokens found',
         );
@@ -134,21 +137,26 @@ class AuthRepository {
       // Get current user data
       final user = await _storageService.getUser();
       if (user == null) {
-        print('❌ AuthRepository: No user data found after token refresh');
+        AppLogger.warning(
+          'AuthRepository: No user data found after token refresh',
+        );
         await _storageService.clearAll();
         return const AuthState.unauthenticated('User data not found');
       }
 
-      print('✅ AuthRepository: Access token refreshed successfully');
+      AppLogger.auth('Access token refreshed successfully', isSuccess: true);
       return AuthState.authenticated(user);
     } on AuthException catch (e) {
-      print('❌ AuthRepository: Token refresh failed - ${e.message}');
+      AppLogger.auth('Token refresh failed: ${e.message}', isSuccess: false);
       await _storageService.clearAll();
-      return AuthState.unauthenticated(
+      return const AuthState.unauthenticated(
         'Session expired. Please sign in again.',
       );
     } catch (e) {
-      print('❌ AuthRepository: Unexpected error during token refresh - $e');
+      AppLogger.error(
+        'AuthRepository: Unexpected error during token refresh',
+        e,
+      );
       await _storageService.clearAll();
       return const AuthState.unauthenticated(
         'Authentication error. Please sign in again.',
@@ -159,11 +167,11 @@ class AuthRepository {
   /// Update user profile
   Future<AuthState> updateProfile(Map<String, dynamic> updates) async {
     try {
-      print('📝 AuthRepository: Updating user profile');
+      AppLogger.info('AuthRepository: Updating user profile');
 
       final accessToken = await _storageService.getAccessToken();
       if (accessToken == null) {
-        print('❌ AuthRepository: No access token for profile update');
+        AppLogger.warning('AuthRepository: No access token for profile update');
         return const AuthState.unauthenticated('Authentication required');
       }
 
@@ -173,10 +181,10 @@ class AuthRepository {
       );
       await _storageService.updateUser(updatedUser);
 
-      print('✅ AuthRepository: Profile updated successfully');
+      AppLogger.info('AuthRepository: Profile updated successfully');
       return AuthState.authenticated(updatedUser);
     } on AuthException catch (e) {
-      print('❌ AuthRepository: Profile update failed - ${e.message}');
+      AppLogger.warning('AuthRepository: Profile update failed - ${e.message}');
 
       // Check if it's an authentication error
       if (e.code == 'INVALID_CREDENTIALS' ||
@@ -196,7 +204,10 @@ class AuthRepository {
       }
       return AuthState.unauthenticated(e.message);
     } catch (e) {
-      print('❌ AuthRepository: Unexpected error during profile update - $e');
+      AppLogger.error(
+        'AuthRepository: Unexpected error during profile update',
+        e,
+      );
       return const AuthState.unauthenticated('An unexpected error occurred');
     }
   }
@@ -206,7 +217,7 @@ class AuthRepository {
     try {
       return await _storageService.getUser();
     } catch (e) {
-      print('❌ AuthRepository: Error getting current user - $e');
+      AppLogger.error('AuthRepository: Error getting current user', e);
       return null;
     }
   }
@@ -224,7 +235,10 @@ class AuthRepository {
       final tokens = await _storageService.getTokens();
       return tokens != null && !tokens.isExpired;
     } catch (e) {
-      print('❌ AuthRepository: Error checking authentication status - $e');
+      AppLogger.error(
+        'AuthRepository: Error checking authentication status',
+        e,
+      );
       return false;
     }
   }
@@ -240,8 +254,8 @@ class AuthRepository {
 
       // Check if token needs refresh
       if (tokens.isExpiringSoon || tokens.isExpired) {
-        print(
-          '🔄 AuthRepository: Token expiring soon, refreshing automatically',
+        AppLogger.info(
+          'AuthRepository: Token expiring soon, refreshing automatically',
         );
         final refreshResult = await refreshAccessToken();
 
@@ -254,7 +268,7 @@ class AuthRepository {
 
       return tokens.accessToken;
     } catch (e) {
-      print('❌ AuthRepository: Error getting access token - $e');
+      AppLogger.error('AuthRepository: Error getting access token', e);
       return null;
     }
   }

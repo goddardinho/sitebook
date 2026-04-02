@@ -137,8 +137,9 @@ class _MapScreenIOSCompatibleState
                                 Icon(
                                   Icons.my_location,
                                   size: 16,
-                                  color: theme.colorScheme.onPrimary
-                                      .withOpacity(0.7),
+                                  color: theme.colorScheme.onPrimary.withValues(
+                                    alpha: 0.7,
+                                  ),
                                 ),
                                 const SizedBox(width: 6),
                                 Expanded(
@@ -146,7 +147,7 @@ class _MapScreenIOSCompatibleState
                                     location.displayName,
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: theme.colorScheme.onPrimary
-                                          .withOpacity(0.8),
+                                          .withValues(alpha: 0.8),
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -283,13 +284,13 @@ class _MapScreenIOSCompatibleState
             Text(
               'No campgrounds found',
               style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             Text(
               'Try adjusting your filter settings',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.4),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
               ),
             ),
           ],

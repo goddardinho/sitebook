@@ -131,7 +131,7 @@ class SimpleCampgroundRepository implements CampgroundRepository {
   Future<void> syncWithApis() async {
     // Add some sample data for UX testing
     final sampleCampgrounds = [
-      Campground(
+      const Campground(
         id: 'sample_1',
         name: 'Yosemite Valley Campground',
         description:
@@ -157,7 +157,7 @@ class SimpleCampgroundRepository implements CampgroundRepository {
         reservationUrl: 'https://recreation.gov/camping/campgrounds/232447',
         phoneNumber: '209-372-0200',
       ),
-      Campground(
+      const Campground(
         id: 'sample_2',
         name: 'Big Sur Coastal Camp',
         description:
@@ -174,7 +174,7 @@ class SimpleCampgroundRepository implements CampgroundRepository {
         ],
         imageUrls: const [],
       ),
-      Campground(
+      const Campground(
         id: 'sample_3',
         name: 'Lake Tahoe Alpine Camp',
         description:
@@ -191,7 +191,7 @@ class SimpleCampgroundRepository implements CampgroundRepository {
         activities: const ['Fishing', 'Boating', 'Swimming', 'Hiking'],
         imageUrls: const [],
       ),
-      Campground(
+      const Campground(
         id: 'sample_4',
         name: 'Joshua Tree Desert Camp',
         description:
@@ -210,7 +210,7 @@ class SimpleCampgroundRepository implements CampgroundRepository {
         imageUrls: const [],
         reservationUrl: 'https://recreation.gov/camping/campgrounds/232447',
       ),
-      Campground(
+      const Campground(
         id: 'sample_5',
         name: 'Sequoia Giant Forest Camp',
         description:

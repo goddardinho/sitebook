@@ -5,7 +5,7 @@ import '../shared/models/campground.dart';
 /// Provides sample campgrounds without database dependency
 class DemoDataProvider {
   static final List<Campground> _sampleCampgrounds = [
-    Campground(
+    const Campground(
       id: 'demo_1',
       name: 'Yosemite Valley Campground',
       description:
@@ -37,7 +37,7 @@ class DemoDataProvider {
       isMonitored: false,
     ),
 
-    Campground(
+    const Campground(
       id: 'demo_2',
       name: 'Big Sur Coastal Paradise',
       description:
@@ -65,7 +65,7 @@ class DemoDataProvider {
       isMonitored: true, // This one is being monitored
     ),
 
-    Campground(
+    const Campground(
       id: 'demo_3',
       name: 'Lake Tahoe Alpine Retreat',
       description:
@@ -93,7 +93,7 @@ class DemoDataProvider {
       isMonitored: false,
     ),
 
-    Campground(
+    const Campground(
       id: 'demo_4',
       name: 'Joshua Tree Desert Camp',
       description:
@@ -121,7 +121,7 @@ class DemoDataProvider {
       isMonitored: true, // This one is being monitored
     ),
 
-    Campground(
+    const Campground(
       id: 'demo_5',
       name: 'Sequoia Giant Forest',
       description:
@@ -149,7 +149,7 @@ class DemoDataProvider {
       isMonitored: false,
     ),
 
-    Campground(
+    const Campground(
       id: 'demo_6',
       name: 'Zion Canyon Basecamp',
       description:

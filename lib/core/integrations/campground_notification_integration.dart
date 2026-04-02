@@ -89,7 +89,6 @@ class CampgroundNotificationIntegration {
         title: title,
         body: body,
         payload: 'monitoring_update:${campground.id}',
-        channel: 'general_notifications',
       );
 
       // Log analytics event
@@ -207,7 +206,6 @@ class CampgroundNotificationIntegration {
         body:
             'We\'ll notify you when your monitored campgrounds become available. Happy camping!',
         payload: 'welcome',
-        channel: 'general_notifications',
       );
 
       await FirebaseConfig.logEvent('welcome_notification_sent');

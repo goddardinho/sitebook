@@ -20,7 +20,7 @@ class AuthWrapperScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildChild(authState, ThemeData theme) {
+  Widget _buildChild(AuthState authState, ThemeData theme) {
     if (authState.status == AuthStatus.unknown) {
       return _buildLoadingScreen(theme);
     } else if (authState.status == AuthStatus.authenticating) {

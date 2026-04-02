@@ -113,7 +113,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            validator: (value) {
+            validator: (String? value) {
               if (value == null || value.trim().isEmpty) {
                 return 'Please enter your full name';
               }
@@ -141,7 +141,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            validator: (value) {
+            validator: (String? value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               }
@@ -199,7 +199,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            validator: (value) {
+            validator: (String? value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter a password';
               }
@@ -244,7 +244,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            validator: (value) {
+            validator: (String? value) {
               if (value == null || value.isEmpty) {
                 return 'Please confirm your password';
               }
@@ -266,7 +266,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 value: _acceptTerms,
                 onChanged: authState.isAuthenticating
                     ? null
-                    : (value) {
+                    : (bool? value) {
                         setState(() {
                           _acceptTerms = value ?? false;
                         });

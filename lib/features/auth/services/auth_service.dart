@@ -35,23 +35,23 @@ class AuthService {
       );
       return AuthResponse(user: user, tokens: tokens);
     } else {
-      throw AuthException('Only Demo User login is supported.');
+      throw const AuthException('Only Demo User login is supported.');
     }
   }
 
   /// Registration is not supported
   Future<AuthResponse> register(RegisterRequest request) async {
-    throw AuthException('Registration is not supported.');
+    throw const AuthException('Registration is not supported.');
   }
 
   /// Token refresh is not supported
   Future<AuthTokens> refreshToken(String refreshToken) async {
-    throw AuthException('Token refresh is not supported.');
+    throw const AuthException('Token refresh is not supported.');
   }
 
   /// Getting current user profile is not supported (local only)
   Future<User> getCurrentUser(String accessToken) async {
-    throw AuthException('Getting user profile is not supported.');
+    throw const AuthException('Getting user profile is not supported.');
   }
 
   /// Updating user profile is not supported (local only)
@@ -59,7 +59,7 @@ class AuthService {
     String accessToken,
     Map<String, dynamic> updates,
   ) async {
-    throw AuthException('Updating user profile is not supported.');
+    throw const AuthException('Updating user profile is not supported.');
   }
 
   /// Logout is a local operation only

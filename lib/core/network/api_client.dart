@@ -32,8 +32,6 @@ class ApiClient {
       _dio.interceptors.add(
         LogInterceptor(
           // SECURITY: Disabled request/response body logging to prevent API key exposure
-          requestBody: false,
-          responseBody: false,
           logPrint: (obj) => _logger.d(obj),
         ),
       );

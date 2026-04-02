@@ -184,15 +184,17 @@ class ProfileScreenIOSCompatible extends ConsumerWidget {
                         Icon(
                           Icons.location_on_outlined,
                           size: 16,
-                          color: theme.colorScheme.onPrimary.withOpacity(0.7),
+                          color: theme.colorScheme.onPrimary.withValues(
+                            alpha: 0.7,
+                          ),
                         ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             profile.location,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onPrimary.withOpacity(
-                                0.8,
+                              color: theme.colorScheme.onPrimary.withValues(
+                                alpha: 0.8,
                               ),
                             ),
                             maxLines: 1,
