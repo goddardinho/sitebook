@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,6 +7,14 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Read local.properties file for API keys and other sensitive data
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { stream ->
+        localProperties.load(stream)
+    }
+}
 android {
     namespace = "com.sitebook.sitebook_flutter"
     compileSdk = flutter.compileSdkVersion
@@ -30,9 +40,9 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        
-        // Hardcoded Google Maps API key for development
-        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = "AIzaSyAnEt8nq3-GT09922xFxSZFbMB3HmEf6R0"
+
+        // Google Maps API key from local.properties (secure)
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = localProperties.getProperty("GOOGLE_MAPS_API_KEY", "")
     }
 
     buildTypes {
