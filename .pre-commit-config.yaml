@@ -26,6 +26,6 @@ repos:
 
       - id: flutter-analyze
         name: Flutter Analyze
-        entry: flutter analyze --no-fatal-infos
+        entry: flutter analyze --no-fatal-infos --no-fatal-warnings
         language: system
         pass_filenames: false

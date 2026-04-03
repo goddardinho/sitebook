@@ -421,7 +421,7 @@ class CampgroundDatabase {
     );
   }
 
-  /// Parse JSON string to List<String>
+  /// Parse JSON string to `List<String>`
   List<String> _parseJsonStringList(String jsonString) {
     try {
       final List<dynamic> list = jsonDecode(jsonString);

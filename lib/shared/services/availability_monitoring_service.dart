@@ -24,10 +24,7 @@ class AvailabilityMonitoringService {
   static Future<void> initialize() async {
     try {
       // Initialize WorkManager with callback dispatcher
-      await Workmanager().initialize(
-        callbackDispatcher,
-        isInDebugMode: kDebugMode,
-      );
+      await Workmanager().initialize(callbackDispatcher);
 
       debugPrint('✅ AvailabilityMonitoringService initialized');
     } catch (e) {
