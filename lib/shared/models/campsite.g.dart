@@ -21,6 +21,30 @@ Campsite _$CampsiteFromJson(Map<String, dynamic> json) => Campsite(
   nextAvailableDate: json['nextAvailableDate'] == null
       ? null
       : DateTime.parse(json['nextAvailableDate'] as String),
+  imageUrl: json['imageUrl'] as String?,
+  description: json['description'] as String?,
+  ratePricing:
+      (json['ratePricing'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, (e as num).toDouble()),
+      ) ??
+      const {},
+  availableDates:
+      (json['availableDates'] as List<dynamic>?)
+          ?.map((e) => DateTime.parse(e as String))
+          .toList() ??
+      const [],
+  amenitiesDetails:
+      (json['amenitiesDetails'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as bool),
+      ) ??
+      const {},
+  reservationUrl: json['reservationUrl'] as String?,
+  isMonitored: json['isMonitored'] as bool? ?? false,
+  monitoringCount: (json['monitoringCount'] as num?)?.toInt(),
+  lastAvailabilityCheck: json['lastAvailabilityCheck'] == null
+      ? null
+      : DateTime.parse(json['lastAvailabilityCheck'] as String),
+  notes: json['notes'] as String?,
 );
 
 Map<String, dynamic> _$CampsiteToJson(Campsite instance) => <String, dynamic>{
@@ -34,4 +58,16 @@ Map<String, dynamic> _$CampsiteToJson(Campsite instance) => <String, dynamic>{
   'pricePerNight': instance.pricePerNight,
   'isAvailable': instance.isAvailable,
   'nextAvailableDate': instance.nextAvailableDate?.toIso8601String(),
+  'imageUrl': instance.imageUrl,
+  'description': instance.description,
+  'ratePricing': instance.ratePricing,
+  'availableDates': instance.availableDates
+      .map((e) => e.toIso8601String())
+      .toList(),
+  'amenitiesDetails': instance.amenitiesDetails,
+  'reservationUrl': instance.reservationUrl,
+  'isMonitored': instance.isMonitored,
+  'monitoringCount': instance.monitoringCount,
+  'lastAvailabilityCheck': instance.lastAvailabilityCheck?.toIso8601String(),
+  'notes': instance.notes,
 };

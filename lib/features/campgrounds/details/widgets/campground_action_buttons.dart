@@ -6,6 +6,7 @@ class CampgroundActionButtons extends StatelessWidget {
   final VoidCallback onReservePressed;
   final VoidCallback onDirectionsPressed;
   final VoidCallback onSharePressed;
+  final VoidCallback onSelectCampsitesPressed;
 
   const CampgroundActionButtons({
     super.key,
@@ -13,6 +14,7 @@ class CampgroundActionButtons extends StatelessWidget {
     required this.onReservePressed,
     required this.onDirectionsPressed,
     required this.onSharePressed,
+    required this.onSelectCampsitesPressed,
   });
 
   @override
@@ -36,13 +38,32 @@ class CampgroundActionButtons extends StatelessWidget {
 
         const SizedBox(height: 12),
 
+        // Select Campsites action
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: onSelectCampsitesPressed,
+            icon: const Icon(Icons.search),
+            label: const Text('View & Select Campsites'),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              side: BorderSide(color: theme.colorScheme.primary, width: 2),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
         // Secondary actions
         Row(
           children: [
             // Directions
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: onDirectionsPressed,
+                onPressed: () {
+                  print('🔘 Directions button pressed!'); // Debug logging
+                  onDirectionsPressed();
+                },
                 icon: const Icon(Icons.directions),
                 label: const Text('Directions'),
                 style: OutlinedButton.styleFrom(

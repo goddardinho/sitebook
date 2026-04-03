@@ -4,6 +4,7 @@ import '../../../shared/models/campground.dart';
 import '../../../shared/providers/campground_providers_demo.dart';
 import '../../../shared/utils/navigation_utils.dart';
 import '../../reservations/reservation_form_screen.dart';
+import '../../navigation/campsite_navigation.dart';
 import 'widgets/campground_image_carousel.dart';
 import 'widgets/campground_info_section.dart';
 import 'widgets/campground_action_buttons.dart';
@@ -78,6 +79,7 @@ class _CampgroundDetailsScreenState
                     onReservePressed: _handleReservePressed,
                     onDirectionsPressed: _handleDirectionsPressed,
                     onSharePressed: _handleSharePressed,
+                    onSelectCampsitesPressed: _handleSelectCampsitesPressed,
                   ),
                 ),
 
@@ -182,9 +184,19 @@ class _CampgroundDetailsScreenState
     );
   }
 
+  void _handleSelectCampsitesPressed() {
+    // Navigate to campsite selection
+    CampsiteNavigation.selectCampsites(context, widget.campground);
+  }
+
   void _handleDirectionsPressed() {
     final latitude = widget.campground.latitude;
     final longitude = widget.campground.longitude;
+
+    // Debug info
+    print(
+      '🗺️ Opening directions for ${widget.campground.name}: $latitude, $longitude',
+    );
 
     NavigationUtils.openDirections(latitude, longitude, context);
   }

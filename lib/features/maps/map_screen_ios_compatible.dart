@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/models/campground.dart';
 import '../../demo/demo_data_provider.dart';
+import '../../shared/utils/navigation_utils.dart';
 import 'dart:math' as math;
 
 // Demo location data
@@ -492,23 +493,17 @@ class _MapScreenIOSCompatibleState
           ),
           FilledButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Directions to ${campground.name}'),
-                  action: SnackBarAction(
-                    label: 'GPS',
-                    onPressed: () {
-                      // In a real app, this would open maps or navigation
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('GPS navigation coming soon!'),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+              print(
+                '🔘 Map screen directions button pressed for ${campground.name}!',
               );
+              Navigator.of(context).pop();
+
+              // Use the proper directions functionality
+              final latitude = campground.latitude;
+              final longitude = campground.longitude;
+
+              print('🗺️ Map screen opening directions: $latitude, $longitude');
+              NavigationUtils.openDirections(latitude, longitude, context);
             },
             child: const Text('Directions'),
           ),
