@@ -1,0 +1,108 @@
+name: 🔒 Security Issue
+description: Report a security vulnerability or concern (private processing)
+title: "[SECURITY] "
+labels: ["security", "urgent", "needs-triage"]
+assignees:
+  - goddardinho
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **IMPORTANT: Security Issues** ⚠️
+
+        If you're reporting a critical security vulnerability, please consider emailing directly instead of using this public form.
+
+        This form is appropriate for:
+        - General security concerns or questions
+        - Security enhancements or hardening suggestions
+        - Non-critical security issues
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Security Severity
+      description: How severe is this security concern?
+      options:
+        - Critical (Immediate risk to user data or app security)
+        - High (Significant security risk)
+        - Medium (Moderate security concern)
+        - Low (Minor security improvement)
+      default: 1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Security Category
+      description: What type of security issue is this?
+      options:
+        - Data Storage (Credential security, local data protection)
+        - Network Communication (API security, HTTPS)
+        - Authentication (Login, session management)
+        - Authorization (Access control, permissions)
+        - Input Validation (Form validation, injection prevention)
+        - Configuration (Security settings, environment variables)
+        - Privacy (Data collection, user privacy)
+        - Third-party Integration (External service security)
+      default: 0
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platform(s) Affected
+      description: Which platforms are affected by this security issue?
+      options:
+        - label: Android
+        - label: iOS
+        - label: Web
+        - label: All platforms
+        - label: Backend/API
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Security Issue Description
+      description: Describe the security issue or concern (avoid sensitive details in public issues)
+      placeholder: Describe the security concern...
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential Impact
+      description: What could happen if this security issue is exploited?
+      placeholder: Describe the potential impact...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-verify
+    attributes:
+      label: Steps to Verify
+      description: How can this security issue be verified or reproduced?
+      placeholder: |
+        1. Step one...
+        2. Step two...
+        3. Observe security concern...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Do you have suggestions for addressing this security issue?
+      placeholder: Describe potential solutions or improvements...
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any additional context about this security issue
+      placeholder: References, similar issues found elsewhere, etc.

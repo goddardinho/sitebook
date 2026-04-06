@@ -1,0 +1,125 @@
+name: 🐛 Bug Report
+description: Report a bug or issue with SiteBook Flutter
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+assignees:
+  - goddardinho
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below with as much detail as possible.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How critical is this issue?
+      options:
+        - P0 - Critical (App crashes, data loss, security vulnerabilities)
+        - P1 - High (Core functionality broken, major UX issues)
+        - P2 - Medium (Feature partially working, minor UX issues)
+        - P3 - Low (Cosmetic issues, nice-to-have improvements)
+      default: 1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: What's the impact on users?
+      options:
+        - Blocker (Complete feature failure)
+        - Major (Significant functionality loss)
+        - Minor (Partial functionality loss)
+        - Trivial (Cosmetic or very minor issue)
+      default: 1
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platform(s) Affected
+      description: Which platforms are experiencing this issue?
+      options:
+        - label: Android
+        - label: iOS
+        - label: Web
+        - label: All platforms
+    validations:
+      required: true
+
+  - type: input
+    id: device-info
+    attributes:
+      label: Device/Browser Information
+      description: "Specific device model, OS version, or browser version"
+      placeholder: "e.g., iPhone 14 Pro iOS 17.2, Pixel 7 Android 14, Chrome 120"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe what happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen
+      placeholder: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: A clear and concise description of what actually happened
+      placeholder: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Videos
+      description: If applicable, add screenshots or videos to help explain your problem
+      placeholder: Drag and drop images or videos here, or paste URLs
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: Console logs, error messages, workarounds tried, etc.
+
+  - type: checkboxes
+    id: uat-check
+    attributes:
+      label: UAT Context
+      description: Is this issue discovered during User Acceptance Testing?
+      options:
+        - label: This issue was discovered during UAT
+        - label: This is a regression from previous version
+        - label: This blocks UAT completion

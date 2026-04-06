@@ -1,0 +1,122 @@
+name: 🚀 Feature Request
+description: Suggest a new feature or enhancement for SiteBook Flutter
+title: "[FEATURE] "
+labels: ["feature", "needs-triage"]
+assignees:
+  - goddardinho
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please fill out the form below to help us understand your request.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - P0 - Critical (Essential for core functionality)
+        - P1 - High (Important for user experience)
+        - P2 - Medium (Would improve user experience)
+        - P3 - Low (Nice to have)
+      default: 2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - New Feature (Completely new functionality)
+        - Enhancement (Improvement to existing feature)
+        - Integration (Third-party service integration)
+        - UI/UX Improvement (Interface or experience enhancement)
+      default: 0
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Target Platform(s)
+      description: Which platforms should support this feature?
+      options:
+        - label: Android
+        - label: iOS
+        - label: Web
+        - label: All platforms
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: User Story
+      description: Describe the feature as a user story
+      placeholder: "As a [type of user], I want [some goal] so that [some reason]."
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Detailed Description
+      description: A clear and detailed description of the requested feature
+      placeholder: Describe the feature in detail...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What needs to be true for this feature to be considered complete?
+      placeholder: |
+        - [ ] Criteria 1
+        - [ ] Criteria 2
+        - [ ] Criteria 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: business-justification
+    attributes:
+      label: Business Justification
+      description: Why is this feature important? What problem does it solve?
+      placeholder: Explain the business value or user benefit...
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-considerations
+    attributes:
+      label: Technical Considerations
+      description: Any technical constraints, dependencies, or considerations?
+      placeholder: API requirements, performance considerations, security concerns, etc.
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Examples
+      description: If you have mockups, wireframes, or examples, please share them
+      placeholder: Drag and drop images here, or paste URLs to examples
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: Describe any alternatives you've considered...
+
+  - type: checkboxes
+    id: uat-context
+    attributes:
+      label: UAT Context
+      description: Context about this feature request
+      options:
+        - label: This feature was requested during UAT
+        - label: This feature would improve UAT experience
+        - label: This is a future enhancement (post-UAT)
