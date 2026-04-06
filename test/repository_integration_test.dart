@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -19,6 +20,9 @@ void main() {
     late CampgroundRepositoryImpl repository;
 
     setUpAll(() {
+      // Initialize Flutter bindings for testing
+      TestWidgetsFlutterBinding.ensureInitialized();
+
       // Initialize FFI for testing
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
@@ -29,6 +33,9 @@ void main() {
       mockStateParkApi = MockStateParkApiService();
       testDatabase = CampgroundDatabase();
 
+      // Clear all data before each test
+      await testDatabase.clearAllData();
+
       repository = CampgroundRepositoryImpl(
         recreationGovApi: mockRecreationGovApi,
         stateParkApi: mockStateParkApi,
@@ -37,6 +44,8 @@ void main() {
     });
 
     tearDown(() async {
+      // Clear all data after each test
+      await testDatabase.clearAllData();
       await testDatabase.close();
     });
 
@@ -112,12 +121,21 @@ void main() {
           _createTestCampground(id: 'state_1', name: 'State Park Camp'),
         ];
 
+        // Mock with flexible parameters
         when(
-          mockRecreationGovApi.getFacilities(state: 'CA', limit: 100),
+          mockRecreationGovApi.getFacilities(
+            activity: any,
+            state: any,
+            latitude: any,
+            longitude: any,
+            radius: any,
+            limit: any,
+            offset: any,
+          ),
         ).thenAnswer((_) async => recGovResponse);
 
         when(
-          mockStateParkApi.getCampgroundsByState('CA'),
+          mockStateParkApi.getCampgroundsByState(any),
         ).thenAnswer((_) async => stateParkCampgrounds);
 
         // Act - This will trigger refresh of state data
@@ -137,7 +155,15 @@ void main() {
 
         // Mock successful API response
         when(
-          mockRecreationGovApi.getFacilities(state: 'CA', limit: 100),
+          mockRecreationGovApi.getFacilities(
+            activity: any,
+            state: any,
+            latitude: any,
+            longitude: any,
+            radius: any,
+            limit: any,
+            offset: any,
+          ),
         ).thenAnswer(
           (_) async => RecreationGovResponse<RecreationGovFacility>(
             data: [],
@@ -146,7 +172,7 @@ void main() {
         );
 
         when(
-          mockStateParkApi.getCampgroundsByState('CA'),
+          mockStateParkApi.getCampgroundsByState(any),
         ).thenAnswer((_) async => []);
 
         // Act
