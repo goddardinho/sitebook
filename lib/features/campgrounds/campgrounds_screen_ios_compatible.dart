@@ -55,6 +55,10 @@ class _CampgroundsScreenIOSCompatibleState
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                titlePadding: const EdgeInsets.only(
+                  left: 16,
+                  bottom: 44, // Increased padding to avoid overlap
+                ),
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -78,7 +82,7 @@ class _CampgroundsScreenIOSCompatibleState
                             _buildSearchBar(theme),
                           ],
                           if (!_isSearching) ...[
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4), // Reduced top spacing
                             Consumer(
                               builder: (context, ref, child) {
                                 final monitoredCountAsync = ref.watch(
@@ -94,7 +98,7 @@ class _CampgroundsScreenIOSCompatibleState
                               },
                             ),
                           ],
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12), // Reduced bottom spacing
                         ],
                       ),
                     ),
@@ -198,21 +202,30 @@ class _CampgroundsScreenIOSCompatibleState
   }
 
   Widget _buildHeaderStats(ThemeData theme, int monitoredCount) {
-    return Row(
-      children: [
-        Icon(
-          Icons.favorite,
-          color: theme.colorScheme.onPrimary.withOpacity(0.7),
-          size: 16,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          '$monitoredCount Monitored',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onPrimary.withOpacity(0.8),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onPrimary.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.favorite,
+            color: theme.colorScheme.onPrimary.withValues(alpha: 0.9),
+            size: 16,
           ),
-        ),
-      ],
+          const SizedBox(width: 6),
+          Text(
+            '$monitoredCount Monitored',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onPrimary.withValues(alpha: 0.9),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
