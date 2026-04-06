@@ -15,9 +15,13 @@ void main() {
 
     setUp(() async {
       database = CampgroundDatabase();
+      // Clear all data before each test to ensure clean state
+      await database.clearAllData();
     });
 
     tearDown(() async {
+      // Clear all data after each test to ensure no interference
+      await database.clearAllData();
       await database.close();
     });
 
@@ -171,8 +175,8 @@ void main() {
           _createTestCampground(
             id: 'far',
             name: 'Far Camp',
-            latitude: 36.7378, // San Jose (~50 miles)
-            longitude: -119.7871,
+            latitude: 37.3409, // San Jose (~50 miles)
+            longitude: -121.8906,
           ),
         ];
         await database.saveCampgrounds(testCampgrounds);
