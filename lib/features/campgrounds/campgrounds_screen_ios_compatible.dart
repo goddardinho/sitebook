@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../shared/providers/campground_providers_ios_compatible.dart';
+import '../../shared/providers/campground_providers_live.dart';
 
 class CampgroundsScreenIOSCompatible extends ConsumerStatefulWidget {
   const CampgroundsScreenIOSCompatible({super.key});
@@ -85,16 +85,10 @@ class _CampgroundsScreenIOSCompatibleState
                             const SizedBox(height: 4), // Reduced top spacing
                             Consumer(
                               builder: (context, ref, child) {
-                                final monitoredCountAsync = ref.watch(
+                                final monitoredCount = ref.watch(
                                   monitoredCountProvider,
                                 );
-                                return monitoredCountAsync.when(
-                                  data: (count) =>
-                                      _buildHeaderStats(theme, count),
-                                  loading: () => _buildHeaderStats(theme, 0),
-                                  error: (error, stack) =>
-                                      _buildHeaderStats(theme, 0),
-                                );
+                                return _buildHeaderStats(theme, monitoredCount);
                               },
                             ),
                           ],
@@ -125,43 +119,17 @@ class _CampgroundsScreenIOSCompatibleState
         },
         body: Consumer(
           builder: (context, ref, child) {
-            final searchResultsAsync = ref.watch(searchResultsProvider);
+            final searchQueryNotifier = ref.watch(searchQueryProvider);
+            final searchQuery = searchQueryNotifier.query;
+            final campgroundsAsync = searchQuery.isEmpty
+                ? ref.watch(nearbyyCampgroundsProvider)
+                : ref.watch(searchResultsProvider(searchQuery));
 
-            return searchResultsAsync.when(
+            return campgroundsAsync.when(
               data: (campgrounds) =>
                   _buildCampgroundsList(context, campgrounds),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: theme.colorScheme.error,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Error loading campgrounds',
-                      style: theme.textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      error.toString(),
-                      style: theme.textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        ref.invalidate(searchResultsProvider);
-                      },
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Retry'),
-                    ),
-                  ],
-                ),
-              ),
+              loading: () => _buildLoadingState(context),
+              error: (error, stack) => _buildErrorState(context, error),
             );
           },
         ),
@@ -232,7 +200,8 @@ class _CampgroundsScreenIOSCompatibleState
   Widget _buildCampgroundsList(BuildContext context, List campgrounds) {
     if (campgrounds.isEmpty) {
       final theme = Theme.of(context);
-      final searchQuery = ref.watch(searchQueryProvider);
+      final searchQueryNotifier = ref.watch(searchQueryProvider);
+      final searchQuery = searchQueryNotifier.query;
 
       return Center(
         child: Column(
@@ -319,6 +288,110 @@ class _CampgroundsScreenIOSCompatibleState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Campground image
+                    if (campground.imageUrls.isNotEmpty) ...[
+                      Container(
+                        height: 160,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            campground.imageUrls.first,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Container(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                alignment: Alignment.center,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.terrain,
+                                      size: 48,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant
+                                          .withOpacity(0.5),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Image unavailable',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant
+                                                .withOpacity(0.7),
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ] else ...[
+                      // Placeholder when no images available
+                      Container(
+                        height: 160,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.photo_camera,
+                              size: 48,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant.withOpacity(0.3),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'No photos available',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant
+                                        .withOpacity(0.5),
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     // Header with name and monitor button
                     Row(
                       children: [
@@ -377,10 +450,7 @@ class _CampgroundsScreenIOSCompatibleState
                         IconButton.filledTonal(
                           onPressed: () {
                             final actions = ref.read(campgroundActionsProvider);
-                            actions.toggleMonitoring(
-                              campground.id,
-                              !campground.isMonitored,
-                            );
+                            actions.toggleMonitoring(campground.id);
                           },
                           icon: Icon(
                             campground.isMonitored
@@ -429,6 +499,68 @@ class _CampgroundsScreenIOSCompatibleState
           ),
         );
       },
+    );
+  }
+
+  Widget _buildLoadingState(BuildContext context) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 16),
+          Text(
+            'Finding nearby campgrounds...',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, Object error) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: theme.colorScheme.error.withOpacity(0.6),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Unable to load campgrounds',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.8),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error.toString(),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+                ref.invalidate(nearbyyCampgroundsProvider);
+                ref.invalidate(searchResultsProvider);
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
