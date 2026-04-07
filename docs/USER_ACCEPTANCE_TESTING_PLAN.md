@@ -41,15 +41,25 @@ This User Acceptance Testing (UAT) plan validates all completed features of the 
 - **Web:** Chrome 90+, Safari 14+, Firefox 88+
 
 ### Pre-Test Setup
-1. **Install Latest Build** from development team
-2. **Enable Location Services** for maps functionality
-3. **Allow Notification Permissions** for monitoring alerts
-4. **Have Recreation.gov Account** ready for credential testing
+1. ⏳ **Install Latest Build**
+   - Download and install the latest SiteBook build on test devices
+   - Verify app launches successfully
+   - Confirm proper icon and branding display
+2. ⏳ **Enable Location Services**
+   - Android Settings → Apps → SiteBook → Permissions → Location
+   - Recommend: "Allow all the time" or "Allow only while using the app"
+   - For emulator testing: Use Extended controls to set mock location
+3. ⏳ **Allow Notification Permissions**
+   - Will be prompted during first app use for monitoring setup
+   - Check Settings → Apps → SiteBook → Notifications when prompted
+4. ⏳ **Have Recreation.gov Account** (Optional)
+   - Demo data system available for testing without real account
+   - Real credentials can be tested if available for live system validation
 
 ### Test Data
 - **Demo Campgrounds:** 5 National Park locations pre-loaded
-- **Test Dates:** Use dates 30-90 days in future for availability
-- **Sample Credentials:** Test recreation.gov account or demo mode
+- **Test Dates:** Use dates 30-90 days in future for availability testing  
+- **Sample Credentials:** Demo mode available, real recreation.gov account optional
 
 ---
 
@@ -67,10 +77,11 @@ Test the primary campground listing, search, filtering, and details functionalit
 4. Validate campground information accuracy (name, location, amenities)
 
 **Expected Results:**
-- Professional card-based UI loads instantly
-- All campground images display correctly
-- Information is accurate and complete
+- App launches successfully to Campgrounds screen
+- All 5 demo campgrounds display with proper images
 - Smooth scrolling performance
+- Accurate campground information (names, locations, amenities)
+- Header layout professional and properly aligned
 
 **Pass/Fail:** _____ | **Notes:** ________________
 
@@ -184,6 +195,33 @@ Test the complete reservation flow including forms, validation, and booking proc
 - Management actions function properly
 
 **Pass/Fail:** _____ | **Notes:** ________________
+5. Verify error messages display properly
+
+**Expected Results:**
+- Past dates rejected with clear message
+- Email validation prevents invalid formats
+- Required field validation shows appropriate errors
+- Guest limits enforced properly
+- Error messages are user-friendly and helpful
+
+**Pass/Fail:** _____ | **Notes:** ________________
+
+#### UAT-RS-003: Reservations Management
+**Objective:** Verify reservation tracking and management  
+**Steps:**
+1. Navigate to Reservations tab
+2. Review list of demo/test reservations
+3. Filter by status (upcoming, past, cancelled)
+4. View reservation details
+5. Test basic management actions if available
+
+**Expected Results:**
+- Reservations display in organized list
+- Status filtering works correctly
+- Reservation details complete and accurate
+- Management actions function properly
+
+**Pass/Fail:** _____ | **Notes:** ________________
 
 ---
 
@@ -239,6 +277,8 @@ Test Google Maps integration, location services, and navigation functionality.
 - Directions launches external navigation app
 - Coordinates match expected campground location
 - App handles external app integration gracefully
+
+**Pass/Fail:** _____ | **Notes:** ________________
 
 **Pass/Fail:** _____ | **Notes:** ________________
 
@@ -607,9 +647,10 @@ Validate security implementation and performance requirements.
 
 ### Test Execution Summary
 - **Total Test Cases:** 21 individual test cases across 6 feature areas
-- **Platforms Tested:** Android ☐ | iOS ☐ | Web ☐
-- **Test Duration:** Start: _______ | End: _______
-- **Testers:** ___________________________
+- **Platforms Tested:** Android ⏳ | iOS ☐ | Web ☐
+- **Test Duration:** Start: April 6, 2026 | End: _______
+- **Testers:** Project Team (Internal UAT)
+- **Current Status:** Pre-Test Setup Phase
 
 ### Results Overview
 - **Critical Issues:** _____ (must fix before release)

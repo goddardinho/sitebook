@@ -62,10 +62,11 @@ class RecreationGovResponse<T> {
     T Function(Map<String, dynamic>) fromJsonT,
   ) {
     return RecreationGovResponse(
-      data: (json['RECDATA'] as List)
+      data: (json['RECDATA'] as List? ?? [])
+          .where((item) => item != null) // Filter out null items
           .map((item) => fromJsonT(item as Map<String, dynamic>))
           .toList(),
-      metadata: RecreationGovMetadata.fromJson(json['METADATA']),
+      metadata: RecreationGovMetadata.fromJson(json['METADATA'] ?? {}),
     );
   }
 }
@@ -82,9 +83,9 @@ class RecreationGovMetadata {
   factory RecreationGovMetadata.fromJson(Map<String, dynamic> json) {
     return RecreationGovMetadata(
       searchParameters: RecreationGovSearchParameters.fromJson(
-        json['SEARCH_PARAMETERS'],
+        json['SEARCH_PARAMETERS'] ?? {},
       ),
-      resultInfo: RecreationGovResultInfo.fromJson(json['RESULT_INFO']),
+      resultInfo: RecreationGovResultInfo.fromJson(json['RESULT_INFO'] ?? {}),
     );
   }
 }
@@ -157,9 +158,11 @@ class RecreationGovFacility {
       facilityEmail: json['FacilityEmail'],
       facilityReservationURL: json['FacilityReservationURL'],
       addresses: (json['FACILITYADDRESS'] as List? ?? [])
+          .where((addr) => addr != null) // Filter out null addresses
           .map((addr) => RecreationGovAddress.fromJson(addr))
           .toList(),
       activities: (json['ACTIVITY'] as List? ?? [])
+          .where((activity) => activity != null) // Filter out null activities
           .map((activity) => RecreationGovActivity.fromJson(activity))
           .toList(),
     );
@@ -277,4 +280,248 @@ class RecreationGovAvailabilityResponse {
   }
 
   Map<String, dynamic> toJson() => availability;
+}
+
+// RESERVATION BOOKING DATA MODELS (NEW)
+
+/// Request payload for creating or updating reservations
+class ReservationRequest {
+  final String facilityId;
+  final String campsiteId;
+  final String startDate; // YYYY-MM-DD format
+  final String endDate; // YYYY-MM-DD format
+  final int partySize;
+  final String customerEmail;
+  final String customerPhone;
+  final String customerFirstName;
+  final String customerLastName;
+  final String? specialRequests;
+  final bool acceptTerms;
+
+  const ReservationRequest({
+    required this.facilityId,
+    required this.campsiteId,
+    required this.startDate,
+    required this.endDate,
+    required this.partySize,
+    required this.customerEmail,
+    required this.customerPhone,
+    required this.customerFirstName,
+    required this.customerLastName,
+    this.specialRequests,
+    this.acceptTerms = true,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'FacilityID': facilityId,
+      'CampsiteID': campsiteId,
+      'StartDate': startDate,
+      'EndDate': endDate,
+      'PartySize': partySize,
+      'CustomerEmail': customerEmail,
+      'CustomerPhone': customerPhone,
+      'CustomerFirstName': customerFirstName,
+      'CustomerLastName': customerLastName,
+      'SpecialRequests': specialRequests,
+      'AcceptTerms': acceptTerms,
+    };
+  }
+
+  factory ReservationRequest.fromJson(Map<String, dynamic> json) {
+    return ReservationRequest(
+      facilityId: json['FacilityID'] ?? '',
+      campsiteId: json['CampsiteID'] ?? '',
+      startDate: json['StartDate'] ?? '',
+      endDate: json['EndDate'] ?? '',
+      partySize: json['PartySize'] ?? 1,
+      customerEmail: json['CustomerEmail'] ?? '',
+      customerPhone: json['CustomerPhone'] ?? '',
+      customerFirstName: json['CustomerFirstName'] ?? '',
+      customerLastName: json['CustomerLastName'] ?? '',
+      specialRequests: json['SpecialRequests'],
+      acceptTerms: json['AcceptTerms'] ?? true,
+    );
+  }
+}
+
+/// Response from Recreation.gov for reservation operations
+class ReservationResponse {
+  final String reservationId;
+  final String confirmationCode;
+  final String status; // 'confirmed', 'pending', 'cancelled'
+  final String facilityId;
+  final String facilityName;
+  final String campsiteId;
+  final String campsiteName;
+  final String startDate;
+  final String endDate;
+  final int nights;
+  final double totalCost;
+  final double taxes;
+  final double fees;
+  final String customerEmail;
+  final String customerName;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+  final String? cancellationPolicy;
+  final List<ReservationFee> feeBreakdown;
+
+  const ReservationResponse({
+    required this.reservationId,
+    required this.confirmationCode,
+    required this.status,
+    required this.facilityId,
+    required this.facilityName,
+    required this.campsiteId,
+    required this.campsiteName,
+    required this.startDate,
+    required this.endDate,
+    required this.nights,
+    required this.totalCost,
+    required this.taxes,
+    required this.fees,
+    required this.customerEmail,
+    required this.customerName,
+    required this.createdAt,
+    this.updatedAt,
+    this.cancellationPolicy,
+    required this.feeBreakdown,
+  });
+
+  factory ReservationResponse.fromJson(Map<String, dynamic> json) {
+    return ReservationResponse(
+      reservationId: json['ReservationID'] ?? '',
+      confirmationCode: json['ConfirmationCode'] ?? '',
+      status: json['Status'] ?? 'pending',
+      facilityId: json['FacilityID'] ?? '',
+      facilityName: json['FacilityName'] ?? '',
+      campsiteId: json['CampsiteID'] ?? '',
+      campsiteName: json['CampsiteName'] ?? '',
+      startDate: json['StartDate'] ?? '',
+      endDate: json['EndDate'] ?? '',
+      nights: json['Nights'] ?? 0,
+      totalCost: (json['TotalCost'] as num?)?.toDouble() ?? 0.0,
+      taxes: (json['Taxes'] as num?)?.toDouble() ?? 0.0,
+      fees: (json['Fees'] as num?)?.toDouble() ?? 0.0,
+      customerEmail: json['CustomerEmail'] ?? '',
+      customerName: json['CustomerName'] ?? '',
+      createdAt: DateTime.tryParse(json['CreatedAt'] ?? '') ?? DateTime.now(),
+      updatedAt: json['UpdatedAt'] != null
+          ? DateTime.tryParse(json['UpdatedAt'])
+          : null,
+      cancellationPolicy: json['CancellationPolicy'],
+      feeBreakdown: (json['FeeBreakdown'] as List? ?? [])
+          .where((fee) => fee != null) // Filter out null fees
+          .map((fee) => ReservationFee.fromJson(fee))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ReservationID': reservationId,
+      'ConfirmationCode': confirmationCode,
+      'Status': status,
+      'FacilityID': facilityId,
+      'FacilityName': facilityName,
+      'CampsiteID': campsiteId,
+      'CampsiteName': campsiteName,
+      'StartDate': startDate,
+      'EndDate': endDate,
+      'Nights': nights,
+      'TotalCost': totalCost,
+      'Taxes': taxes,
+      'Fees': fees,
+      'CustomerEmail': customerEmail,
+      'CustomerName': customerName,
+      'CreatedAt': createdAt.toIso8601String(),
+      'UpdatedAt': updatedAt?.toIso8601String(),
+      'CancellationPolicy': cancellationPolicy,
+      'FeeBreakdown': feeBreakdown.map((fee) => fee.toJson()).toList(),
+    };
+  }
+}
+
+/// Fee breakdown for reservations
+class ReservationFee {
+  final String feeType; // 'site', 'tax', 'service', 'processing'
+  final String description;
+  final double amount;
+  final int nights;
+
+  const ReservationFee({
+    required this.feeType,
+    required this.description,
+    required this.amount,
+    required this.nights,
+  });
+
+  factory ReservationFee.fromJson(Map<String, dynamic> json) {
+    return ReservationFee(
+      feeType: json['FeeType'] ?? '',
+      description: json['Description'] ?? '',
+      amount: (json['Amount'] as num?)?.toDouble() ?? 0.0,
+      nights: json['Nights'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'FeeType': feeType,
+      'Description': description,
+      'Amount': amount,
+      'Nights': nights,
+    };
+  }
+}
+
+/// Response for reservation cancellation
+class CancellationResponse {
+  final String reservationId;
+  final String status; // 'cancelled', 'cancelledWithFee', 'error'
+  final double refundAmount;
+  final double cancellationFee;
+  final String refundMethod; // 'original_payment', 'credit'
+  final String? refundEta; // Expected refund timeline
+  final DateTime cancelledAt;
+  final String? cancellationReason;
+
+  const CancellationResponse({
+    required this.reservationId,
+    required this.status,
+    required this.refundAmount,
+    required this.cancellationFee,
+    required this.refundMethod,
+    this.refundEta,
+    required this.cancelledAt,
+    this.cancellationReason,
+  });
+
+  factory CancellationResponse.fromJson(Map<String, dynamic> json) {
+    return CancellationResponse(
+      reservationId: json['ReservationID'] ?? '',
+      status: json['Status'] ?? 'error',
+      refundAmount: (json['RefundAmount'] as num?)?.toDouble() ?? 0.0,
+      cancellationFee: (json['CancellationFee'] as num?)?.toDouble() ?? 0.0,
+      refundMethod: json['RefundMethod'] ?? 'original_payment',
+      refundEta: json['RefundETA'],
+      cancelledAt:
+          DateTime.tryParse(json['CancelledAt'] ?? '') ?? DateTime.now(),
+      cancellationReason: json['CancellationReason'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ReservationID': reservationId,
+      'Status': status,
+      'RefundAmount': refundAmount,
+      'CancellationFee': cancellationFee,
+      'RefundMethod': refundMethod,
+      'RefundETA': refundEta,
+      'CancelledAt': cancelledAt.toIso8601String(),
+      'CancellationReason': cancellationReason,
+    };
+  }
 }

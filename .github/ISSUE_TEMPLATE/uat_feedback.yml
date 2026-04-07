@@ -1,0 +1,151 @@
+name: 🧪 UAT Feedback
+description: Feedback and issues discovered during User Acceptance Testing
+title: "[UAT] "
+labels: ["uat", "feedback", "needs-triage"]
+assignees:
+  - goddardinho
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for participating in User Acceptance Testing! Your feedback helps us improve SiteBook Flutter.
+
+  - type: dropdown
+    id: feedback-type
+    attributes:
+      label: Feedback Type
+      description: What type of feedback are you providing?
+      options:
+        - Bug/Issue (Something is broken or not working as expected)
+        - Usability Concern (Feature works but is confusing or difficult to use)
+        - Enhancement Suggestion (Improvement to existing functionality)
+        - Missing Feature (Something you expected but couldn't find)
+        - Positive Feedback (Something that worked well)
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority for Release
+      description: How important is this for the initial release?
+      options:
+        - Must Fix (Blocks release or critical user flows)
+        - Should Fix (Important for good user experience)
+        - Could Fix (Nice to have, not critical)
+        - Future (Good idea for future releases)
+      default: 1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: test-area
+    attributes:
+      label: UAT Test Area
+      description: Which UAT test area does this relate to?
+      options:
+        - Core Campground Discovery
+        - Reservation System
+        - Maps & Location Features
+        - Notifications & Monitoring
+        - Settings & Credential Management
+        - Advanced Campsite Features
+        - Cross-Platform Testing
+        - End-to-End User Journeys
+        - Security & Performance
+        - General App Experience
+      default: 0
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms-tested
+    attributes:
+      label: Platform(s) Tested
+      description: Which platforms did you test this on?
+      options:
+        - label: Android (specify device model in description)
+        - label: iOS (specify device model in description)
+        - label: Web (specify browser in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Detailed description of your feedback
+      placeholder: |
+        Please provide a clear description of:
+        - What you were trying to do
+        - What happened (or didn't happen)
+        - What you expected to happen
+        - How this impacted your testing experience
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce (if applicable)
+      description: If reporting a bug or issue, how can we reproduce it?
+      placeholder: |
+        1. Go to...
+        2. Click on...
+        3. Enter...
+        4. Observe...
+
+  - type: textarea
+    id: user-context
+    attributes:
+      label: User Context
+      description: Tell us about your background and how you plan to use the app
+      placeholder: |
+        - How often do you camp?
+        - Do you typically use reservation systems?
+        - What devices do you usually use for travel planning?
+        - Any other relevant context about your camping/tech habits
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Videos
+      description: If applicable, add screenshots or videos to illustrate your feedback
+      placeholder: Drag and drop images or videos here
+
+  - type: input
+    id: device-details
+    attributes:
+      label: Device/Browser Details
+      description: Specific device model, OS version, or browser version
+      placeholder: "e.g., iPhone 14 Pro iOS 17.2, Samsung Galaxy S23 Android 14, Chrome 120"
+    validations:
+      required: true
+
+  - type: textarea
+    id: overall-impression
+    attributes:
+      label: Overall Impression
+      description: What's your overall impression of this feature or the app?
+      placeholder: |
+        - What did you like most?
+        - What was most frustrating?
+        - Would you recommend this app to other campers?
+        - Any other general thoughts?
+
+  - type: dropdown
+    id: completion-impact
+    attributes:
+      label: Impact on UAT Completion
+      description: How does this feedback impact your ability to complete UAT?
+      options:
+        - No Impact (Doesn't affect UAT completion)
+        - Minor Impact (Noted but doesn't block testing)
+        - Major Impact (Makes testing difficult but possible)
+        - Blocking (Prevents completion of UAT test cases)
+      default: 0
+    validations:
+      required: true

@@ -39,7 +39,7 @@ class DemoDataProvider {
 
     const Campground(
       id: 'demo_2',
-      name: 'Big Sur Coastal Paradise',
+      name: 'CA - Big Sur Coastal Paradise',
       description:
           'Breathtaking oceanfront camping with dramatic coastal views and rugged hiking trails along the Pacific Coast Highway.',
       latitude: 36.2704,
@@ -61,13 +61,16 @@ class DemoDataProvider {
         'Photography',
         'Tide Pooling',
       ],
-      imageUrls: const [],
+      imageUrls: const [
+        'https://picsum.photos/400/240?random=1',
+        'https://picsum.photos/400/240?random=2',
+      ],
       isMonitored: true, // This one is being monitored
     ),
 
     const Campground(
       id: 'demo_3',
-      name: 'Lake Tahoe Alpine Retreat',
+      name: 'CA - Lake Tahoe Alpine Retreat',
       description:
           'High elevation mountain camping with crystal clear lake views, excellent fishing, and alpine hiking trails.',
       latitude: 39.0968,
@@ -89,7 +92,10 @@ class DemoDataProvider {
         'Kayaking',
         'Mountain Biking',
       ],
-      imageUrls: const [],
+      imageUrls: const [
+        'https://picsum.photos/400/240?random=3',
+        'https://picsum.photos/400/240?random=4',
+      ],
       isMonitored: false,
     ),
 
@@ -116,7 +122,10 @@ class DemoDataProvider {
         'Desert Exploration',
         'Nature Study',
       ],
-      imageUrls: const [],
+      imageUrls: const [
+        'https://picsum.photos/400/240?random=5',
+        'https://picsum.photos/400/240?random=6',
+      ],
       reservationUrl: 'https://recreation.gov/camping/campgrounds/232427',
       isMonitored: true, // This one is being monitored
     ),
@@ -145,7 +154,10 @@ class DemoDataProvider {
         'Ranger Programs',
         'Nature Walks',
       ],
-      imageUrls: const [],
+      imageUrls: const [
+        'https://picsum.photos/400/240?random=7',
+        'https://picsum.photos/400/240?random=8',
+      ],
       isMonitored: false,
     ),
 
@@ -174,7 +186,10 @@ class DemoDataProvider {
         'Wildlife Viewing',
         'River Tubing',
       ],
-      imageUrls: const [],
+      imageUrls: const [
+        'https://picsum.photos/400/240?random=9',
+        'https://picsum.photos/400/240?random=10',
+      ],
       reservationUrl: 'https://recreation.gov/camping/campgrounds/232475',
       phoneNumber: '435-772-3256',
       isMonitored: true, // This one is being monitored

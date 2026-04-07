@@ -5,8 +5,6 @@ import '../models/campground.dart';
 import '../models/campsite.dart';
 import '../models/campsite_monitoring_settings.dart';
 import '../../demo/demo_data_provider.dart';
-import 'enhanced_notification_service.dart';
-import 'notification_preferences_service.dart';
 import 'advanced_notification_service.dart';
 import 'availability_change_detection_service.dart';
 
@@ -329,73 +327,6 @@ List<DateTime> _generateAvailableDates(math.Random random) {
 
   dates.sort();
   return dates;
-}
-
-/// Send notifications for found availability
-Future<void> _sendAvailabilityNotifications(
-  List<CampgroundAvailability> availabilities,
-) async {
-  try {
-    // Initialize notification preferences service
-    final prefsService = NotificationPreferencesService();
-    await prefsService.initialize();
-
-    // Check if notifications are enabled globally
-    if (!prefsService.notificationsEnabled) {
-      debugPrint('🔕 Notifications disabled globally, skipping notifications');
-      return;
-    }
-
-    // Check if we're in quiet hours
-    if (prefsService.isQuietHours) {
-      debugPrint('🌙 Currently in quiet hours, skipping notifications');
-      return;
-    }
-
-    // Initialize enhanced notification service
-    await EnhancedNotificationService.initialize();
-
-    // Send notifications for each available campground
-    for (final availability in availabilities) {
-      final campground = availability.campground;
-
-      // Check campground-specific settings
-      if (!prefsService.getCampgroundNotificationsEnabled(campground.id)) {
-        debugPrint(
-          '🔕 Notifications disabled for ${campground.name}, skipping',
-        );
-        continue;
-      }
-
-      // Check if instant notifications are enabled
-      if (!prefsService.instantNotificationsEnabled) {
-        debugPrint(
-          '📬 Instant notifications disabled, will include in summary only',
-        );
-        continue;
-      }
-
-      final dates = availability.availableDates.first;
-
-      debugPrint('🔥 AVAILABILITY FOUND: ${campground.name}');
-      debugPrint(
-        '📅 Available: ${dates.startDate.toString().split(' ')[0]} - ${dates.endDate.toString().split(' ')[0]}',
-      );
-      debugPrint('🏞️ Park: ${campground.parkName}');
-      debugPrint(
-        '⚙️ Notification preferences: vibration=${prefsService.vibrationEnabled}, sound=${prefsService.soundEnabled}',
-      );
-
-      // Send availability notification using enhanced service
-      await EnhancedNotificationService.sendAvailabilityNotification(
-        campgroundName: campground.name,
-        parkName: campground.parkName ?? 'Unknown Park',
-        availableDates: dates,
-      );
-    }
-  } catch (e) {
-    debugPrint('❌ Error sending availability notifications: $e');
-  }
 }
 
 /// Data model for campground availability results

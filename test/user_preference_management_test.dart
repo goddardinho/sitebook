@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sitebook_flutter/shared/services/user_preference_service.dart';
 import 'package:sitebook_flutter/shared/services/campground_preference_service.dart';
-import 'package:sitebook_flutter/shared/models/user_preference.dart';
 
 void main() {
   group('User Preference Management Tests', () {

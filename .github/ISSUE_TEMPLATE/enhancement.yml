@@ -1,0 +1,118 @@
+name: 🔧 Enhancement
+description: Suggest an improvement to existing functionality
+title: "[ENHANCEMENT] "
+labels: ["enhancement", "needs-triage"]
+assignees:
+  - goddardinho
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an enhancement! Please fill out the form below to help us understand your improvement idea.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this enhancement?
+      options:
+        - P1 - High (Significantly improves user experience)
+        - P2 - Medium (Noticeable improvement to user experience)
+        - P3 - Low (Minor improvement or polish)
+      default: 1
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platform(s) Affected
+      description: Which platforms would benefit from this enhancement?
+      options:
+        - label: Android
+        - label: iOS
+        - label: Web
+        - label: All platforms
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: Feature Area
+      description: Which part of the app would this enhancement affect?
+      options:
+        - Campground Discovery & Listing
+        - Reservation System
+        - Maps & Location Features
+        - Notifications & Monitoring
+        - Settings & Preferences
+        - User Interface/Experience
+        - Performance
+        - Security
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Behavior
+      description: How does the feature currently work?
+      placeholder: Describe the current functionality...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-enhancement
+    attributes:
+      label: Proposed Enhancement
+      description: How would you like it to work instead?
+      placeholder: Describe your proposed improvement...
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-benefit
+    attributes:
+      label: User Benefit
+      description: How would this enhancement benefit users?
+      placeholder: Explain the value this enhancement would provide...
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: In what situations would this enhancement be most valuable?
+      placeholder: |
+        1. When users are...
+        2. During the process of...
+        3. For users who...
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Examples
+      description: If you have mockups, wireframes, or examples, please share them
+      placeholder: Drag and drop images here, or paste URLs to examples
+
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: Implementation Notes
+      description: Any thoughts on how this could be implemented?
+      placeholder: Technical approach, UI changes, etc.
+
+  - type: checkboxes
+    id: uat-context
+    attributes:
+      label: UAT Context
+      description: Context about this enhancement
+      options:
+        - label: This enhancement was suggested during UAT
+        - label: This would improve the UAT experience
+        - label: Users specifically requested this during testing

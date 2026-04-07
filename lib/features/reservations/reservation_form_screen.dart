@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/models/campground.dart';
+import '../../shared/providers/reservation_providers.dart';
+import '../../shared/services/reservation_service.dart'; // For ReservationFormData and ContactInfo
 import 'widgets/date_selection_section.dart';
 import 'widgets/guest_selection_section.dart';
 import 'widgets/contact_information_section.dart';
@@ -283,7 +285,7 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
             // Back button
             if (_currentStep > 0)
               OutlinedButton(
-                onPressed: _goToPreviousStep,
+                onPressed: _isSubmitting ? null : _goToPreviousStep,
                 child: const Text('Back'),
               ),
 
@@ -377,13 +379,37 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
   }
 
   Future<void> _submitReservation() async {
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please complete all required fields')),
+      );
+      return;
+    }
+
     setState(() {
       _isSubmitting = true;
     });
 
     try {
-      // TODO: Implement actual reservation submission
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      final submissionFunction = ref.read(manualReservationSubmissionProvider);
+
+      // Create form data object
+      final formData = ReservationFormData(
+        campgroundId: widget.campground.id,
+        campgroundName: widget.campground.name,
+        checkInDate: _checkInDate!,
+        checkOutDate: _checkOutDate!,
+        guestCount: _numberOfGuests,
+        contactInfo: ContactInfo(
+          firstName: _firstName,
+          lastName: _lastName,
+          email: _email,
+          phone: _phone,
+        ),
+        specialRequests: _specialRequests.isEmpty ? null : _specialRequests,
+      );
+
+      await submissionFunction(formData);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -393,14 +419,40 @@ class _ReservationFormScreenState extends ConsumerState<ReservationFormScreen> {
           ),
         );
 
-        Navigator.of(context).pop(); // Return to previous screen
+        Navigator.of(context).pop();
       }
     } catch (error) {
       if (mounted) {
+        String errorMessage = 'Failed to submit reservation';
+
+        if (error.toString().contains('already_exists')) {
+          errorMessage = 'A reservation already exists for these dates';
+        } else if (error.toString().contains('invalid_dates')) {
+          errorMessage = 'Invalid check-in or check-out dates';
+        } else if (error.toString().contains('credentials_required')) {
+          errorMessage = 'Please configure your Recreation.gov credentials';
+        } else if (error.toString().contains('capacity_exceeded')) {
+          errorMessage = 'Campsite capacity exceeded for selected guest count';
+        } else if (error.toString().contains('unauthorized')) {
+          errorMessage = 'Invalid Recreation.gov credentials';
+        } else if (error.toString().contains('campground_not_available')) {
+          errorMessage = 'Campground is not available for reservations';
+        } else if (error.toString().contains('network_error')) {
+          errorMessage = 'Network error - please check your connection';
+        } else if (error.toString().contains('service_unavailable')) {
+          errorMessage = 'Recreation.gov service temporarily unavailable';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to submit reservation: $error'),
+            content: Text(errorMessage),
             backgroundColor: Theme.of(context).colorScheme.error,
+            action: SnackBarAction(
+              label: 'Dismiss',
+              textColor: Colors.white,
+              onPressed: () =>
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+            ),
           ),
         );
       }
