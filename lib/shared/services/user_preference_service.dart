@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_preference.dart';
-import '../models/campground.dart';
-import '../models/campsite.dart';
 import '../models/campsite_monitoring_settings.dart';
 
 /// Comprehensive service for managing user preferences and campsite monitoring settings

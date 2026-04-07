@@ -124,8 +124,8 @@ class LocationBasedCampgroundService {
       // Use built-in conversion method then enhance with location data
       final campground = facility.toCampground();
 
-      // Calculate distance from user
-      final distance = _calculateDistance(
+      // Calculate distance from user (used for sorting)
+      _calculateDistance(
         userPosition.latitude,
         userPosition.longitude,
         facility.facilityLatitude!,
@@ -177,38 +177,20 @@ class LocationBasedCampgroundService {
       amenities.add('Cabins');
     }
 
-    if (desc.contains('shower')) amenities.add('Showers');
-    if (desc.contains('wifi') || desc.contains('internet'))
+    if (desc.contains('shower')) {
+      amenities.add('Showers');
+    }
+    if (desc.contains('wifi') || desc.contains('internet')) {
       amenities.add('Wi-Fi');
-    if (desc.contains('store') || desc.contains('shop'))
+    }
+    if (desc.contains('store') || desc.contains('shop')) {
       amenities.add('Camp Store');
-    if (desc.contains('beach') || desc.contains('lake'))
+    }
+    if (desc.contains('beach') || desc.contains('lake')) {
       amenities.add('Beach Access');
+    }
 
     return amenities;
-  }
-
-  /// Extract activities from Recreation.gov facility data
-  List<String> _extractActivities(RecreationGovFacility facility) {
-    final activities = <String>['Camping'];
-
-    // Use API-provided activities first
-    activities.addAll(facility.activities.map((a) => a.activityName));
-
-    // Add activities based on facility name/description analysis
-    final text =
-        '${facility.facilityName} ${facility.facilityDescription ?? ""}'
-            .toLowerCase();
-
-    if (text.contains('hik')) activities.add('Hiking');
-    if (text.contains('fish')) activities.add('Fishing');
-    if (text.contains('swim')) activities.add('Swimming');
-    if (text.contains('boat')) activities.add('Boating');
-    if (text.contains('climb')) activities.add('Rock Climbing');
-    if (text.contains('trail')) activities.add('Trail Access');
-    if (text.contains('bike')) activities.add('Mountain Biking');
-
-    return activities.toSet().toList(); // Remove duplicates
   }
 
   /// Extract images from Recreation.gov facility data
@@ -219,11 +201,6 @@ class LocationBasedCampgroundService {
       'https://picsum.photos/400/240?random=${facility.facilityId.hashCode.abs()}',
       'https://picsum.photos/400/240?random=${(facility.facilityId.hashCode + 1).abs()}',
     ];
-  }
-
-  /// Build Recreation.gov reservation URL
-  String _buildReservationUrl(String facilityId) {
-    return 'https://www.recreation.gov/camping/campgrounds/$facilityId';
   }
 
   /// Fallback campgrounds if location fails or API is unavailable

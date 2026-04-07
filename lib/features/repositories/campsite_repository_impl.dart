@@ -1,4 +1,3 @@
-import 'package:logger/logger.dart';
 import '../../shared/models/campsite.dart';
 import '../../shared/models/campsite_monitoring_settings.dart';
 import '../../shared/services/campsite_api_service.dart';
@@ -10,7 +9,6 @@ import 'campsite_repository.dart';
 class CampsiteRepositoryImpl implements CampsiteRepository {
   final CampsiteApiService _apiService;
   final CampsiteDatabase _database;
-  final Logger _logger = Logger();
 
   static const Duration _cacheExpiration = Duration(hours: 6);
 

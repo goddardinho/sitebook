@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import '../../shared/models/campsite_monitoring_settings.dart';
 import '../../shared/services/campsite_api_service.dart';
 import '../../core/services/notification_service.dart';
@@ -12,7 +10,6 @@ import '../repositories/campsite_repository.dart';
 class CampsiteMonitoringService {
   final CampsiteRepository _repository;
   final NotificationService _notificationService;
-  final Logger _logger = Logger();
 
   Timer? _monitoringTimer;
   bool _isRunning = false;

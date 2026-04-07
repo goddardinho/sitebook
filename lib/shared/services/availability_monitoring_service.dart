@@ -332,6 +332,7 @@ List<DateTime> _generateAvailableDates(math.Random random) {
 }
 
 /// Send notifications for found availability
+/// TODO: Integrate with availability checking workflow
 Future<void> _sendAvailabilityNotifications(
   List<CampgroundAvailability> availabilities,
 ) async {

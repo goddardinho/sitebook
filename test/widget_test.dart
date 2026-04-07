@@ -5,13 +5,11 @@
 // NOTE: These tests are currently skipped due to navigation complexities.
 // TODO: Review and restore with proper test setup for navigation context.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:sitebook_flutter/main.dart';
-import 'package:sitebook_flutter/features/campgrounds/campgrounds_screen.dart';
-import 'helpers/test_helpers.dart';
+import 'package:sitebook_flutter/features/campgrounds/campgrounds_screen_ios_compatible.dart';
 
 void main() {
   group('Widget Tests (TODO: Fix navigation context)', () {
@@ -20,11 +18,11 @@ void main() {
       expect(() => const ProviderScope(child: SiteBookApp()), returnsNormally);
     });
 
-    testWidgets('CampgroundsScreen can be instantiated', (
+    testWidgets('CampgroundsScreenIOSCompatible can be instantiated', (
       WidgetTester tester,
     ) async {
       // Just verify the screen builds without crashing
-      expect(() => const CampgroundsScreen(), returnsNormally);
+      expect(() => const CampgroundsScreenIOSCompatible(), returnsNormally);
     });
   });
 }

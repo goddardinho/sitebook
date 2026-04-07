@@ -402,6 +402,58 @@
   - [x] **Production UI**: UserPreferenceManagementScreen with comprehensive controls, CampgroundPreferenceScreen with multi-tab interface
   - [x] **Comprehensive Testing**: 17/18 tests passing (97% success), full service coverage, data serialization validation, edge case handling
 
+### 6.5. Reservation System API Integration (Week 7-8) 🔄 **IN PROGRESS**
+**Status**: 🚧 **CRITICAL PREREQUISITE FOR UAT** - Tagged: v1.7.0-pre-reservation-system  
+**Branch**: feature/reservation-system-api-integration
+
+**Background**: Current reservation system has comprehensive UI components and data models but lacks live API integration for actual booking functionality. UAT validation identified this as a critical gap preventing meaningful user testing.
+
+- [ ] **1. Recreation.gov Booking API Integration** ⏰ **HIGH PRIORITY**
+  - [ ] Implement POST endpoint for reservation creation (`/reservations`)
+  - [ ] Add PUT endpoint for reservation updates (`/reservations/{id}`)
+  - [ ] Add DELETE endpoint for reservation cancellation
+  - [ ] Implement proper authentication headers and API key management
+  - [ ] Add comprehensive error handling for booking conflicts and API failures
+  - [ ] Create ReservationRequest and ReservationResponse data models
+  - [ ] Test integration with Recreation.gov sandbox/development APIs
+- [ ] **2. Complete ReservationService Layer** ⏰ **HIGH PRIORITY**
+  - [ ] Create ReservationService with core methods:
+    - [ ] `submitReservation(ReservationFormData data)` - Convert form to API call
+    - [ ] `getUserReservations()` - Fetch user's current reservations  
+    - [ ] `updateReservation(String id, ReservationFormData data)` - Modify existing
+    - [ ] `cancelReservation(String id)` - Cancel booking with Recreation.gov
+  - [ ] Implement proper state management integration with Riverpod providers
+  - [ ] Add caching layer for reservation data with refresh logic
+  - [ ] Implement real-time reservation status updates
+  - [ ] Add reservation conflict detection and validation
+- [ ] **3. Form Integration & User Experience** ⏰ **HIGH PRIORITY**
+  - [ ] Connect ReservationFormScreen to live ReservationService
+  - [ ] Implement proper loading states and progress indicators during booking
+  - [ ] Add comprehensive form validation with API-specific constraints
+  - [ ] Create booking confirmation flow with success/error handling
+  - [ ] Implement reservation summary and confirmation screens
+  - [ ] Add proper error messaging for booking failures and API errors
+  - [ ] integrate with existing credential management system
+- [ ] **4. Testing & Validation** ⏰ **MEDIUM PRIORITY**
+  - [ ] Create comprehensive unit tests for ReservationService
+  - [ ] Add integration tests for complete booking workflow
+  - [ ] Test error scenarios (API failures, booking conflicts, network issues)
+  - [ ] Validate reservation form data persistence and error recovery
+  - [ ] Test cross-platform booking functionality (iOS/Android)
+
+**Estimated Timeline**: 5-9 days total
+- API Integration: 2-3 days
+- Service Layer: 1-2 days  
+- Form Integration: 1-2 days
+- Testing & QA: 1-2 days
+
+**Success Criteria**: 
+- ✅ Users can successfully create reservations through Recreation.gov API
+- ✅ Real-time reservation status updates and management working
+- ✅ Comprehensive error handling for all booking scenarios
+- ✅ Form validation integrated with live API constraints
+- ✅ Ready for Phase 2 UAT testing of complete reservation system
+
 ### 7. User Acceptance and Testing (Week 8-9)
 - [ ] **User Acceptance Testing**
 - [ ] **Organize parks by reservation system**
