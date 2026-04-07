@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'my_reservations_screen.dart';
 
 // Demo reservation data
 class Reservation {
@@ -102,6 +103,19 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
               pinned: true,
               backgroundColor: theme.colorScheme.primary,
               foregroundColor: theme.colorScheme.onPrimary,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.sync_outlined),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const MyReservationsScreen(),
+                      ),
+                    );
+                  },
+                  tooltip: 'View Live Reservations',
+                ),
+              ],
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   'My Reservations',
@@ -126,11 +140,74 @@ class ReservationsScreenIOSCompatible extends ConsumerWidget {
             ),
           ];
         },
-        body: reservationsAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => _buildErrorState(context, theme),
-          data: (reservations) =>
-              _buildReservationsList(context, theme, reservations),
+        body: Column(
+          children: [
+            // Live Reservations Link Banner
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.all(16),
+              child: Card(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const MyReservationsScreen(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.sync_outlined,
+                          color: theme.colorScheme.primary,
+                          size: 28,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'View Live Reservations',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Connect to Recreation.gov for your actual reservations',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: theme.colorScheme.onSurfaceVariant,
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Demo reservations content
+            Expanded(
+              child: reservationsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => _buildErrorState(context, theme),
+                data: (reservations) =>
+                    _buildReservationsList(context, theme, reservations),
+              ),
+            ),
+          ],
         ),
       ),
     );
