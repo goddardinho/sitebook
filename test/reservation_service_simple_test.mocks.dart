@@ -48,18 +48,6 @@ class _FakeRecreationGovAvailabilityResponse_2 extends _i1.SmartFake
   ) : super(parent, parentInvocation);
 }
 
-class _FakeReservationResponse_3 extends _i1.SmartFake
-    implements _i2.ReservationResponse {
-  _FakeReservationResponse_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeCancellationResponse_4 extends _i1.SmartFake
-    implements _i2.CancellationResponse {
-  _FakeCancellationResponse_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
 /// A class which mocks [RecreationGovApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -181,78 +169,6 @@ class MockRecreationGovApiService extends _i1.Mock
                 ),
           )
           as _i3.Future<_i2.RecreationGovAvailabilityResponse>);
-
-  @override
-  _i3.Future<_i2.ReservationResponse> createReservation(
-    _i2.ReservationRequest? request,
-    String? authToken,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#createReservation, [request, authToken]),
-            returnValue: _i3.Future<_i2.ReservationResponse>.value(
-              _FakeReservationResponse_3(
-                this,
-                Invocation.method(#createReservation, [request, authToken]),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.ReservationResponse>);
-
-  @override
-  _i3.Future<_i2.ReservationResponse> updateReservation(
-    String? reservationId,
-    _i2.ReservationRequest? request,
-    String? authToken,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#updateReservation, [
-              reservationId,
-              request,
-              authToken,
-            ]),
-            returnValue: _i3.Future<_i2.ReservationResponse>.value(
-              _FakeReservationResponse_3(
-                this,
-                Invocation.method(#updateReservation, [
-                  reservationId,
-                  request,
-                  authToken,
-                ]),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.ReservationResponse>);
-
-  @override
-  _i3.Future<_i2.CancellationResponse> cancelReservation(
-    String? reservationId,
-    String? authToken,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#cancelReservation, [reservationId, authToken]),
-            returnValue: _i3.Future<_i2.CancellationResponse>.value(
-              _FakeCancellationResponse_4(
-                this,
-                Invocation.method(#cancelReservation, [
-                  reservationId,
-                  authToken,
-                ]),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.CancellationResponse>);
-
-  @override
-  _i3.Future<List<_i2.ReservationResponse>> getUserReservations(
-    String? authToken,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#getUserReservations, [authToken]),
-            returnValue: _i3.Future<List<_i2.ReservationResponse>>.value(
-              <_i2.ReservationResponse>[],
-            ),
-          )
-          as _i3.Future<List<_i2.ReservationResponse>>);
 }
 
 /// A class which mocks [CredentialStorageService].

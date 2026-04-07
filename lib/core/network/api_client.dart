@@ -4,8 +4,12 @@ import 'package:logger/logger.dart';
 
 class ApiClient {
   static const String _baseUrl = 'https://ridb.recreation.gov/api/v1';
-  static const String _apiKey =
-      'YOUR_API_KEY_HERE'; // TODO: Move to environment variable
+
+  // Get API key from environment variable passed via --dart-define
+  static const String _apiKey = String.fromEnvironment(
+    'RECREATION_GOV_API_KEY',
+    defaultValue: '',
+  );
 
   late final Dio _dio;
   final Logger _logger = Logger();

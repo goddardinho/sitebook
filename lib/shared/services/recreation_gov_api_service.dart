@@ -48,36 +48,6 @@ abstract class RecreationGovApiService {
     @Query('start_date') String startDate, // YYYY-MM-DD format
     @Query('end_date') String endDate,
   );
-
-  // RESERVATION BOOKING ENDPOINTS (NEW)
-
-  // Create a new reservation
-  @POST('/reservations')
-  Future<ReservationResponse> createReservation(
-    @Body() ReservationRequest request,
-    @Header('Authorization') String authToken,
-  );
-
-  // Update an existing reservation
-  @PUT('/reservations/{reservationId}')
-  Future<ReservationResponse> updateReservation(
-    @Path('reservationId') String reservationId,
-    @Body() ReservationRequest request,
-    @Header('Authorization') String authToken,
-  );
-
-  // Cancel a reservation
-  @DELETE('/reservations/{reservationId}')
-  Future<CancellationResponse> cancelReservation(
-    @Path('reservationId') String reservationId,
-    @Header('Authorization') String authToken,
-  );
-
-  // Get user's reservations
-  @GET('/reservations')
-  Future<List<ReservationResponse>> getUserReservations(
-    @Header('Authorization') String authToken,
-  );
 }
 
 // API Response wrapper
@@ -92,10 +62,11 @@ class RecreationGovResponse<T> {
     T Function(Map<String, dynamic>) fromJsonT,
   ) {
     return RecreationGovResponse(
-      data: (json['RECDATA'] as List)
+      data: (json['RECDATA'] as List? ?? [])
+          .where((item) => item != null) // Filter out null items
           .map((item) => fromJsonT(item as Map<String, dynamic>))
           .toList(),
-      metadata: RecreationGovMetadata.fromJson(json['METADATA']),
+      metadata: RecreationGovMetadata.fromJson(json['METADATA'] ?? {}),
     );
   }
 }
@@ -112,9 +83,9 @@ class RecreationGovMetadata {
   factory RecreationGovMetadata.fromJson(Map<String, dynamic> json) {
     return RecreationGovMetadata(
       searchParameters: RecreationGovSearchParameters.fromJson(
-        json['SEARCH_PARAMETERS'],
+        json['SEARCH_PARAMETERS'] ?? {},
       ),
-      resultInfo: RecreationGovResultInfo.fromJson(json['RESULT_INFO']),
+      resultInfo: RecreationGovResultInfo.fromJson(json['RESULT_INFO'] ?? {}),
     );
   }
 }
@@ -187,9 +158,11 @@ class RecreationGovFacility {
       facilityEmail: json['FacilityEmail'],
       facilityReservationURL: json['FacilityReservationURL'],
       addresses: (json['FACILITYADDRESS'] as List? ?? [])
+          .where((addr) => addr != null) // Filter out null addresses
           .map((addr) => RecreationGovAddress.fromJson(addr))
           .toList(),
       activities: (json['ACTIVITY'] as List? ?? [])
+          .where((activity) => activity != null) // Filter out null activities
           .map((activity) => RecreationGovActivity.fromJson(activity))
           .toList(),
     );
@@ -439,6 +412,7 @@ class ReservationResponse {
           : null,
       cancellationPolicy: json['CancellationPolicy'],
       feeBreakdown: (json['FeeBreakdown'] as List? ?? [])
+          .where((fee) => fee != null) // Filter out null fees
           .map((fee) => ReservationFee.fromJson(fee))
           .toList(),
     );

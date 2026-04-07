@@ -41,6 +41,7 @@ class LocationBasedCampgroundService {
 
       // Convert Recreation.gov facilities to our Campground model
       final campgrounds = response.data
+          .where((facility) => facility != null) // Filter out null facilities
           .map((facility) => _convertFacilityToCampground(facility, position))
           .where((campground) => campground != null)
           .cast<Campground>()
@@ -115,14 +116,29 @@ class LocationBasedCampgroundService {
     Position userPosition,
   ) {
     try {
+      // Skip if facility is null or missing essential data
+      if (facility.facilityId == null || facility.facilityId!.isEmpty) {
+        _logger.w('Skipping facility with null or empty ID');
+        return null;
+      }
+
       // Skip if no coordinates
       if (facility.facilityLatitude == null ||
           facility.facilityLongitude == null) {
+        _logger.w(
+          'Skipping facility ${facility.facilityId} - missing coordinates',
+        );
         return null;
       }
 
       // Use built-in conversion method then enhance with location data
       final campground = facility.toCampground();
+      if (campground == null) {
+        _logger.w(
+          'Failed to convert facility ${facility.facilityId} to campground',
+        );
+        return null;
+      }
 
       // Calculate distance from user (used for sorting)
       _calculateDistance(
@@ -141,7 +157,10 @@ class LocationBasedCampgroundService {
         ],
       );
     } catch (e) {
-      _logger.e('Error converting facility ${facility.facilityId}', error: e);
+      _logger.e(
+        'Error converting facility ${facility.facilityId}: $e',
+        error: e,
+      );
       return null;
     }
   }

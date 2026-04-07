@@ -21,136 +21,110 @@ class ReservationService {
   }) : _apiService = apiService,
        _credentialService = credentialService;
 
-  /// Create a new reservation from form data
+  /// Create a new reservation by redirecting to Recreation.gov website
+  /// Recreation.gov requires web-based booking - no public API available
   Future<Reservation> submitReservation(ReservationFormData formData) async {
     try {
       AppLogger.info(
-        '🎫 Submitting reservation for ${formData.campgroundName}',
+        '🎫 Preparing Recreation.gov booking for ${formData.campgroundName}',
       );
 
-      // Get Recreation.gov credentials
-      final authToken = await _getAuthToken();
-      if (authToken == null) {
-        throw ReservationException(
-          'No Recreation.gov credentials found. Please add credentials in Settings.',
-          ReservationErrorType.authenticationRequired,
-        );
-      }
+      // Generate the Recreation.gov booking URL
+      final bookingUrl = createBookingUrl(
+        facilityId: formData.campgroundId,
+        checkInDate: formData.checkInDate,
+        checkOutDate: formData.checkOutDate,
+        partySize: formData.guestCount,
+      );
 
-      // Convert form data to API request
-      final request = _buildReservationRequest(formData);
+      // Create a pending reservation locally for tracking
+      final reservation = Reservation(
+        id: 'pending_${DateTime.now().millisecondsSinceEpoch}',
+        campsiteId: formData.campsiteId ?? 'TBD',
+        campgroundName: formData.campgroundName,
+        siteNumber: 'To be selected on Recreation.gov',
+        checkInDate: formData.checkInDate,
+        checkOutDate: formData.checkOutDate,
+        guestCount: formData.guestCount,
+        status: ReservationStatus.pending,
+        confirmationNumber: 'PENDING_WEB_BOOKING',
+        totalCost: 0.0, // Will be determined on Recreation.gov
+        specialRequests: formData.specialRequests,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
 
-      // Validate request data
-      _validateReservationRequest(request, formData);
-
-      // Submit to Recreation.gov API
-      final response = await _apiService.createReservation(request, authToken);
-
-      // Convert API response to our reservation model
-      final reservation = _mapApiResponseToReservation(response, formData);
-
-      // Update cache
+      // Cache the pending reservation
       _updateReservationCache(reservation);
 
       AppLogger.info(
-        '✅ Reservation created successfully: ${reservation.confirmationNumber}',
+        '✅ Pending reservation created - user should complete booking on Recreation.gov',
       );
       return reservation;
     } catch (e) {
-      AppLogger.error('❌ Failed to submit reservation: $e');
-      if (e is ReservationException) rethrow;
+      AppLogger.error('❌ Failed to create booking redirect: $e');
       throw ReservationException(
-        'Failed to create reservation. Please try again.',
+        'Failed to prepare Recreation.gov booking. Please try again.',
         ReservationErrorType.serverError,
         originalError: e,
       );
     }
   }
 
-  /// Get all user reservations with caching
+  /// Get user reservations - Recreation.gov uses web-only booking
+  /// Returns locally cached/managed reservation data for display
   Future<List<Reservation>> getUserReservations({
     bool forceRefresh = false,
   }) async {
     try {
+      AppLogger.info('📋 Accessing user reservation data (web-managed)');
+
+      // Recreation.gov manages reservations through their website only
+      // Return any locally stored reservation data for display purposes
       const cacheKey = 'user_reservations';
+      final cachedReservations = _reservationCache[cacheKey] ?? [];
 
-      // Check cache first
-      if (!forceRefresh && _isCacheValid(cacheKey)) {
-        AppLogger.info('📋 Returning cached reservations');
-        return _reservationCache[cacheKey] ?? [];
+      if (cachedReservations.isNotEmpty) {
+        AppLogger.info(
+          '📋 Displaying ${cachedReservations.length} locally tracked reservations',
+        );
+        return cachedReservations;
       }
 
-      AppLogger.info('🔄 Fetching user reservations from API');
-
-      // Get credentials
-      final authToken = await _getAuthToken();
-      if (authToken == null) {
-        AppLogger.warning('⚠️ No credentials found, returning empty list');
-        return [];
-      }
-
-      // Fetch from API
-      final apiReservations = await _apiService.getUserReservations(authToken);
-
-      // Convert to our model
-      final reservations = apiReservations
-          .map((apiRes) => _mapApiResponseToReservation(apiRes, null))
-          .toList();
-
-      // Update cache
-      _reservationCache[cacheKey] = reservations;
-      _cacheTimestamps[cacheKey] = DateTime.now();
-
-      AppLogger.info('✅ Retrieved ${reservations.length} reservations');
-      return reservations;
-    } catch (e) {
-      AppLogger.error('❌ Failed to get user reservations: $e');
-      // Return cached data on error if available
-      const cacheKey = 'user_reservations';
-      if (_reservationCache.containsKey(cacheKey)) {
-        AppLogger.info('🔄 Returning cached data due to API error');
-        return _reservationCache[cacheKey]!;
-      }
-
-      throw ReservationException(
-        'Failed to retrieve reservations. Please check your connection.',
-        ReservationErrorType.networkError,
-        originalError: e,
+      // Guide users to Recreation.gov website for actual reservation management
+      AppLogger.info(
+        'ℹ️ No local reservation data - use Recreation.gov website for booking',
       );
+      return [];
+    } catch (e) {
+      AppLogger.warning('⚠️ Error accessing reservation data: $e');
+      return [];
     }
   }
 
-  /// Update existing reservation
+  /// Update existing reservation through Recreation.gov website
   Future<Reservation> updateReservation(
     String reservationId,
     ReservationFormData formData,
   ) async {
     try {
-      AppLogger.info('✏️ Updating reservation $reservationId');
-
-      final authToken = await _getAuthToken();
-      if (authToken == null) {
-        throw ReservationException(
-          'Authentication required to update reservation.',
-          ReservationErrorType.authenticationRequired,
-        );
-      }
-
-      final request = _buildReservationRequest(formData);
-      final response = await _apiService.updateReservation(
-        reservationId,
-        request,
-        authToken,
+      AppLogger.info(
+        '✏️ Reservation updates must be done through Recreation.gov website',
       );
 
-      final updatedReservation = _mapApiResponseToReservation(
-        response,
-        formData,
-      );
-      _updateReservationCache(updatedReservation);
+      // Recreation.gov requires web-based management for reservation changes
+      // Generate URL to manage existing reservation
+      final manageUrl =
+          'https://www.recreation.gov/reservation/manage/$reservationId';
 
-      AppLogger.info('✅ Reservation updated successfully');
-      return updatedReservation;
+      AppLogger.info(
+        '🌐 Visit Recreation.gov to update reservation: $manageUrl',
+      );
+
+      throw ReservationException(
+        'Reservation updates must be completed on Recreation.gov website.',
+        ReservationErrorType.authenticationRequired,
+      );
     } catch (e) {
       AppLogger.error('❌ Failed to update reservation: $e');
       if (e is ReservationException) rethrow;
@@ -162,41 +136,25 @@ class ReservationService {
     }
   }
 
-  /// Cancel existing reservation
+  /// Cancel existing reservation through Recreation.gov website
   Future<CancellationResult> cancelReservation(String reservationId) async {
     try {
-      AppLogger.info('🚫 Cancelling reservation $reservationId');
-
-      final authToken = await _getAuthToken();
-      if (authToken == null) {
-        throw ReservationException(
-          'Authentication required to cancel reservation.',
-          ReservationErrorType.authenticationRequired,
-        );
-      }
-
-      final response = await _apiService.cancelReservation(
-        reservationId,
-        authToken,
+      AppLogger.info(
+        '🚫 Reservation cancellations must be done through Recreation.gov website',
       );
 
-      // Remove from cache
-      _removeFromCache(reservationId);
+      // Recreation.gov requires web-based management for cancellations
+      final manageUrl =
+          'https://www.recreation.gov/reservation/manage/$reservationId';
 
-      final result = CancellationResult(
-        reservationId: response.reservationId,
-        success:
-            response.status == 'cancelled' ||
-            response.status == 'cancelledWithFee',
-        refundAmount: response.refundAmount,
-        cancellationFee: response.cancellationFee,
-        refundMethod: response.refundMethod,
-        eta: response.refundEta,
-        message: _getCancellationMessage(response),
+      AppLogger.info(
+        '🌐 Visit Recreation.gov to cancel reservation: $manageUrl',
       );
 
-      AppLogger.info('✅ Reservation cancelled successfully');
-      return result;
+      throw ReservationException(
+        'Reservation cancellations must be completed on Recreation.gov website.',
+        ReservationErrorType.authenticationRequired,
+      );
     } catch (e) {
       AppLogger.error('❌ Failed to cancel reservation: $e');
       if (e is ReservationException) rethrow;
@@ -249,6 +207,40 @@ class ReservationService {
 
   /// Check if Recreation.gov credentials are configured
   Future<bool> hasValidCredentials() async {
+    return await hasRecreationGovCredentials();
+  }
+
+  /// Create Recreation.gov booking URL for campground reservation
+  String createBookingUrl({
+    required String facilityId,
+    DateTime? checkInDate,
+    DateTime? checkOutDate,
+    int? partySize,
+  }) {
+    // Recreation.gov booking URL format
+    var url = 'https://www.recreation.gov/camping/campgrounds/$facilityId';
+
+    final params = <String>[];
+    if (checkInDate != null && checkOutDate != null) {
+      params.add('arrival_date=${checkInDate.toIso8601String().split('T')[0]}');
+      params.add(
+        'departure_date=${checkOutDate.toIso8601String().split('T')[0]}',
+      );
+    }
+    if (partySize != null) {
+      params.add('party_size=$partySize');
+    }
+
+    if (params.isNotEmpty) {
+      url += '?${params.join('&')}';
+    }
+
+    AppLogger.info('🌐 Generated Recreation.gov booking URL: $url');
+    return url;
+  }
+
+  /// Check if user has Recreation.gov credentials for web login
+  Future<bool> hasRecreationGovCredentials() async {
     try {
       final credentials = await _credentialService.loadCredentials();
       return credentials.any(
@@ -258,31 +250,8 @@ class ReservationService {
             cred.password.isNotEmpty,
       );
     } catch (e) {
-      AppLogger.warning('⚠️ Failed to check credentials: $e');
+      AppLogger.warning('⚠️ Failed to check Recreation.gov credentials: $e');
       return false;
-    }
-  }
-
-  /// Get Recreation.gov auth token from stored credentials
-  Future<String?> _getAuthToken() async {
-    try {
-      final credentials = await _credentialService.loadCredentials();
-      final recreationGovCred = credentials.firstWhere(
-        (cred) => cred.name.toLowerCase().contains('recreation.gov'),
-        orElse: () => throw StateError('No Recreation.gov credentials found'),
-      );
-
-      // In a real implementation, you'd use the username/password to get a JWT token
-      // For now, we'll simulate with a basic auth token
-      final basicAuth = base64Encode(
-        utf8.encode(
-          '${recreationGovCred.username}:${recreationGovCred.password}',
-        ),
-      );
-      return 'Bearer $basicAuth';
-    } catch (e) {
-      AppLogger.warning('⚠️ Failed to get auth token: $e');
-      return null;
     }
   }
 
