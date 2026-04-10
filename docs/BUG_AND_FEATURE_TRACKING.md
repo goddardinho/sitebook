@@ -1,13 +1,55 @@
 # Bug and Feature Tracking Process
 
-**Version:** 1.0  
-**Date:** April 6, 2026  
-**Status:** Active  
-**Branch:** feature/user-acceptance-testing
+**Version:** 1.1  
+**Date:** April 10, 2026  
+**Status:** Active - GitHub Issues Integration  
+**Primary Tracking Tool:** [GitHub Issues](https://github.com/your-repo/issues)
 
 ## 📋 Overview
 
-This document establishes the bug tracking and feature request workflow for SiteBook Flutter, designed to support the User Acceptance Testing phase and ongoing development.
+This document establishes the bug tracking and feature request workflow for SiteBook Flutter. **All issues are tracked using GitHub Issues** with this document serving as the process reference guide.
+
+### 🎯 Quick Start
+1. **Report Issues:** Use GitHub Issues with provided templates
+2. **Reference Process:** Follow guidelines in this document  
+3. **Track Progress:** Monitor issues via GitHub project boards
+4. **Integration:** Link commits/PRs to issues for automatic closure
+
+## 🛠️ GitHub Issues Setup
+
+### Labels System
+Our GitHub repository uses the following label structure:
+
+#### Priority Labels
+- 🔴 `P0-Critical` - Immediate response required
+- 🟠 `P1-High` - 1-2 day response time  
+- 🟡 `P2-Medium` - 1 week response time
+- 🟢 `P3-Low` - Next release cycle
+
+#### Type Labels  
+- 🐛 `bug` - Something is broken
+- 🚀 `feature` - New functionality request
+- 🔧 `enhancement` - Improvement to existing feature
+- 📚 `documentation` - Documentation updates needed
+- 🧪 `testing` - Testing-related issues
+- 🔒 `security` - Security-related concerns
+
+#### Platform Labels
+- 🤖 `android` - Android-specific issues
+- 🍎 `ios` - iOS-specific issues  
+- 🌐 `web` - Web-specific issues
+
+#### Status Labels
+- 🔍 `triaged` - Issue reviewed and classified
+- 🚧 `in-progress` - Actively being worked on
+- 👀 `in-review` - Code review in progress
+- 🧪 `testing` - Solution being tested
+
+### Issue Templates
+Use the provided GitHub Issue templates (`.github/ISSUE_TEMPLATE/`):
+- **Bug Report** - For reporting defects
+- **Feature Request** - For new functionality  
+- **Enhancement** - For improvements to existing features
 
 ## 🎯 Tracking Scope
 
@@ -50,7 +92,32 @@ This document establishes the bug tracking and feature request workflow for Site
 - 🧪 **Testing** - Testing-related issues
 - 🔒 **Security** - Security-related concerns
 
-## 🔄 Issue Workflow
+## � GitHub Integration Workflow
+
+### Issue Lifecycle in GitHub
+1. **Create Issue** - Use templates to ensure complete information
+2. **Auto-Label** - Templates apply initial labels (bug/feature/enhancement)
+3. **Triage** - Add priority, platform, and status labels
+4. **Assignment** - Assign to developer or team
+5. **Development** - Link commits and PRs to issues
+6. **Testing** - Move to testing label when ready for UAT
+7. **Closure** - Auto-close with `Fixes #123` in commit messages
+
+### Commit Message Integration
+Link commits to issues using these formats:
+- `Fixes #123` - Closes issue when merged
+- `Addresses #123` - References without closing
+- `Related to #123` - Links related work
+
+### Branch Naming Convention
+- `bug/issue-123-fix-login-crash`
+- `feature/issue-124-recreation-images`  
+- `enhancement/issue-125-improve-search`
+
+### Milestones and Projects
+- **Milestones** - Group issues by release (v1.1, v1.2)
+- **Projects** - Track progress across features
+- **Labels** - Filter and organize by type, priority, platform
 
 ### Issue Lifecycle States
 ```
@@ -96,8 +163,49 @@ This document establishes the bug tracking and feature request workflow for Site
 **Screenshots/Videos:**
 [Attach if applicable]
 
-**Additional Context:**
-[Any other relevant information]
+## 🚀 Next Steps: Repository Setup
+
+### 1. GitHub Repository Configuration
+When you create/push to your GitHub repository:
+
+1. **Push these templates** - The `.github/ISSUE_TEMPLATE/` files will be automatically available
+2. **Set up labels** - Create the priority, type, platform, and status labels listed above  
+3. **Create milestones** - Set up v1.1, v1.2, etc. for release planning
+4. **Enable Projects** - Optional: Create project boards for kanban-style tracking
+
+### 2. Create Initial Issues
+Start with known items from your documentation:
+
+**Example Issue Ready to Create:**
+- See `docs/EXAMPLE_GITHUB_ISSUE_RECREATION_IMAGES.md` 
+- Copy content into new GitHub issue
+- Apply labels: `feature`, `P2-Medium`, `android`, `ios`, `web`
+- Assign to milestone: `v1.1`
+
+### 3. Team Training
+- Share this process document with team members
+- Demonstrate GitHub Issues workflow  
+- Establish triage meeting schedule (weekly recommended)
+- Define assignment and review processes
+
+### 4. Integration with Development
+- Update commit message practices to reference issues
+- Establish branch naming conventions  
+- Link Pull Requests to related issues
+- Set up notifications for issue updates
+
+---
+
+## 📞 Support and Questions
+
+For questions about this process:
+- Create a GitHub Discussion (general questions)
+- Update this document via Pull Request (process improvements)
+- Contact project maintainers for urgent process issues
+
+**Document Owner:** Development Team  
+**Last Updated:** April 10, 2026  
+**Next Review:** May 1, 2026
 
 **Reporter:** [Name/Role]
 **Date Reported:** [Date]
