@@ -1,25 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 import '../models/reservation.dart';
-import 'recreation_gov_api_service.dart';
 import '../../features/credentials/services/credential_storage_service.dart';
 import '../../core/utils/app_logger.dart';
 
 /// Service for managing reservations through Recreation.gov API
 /// Bridges form data to live booking system
 class ReservationService {
-  final RecreationGovApiService _apiService;
   final CredentialStorageService _credentialService;
   final Map<String, List<Reservation>> _reservationCache = {};
-  final Map<String, DateTime> _cacheTimestamps = {};
 
-  static const Duration _cacheExpiration = Duration(minutes: 15);
-
-  ReservationService({
-    required RecreationGovApiService apiService,
-    required CredentialStorageService credentialService,
-  }) : _apiService = apiService,
-       _credentialService = credentialService;
+  ReservationService({required CredentialStorageService credentialService})
+    : _credentialService = credentialService;
 
   /// Create a new reservation by redirecting to Recreation.gov website
   /// Recreation.gov requires web-based booking - no public API available
@@ -27,14 +18,6 @@ class ReservationService {
     try {
       AppLogger.info(
         '🎫 Preparing Recreation.gov booking for ${formData.campgroundName}',
-      );
-
-      // Generate the Recreation.gov booking URL
-      final bookingUrl = createBookingUrl(
-        facilityId: formData.campgroundId,
-        checkInDate: formData.checkInDate,
-        checkOutDate: formData.checkOutDate,
-        partySize: formData.guestCount,
       );
 
       // Create a pending reservation locally for tracking
@@ -53,9 +36,6 @@ class ReservationService {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
-
-      // Cache the pending reservation
-      _updateReservationCache(reservation);
 
       AppLogger.info(
         '✅ Pending reservation created - user should complete booking on Recreation.gov',
@@ -181,12 +161,8 @@ class ReservationService {
         }
 
         // Check date overlap
-        if (_datesOverlap(
-          formData.checkInDate,
-          formData.checkOutDate,
-          reservation.checkInDate,
-          reservation.checkOutDate,
-        )) {
+        if (formData.checkInDate.isBefore(reservation.checkOutDate) &&
+            formData.checkOutDate.isAfter(reservation.checkInDate)) {
           conflicts.add(
             ReservationConflict(
               conflictingReservation: reservation,
@@ -253,153 +229,6 @@ class ReservationService {
       AppLogger.warning('⚠️ Failed to check Recreation.gov credentials: $e');
       return false;
     }
-  }
-
-  /// Build API request from form data
-  ReservationRequest _buildReservationRequest(ReservationFormData formData) {
-    return ReservationRequest(
-      facilityId: formData.campgroundId,
-      campsiteId:
-          formData.campsiteId ?? 'auto', // Let system choose if not specified
-      startDate: formData.checkInDate.toIso8601String().split('T')[0],
-      endDate: formData.checkOutDate.toIso8601String().split('T')[0],
-      partySize: formData.guestCount,
-      customerEmail: formData.contactInfo.email,
-      customerPhone: formData.contactInfo.phone,
-      customerFirstName: formData.contactInfo.firstName,
-      customerLastName: formData.contactInfo.lastName,
-      specialRequests: formData.specialRequests,
-      acceptTerms: true,
-    );
-  }
-
-  /// Validate reservation request before submission
-  void _validateReservationRequest(
-    ReservationRequest request,
-    ReservationFormData formData,
-  ) {
-    final errors = <String>[];
-
-    // Date validation
-    if (formData.checkInDate.isBefore(DateTime.now())) {
-      errors.add('Check-in date cannot be in the past');
-    }
-
-    if (formData.checkOutDate.isBefore(
-      formData.checkInDate.add(Duration(days: 1)),
-    )) {
-      errors.add('Check-out must be at least 1 day after check-in');
-    }
-
-    // Guest count validation
-    if (formData.guestCount < 1 || formData.guestCount > 20) {
-      errors.add('Guest count must be between 1 and 20');
-    }
-
-    // Contact validation
-    if (formData.contactInfo.email.isEmpty ||
-        !formData.contactInfo.email.contains('@')) {
-      errors.add('Valid email address is required');
-    }
-
-    if (formData.contactInfo.firstName.isEmpty ||
-        formData.contactInfo.lastName.isEmpty) {
-      errors.add('First and last name are required');
-    }
-
-    if (errors.isNotEmpty) {
-      throw ReservationException(
-        'Validation failed: ${errors.join(', ')}',
-        ReservationErrorType.validationError,
-      );
-    }
-  }
-
-  /// Map API response to our reservation model
-  Reservation _mapApiResponseToReservation(
-    ReservationResponse response,
-    ReservationFormData? formData,
-  ) {
-    return Reservation(
-      id: response.reservationId,
-      campsiteId: response.campsiteId,
-      campgroundName: response.facilityName,
-      siteNumber: response.campsiteName,
-      checkInDate: DateTime.parse(response.startDate),
-      checkOutDate: DateTime.parse(response.endDate),
-      guestCount: formData?.guestCount ?? 1,
-      autoReserve: false,
-      maxPrice: formData?.maxBudget,
-      specialRequests: formData?.specialRequests,
-      status: _mapApiStatus(response.status),
-      confirmationNumber: response.confirmationCode,
-      totalCost: response.totalCost,
-      createdAt: response.createdAt,
-      updatedAt: response.updatedAt,
-    );
-  }
-
-  /// Map API status to our enum
-  ReservationStatus _mapApiStatus(String apiStatus) {
-    switch (apiStatus.toLowerCase()) {
-      case 'confirmed':
-        return ReservationStatus.confirmed;
-      case 'pending':
-        return ReservationStatus.pending;
-      case 'cancelled':
-        return ReservationStatus.cancelled;
-      default:
-        return ReservationStatus.pending;
-    }
-  }
-
-  /// Helper methods for caching and validation
-  bool _isCacheValid(String key) {
-    final timestamp = _cacheTimestamps[key];
-    if (timestamp == null) return false;
-    return DateTime.now().difference(timestamp) < _cacheExpiration;
-  }
-
-  void _updateReservationCache(Reservation reservation) {
-    const cacheKey = 'user_reservations';
-    final cached = _reservationCache[cacheKey] ?? [];
-
-    // Update existing or add new
-    final index = cached.indexWhere((r) => r.id == reservation.id);
-    if (index >= 0) {
-      cached[index] = reservation;
-    } else {
-      cached.add(reservation);
-    }
-
-    _reservationCache[cacheKey] = cached;
-    _cacheTimestamps[cacheKey] = DateTime.now();
-  }
-
-  void _removeFromCache(String reservationId) {
-    const cacheKey = 'user_reservations';
-    final cached = _reservationCache[cacheKey];
-    if (cached != null) {
-      cached.removeWhere((r) => r.id == reservationId);
-    }
-  }
-
-  bool _datesOverlap(
-    DateTime start1,
-    DateTime end1,
-    DateTime start2,
-    DateTime end2,
-  ) {
-    return start1.isBefore(end2) && end1.isAfter(start2);
-  }
-
-  String _getCancellationMessage(CancellationResponse response) {
-    if (response.status == 'cancelled') {
-      return 'Reservation cancelled successfully. Refund of \$${response.refundAmount.toStringAsFixed(2)} will be processed.';
-    } else if (response.status == 'cancelledWithFee') {
-      return 'Reservation cancelled with \$${response.cancellationFee.toStringAsFixed(2)} fee. Refund of \$${response.refundAmount.toStringAsFixed(2)} will be processed.';
-    }
-    return 'Cancellation request processed. Please check your email for details.';
   }
 }
 

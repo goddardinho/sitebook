@@ -28,20 +28,57 @@ class LocationBasedCampgroundService {
 
       _logger.i('User location: ${position.latitude}, ${position.longitude}');
 
-      // Search for campgrounds near user
+      // Search for campgrounds near user - removed activity filter to include National Parks
       final response = await _apiService.getFacilities(
         latitude: position.latitude,
         longitude: position.longitude,
         radius: radiusInMiles,
         limit: limit,
-        activity: 'CAMPING', // Filter for camping facilities
+        // No activity filter to include National Park campgrounds and other camping facilities
       );
 
-      _logger.i('Found ${response.data.length} campgrounds from API');
+      _logger.i('Found ${response.data.length} facilities from API');
+
+      // Filter for camping-related facilities (includes National Parks)
+      final campingFacilities = response.data.where((facility) {
+        final name = facility.facilityName.toLowerCase();
+        final description = facility.facilityDescription?.toLowerCase() ?? '';
+        final activities = facility.activities
+            .map((a) => a.activityName.toLowerCase())
+            .toList();
+
+        // Include facilities that are clearly camping-related
+        return name.contains('camp') ||
+            name.contains('rv') ||
+            name.contains('trailer') ||
+            description.contains('camp') ||
+            description.contains('rv') ||
+            description.contains('tent') ||
+            activities.any(
+              (activity) =>
+                  activity.contains('camp') ||
+                  activity.contains('rv') ||
+                  activity.contains('tent') ||
+                  activity.contains('overnight'),
+            ) ||
+            // Include National Park facilities and other common camping terms
+            name.contains('national park') ||
+            name.contains('state park') ||
+            name.contains('recreation area') ||
+            description.contains('national park') ||
+            description.contains('state park') ||
+            description.contains('recreation area') ||
+            // Include facilities with generic camping-related activities
+            activities
+                .isNotEmpty; // Many camping facilities have various activities
+      }).toList();
+
+      _logger.i(
+        'Filtered to ${campingFacilities.length} camping-related facilities',
+      );
 
       // Convert Recreation.gov facilities to our Campground model
-      final campgrounds = response.data
-          .where((facility) => facility != null) // Filter out null facilities
+      final campgrounds = campingFacilities
           .map((facility) => _convertFacilityToCampground(facility, position))
           .where((campground) => campground != null)
           .cast<Campground>()
@@ -75,37 +112,59 @@ class LocationBasedCampgroundService {
   /// Get current user position with proper permissions
   Future<Position?> _getCurrentPosition() async {
     try {
+      _logger.i('📍 UAT: Checking location permissions...');
+
       // Check location permissions
       LocationPermission permission = await Geolocator.checkPermission();
+      _logger.i('📍 UAT: Current permission status: $permission');
+
       if (permission == LocationPermission.denied) {
+        _logger.i('📍 UAT: Requesting location permission...');
         permission = await Geolocator.requestPermission();
+        _logger.i('📍 UAT: Permission after request: $permission');
+
         if (permission == LocationPermission.denied) {
-          _logger.w('Location permissions denied by user');
+          _logger.w('⚠️ UAT: Location permissions denied by user');
           return null;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        _logger.e('Location permissions permanently denied');
+        _logger.e('❌ UAT: Location permissions permanently denied');
         return null;
       }
 
       // Check if location services are enabled
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      _logger.i('📍 UAT: Location services enabled: $serviceEnabled');
       if (!serviceEnabled) {
-        _logger.w('Location services are disabled');
+        _logger.w('⚠️ UAT: Location services are disabled on device');
+        // For web browsers, show instruction to user
+        _logger.w(
+          '💡 UAT: On web, please allow location access when prompted by browser',
+        );
         return null;
       }
 
-      // Get current position
+      _logger.i('📍 UAT: Getting current position...');
+      // Get current position with extended timeout for testing
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
+        timeLimit: const Duration(seconds: 30),
       );
+
+      _logger.i('✅ UAT: Position obtained successfully!');
+      _logger.i(
+        '📍 UAT: Coordinates: ${position.latitude}, ${position.longitude}',
+      );
+      _logger.i('📍 UAT: Accuracy: ${position.accuracy}m');
 
       return position;
     } catch (e) {
-      _logger.e('Error getting current position', error: e);
+      _logger.e('❌ UAT: Error getting current position', error: e);
+      _logger.e(
+        '💡 UAT: If using web browser, ensure location permission is granted',
+      );
       return null;
     }
   }
@@ -116,9 +175,9 @@ class LocationBasedCampgroundService {
     Position userPosition,
   ) {
     try {
-      // Skip if facility is null or missing essential data
-      if (facility.facilityId == null || facility.facilityId!.isEmpty) {
-        _logger.w('Skipping facility with null or empty ID');
+      // Skip if facility is missing essential data
+      if (facility.facilityId.isEmpty) {
+        _logger.w('Skipping facility with empty ID');
         return null;
       }
 
@@ -133,12 +192,6 @@ class LocationBasedCampgroundService {
 
       // Use built-in conversion method then enhance with location data
       final campground = facility.toCampground();
-      if (campground == null) {
-        _logger.w(
-          'Failed to convert facility ${facility.facilityId} to campground',
-        );
-        return null;
-      }
 
       // Calculate distance from user (used for sorting)
       _calculateDistance(
@@ -212,14 +265,23 @@ class LocationBasedCampgroundService {
     return amenities;
   }
 
-  /// Extract images from Recreation.gov facility data
+  /// Extract images from Recreation.gov facility data with consistency
   List<String> _extractImages(RecreationGovFacility facility) {
-    // For now, use placeholder images similar to demo
-    // Recreation.gov API may provide media URLs that we can parse
-    return [
-      'https://picsum.photos/400/240?random=${facility.facilityId.hashCode.abs()}',
-      'https://picsum.photos/400/240?random=${(facility.facilityId.hashCode + 1).abs()}',
-    ];
+    // Let the facility's toCampground method handle image extraction
+    // so we get consistent, cleaned images across the app
+    if (facility.facilityId.isNotEmpty) {
+      final seed1 = facility.facilityId.hashCode.abs() % 1000;
+      final seed2 =
+          (facility.facilityId.hashCode + facility.facilityName.hashCode)
+              .abs() %
+          1000;
+
+      return [
+        'https://picsum.photos/seed/$seed1/400/240',
+        'https://picsum.photos/seed/$seed2/400/240',
+      ];
+    }
+    return [];
   }
 
   /// Fallback campgrounds if location fails or API is unavailable

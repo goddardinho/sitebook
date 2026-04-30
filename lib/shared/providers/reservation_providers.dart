@@ -1,20 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/reservation_service.dart';
-import '../services/recreation_gov_api_service.dart';
 import '../../features/credentials/services/credential_storage_service.dart';
 import '../models/reservation.dart';
 import '../../core/utils/app_logger.dart';
 
 /// Provider for the reservation service
 final reservationServiceProvider = Provider<ReservationService>((ref) {
-  final apiService = RecreationGovApiService.create();
   final credentialService = CredentialStorageService();
 
-  return ReservationService(
-    apiService: apiService,
-    credentialService: credentialService,
-  );
+  return ReservationService(credentialService: credentialService);
 });
 
 /// Provider for user reservations with automatic refresh

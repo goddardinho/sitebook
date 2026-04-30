@@ -120,10 +120,10 @@ class _CampgroundsScreenIOSCompatibleState
         body: Consumer(
           builder: (context, ref, child) {
             final searchQueryNotifier = ref.watch(searchQueryProvider);
-            final searchQuery = searchQueryNotifier.query;
+            final searchQuery = searchQueryNotifier;
             final campgroundsAsync = searchQuery.isEmpty
                 ? ref.watch(nearbyyCampgroundsProvider)
-                : ref.watch(searchResultsProvider(searchQuery));
+                : ref.watch(searchResultsProvider);
 
             return campgroundsAsync.when(
               data: (campgrounds) =>
@@ -201,7 +201,7 @@ class _CampgroundsScreenIOSCompatibleState
     if (campgrounds.isEmpty) {
       final theme = Theme.of(context);
       final searchQueryNotifier = ref.watch(searchQueryProvider);
-      final searchQuery = searchQueryNotifier.query;
+      final searchQuery = searchQueryNotifier;
 
       return Center(
         child: Column(

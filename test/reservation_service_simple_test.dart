@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:sitebook_flutter/shared/services/recreation_gov_api_service.dart';
 import 'package:sitebook_flutter/features/credentials/services/credential_storage_service.dart';
 import 'package:sitebook_flutter/shared/services/reservation_service.dart';
 import 'package:sitebook_flutter/features/credentials/models/reservation_credential.dart';
@@ -10,19 +9,16 @@ import 'package:sitebook_flutter/features/credentials/models/reservation_credent
 import 'reservation_service_simple_test.mocks.dart';
 
 // Generate mocks
-@GenerateMocks([RecreationGovApiService, CredentialStorageService])
+@GenerateMocks([CredentialStorageService])
 void main() {
   group('ReservationService Simple Tests', () {
     late ReservationService reservationService;
-    late MockRecreationGovApiService mockApiService;
     late MockCredentialStorageService mockCredentialService;
 
     setUp(() {
-      mockApiService = MockRecreationGovApiService();
       mockCredentialService = MockCredentialStorageService();
 
       reservationService = ReservationService(
-        apiService: mockApiService,
         credentialService: mockCredentialService,
       );
     });
@@ -81,41 +77,13 @@ void main() {
           mockCredentialService.loadCredentials(),
         ).thenAnswer((_) async => mockCredentials);
 
-        final mockReservations = [
-          ReservationResponse(
-            reservationId: 'RES001',
-            confirmationCode: 'CONF001',
-            status: 'confirmed',
-            facilityId: 'FAC001',
-            facilityName: 'Yellowstone NP',
-            campsiteId: 'SITE001',
-            campsiteName: 'Loop A Site 1',
-            startDate: '2024-07-15',
-            endDate: '2024-07-17',
-            nights: 2,
-            totalCost: 120.0,
-            taxes: 8.0,
-            fees: 12.0,
-            customerEmail: 'test@example.com',
-            customerName: 'Test User',
-            feeBreakdown: [],
-            createdAt: DateTime.now(),
-          ),
-        ];
+        // getUserReservations returns cached data only, no API calls needed
 
-        when(
-          mockApiService.getUserReservations(any),
-        ).thenAnswer((_) async => mockReservations);
-
+        // getUserReservations returns cached data only, no API calls needed
         final result = await reservationService.getUserReservations();
 
-        expect(result, hasLength(1));
-        expect(
-          result.first.id,
-          contains('RES001'),
-        ); // The mapping might change the ID format
-
-        verify(mockApiService.getUserReservations(any)).called(1);
+        // Should return empty list when no data is cached
+        expect(result, hasLength(0));
       });
 
       test('should handle API errors gracefully', () async {
@@ -134,11 +102,11 @@ void main() {
           mockCredentialService.loadCredentials(),
         ).thenAnswer((_) async => mockCredentials);
 
-        when(
-          mockApiService.getUserReservations(any),
-        ).thenThrow(Exception('API unavailable'));
+        // getUserReservations handles errors internally and returns empty list
+        final result = await reservationService.getUserReservations();
 
-        expect(() => reservationService.getUserReservations(), throwsException);
+        // Should return empty list and not throw
+        expect(result, hasLength(0));
       });
     });
 
@@ -164,44 +132,15 @@ void main() {
           mockCredentialService.loadCredentials(),
         ).thenAnswer((_) async => mockCredentials);
 
-        final mockReservations = [
-          ReservationResponse(
-            reservationId: 'RES001',
-            confirmationCode: 'CONF001',
-            status: 'confirmed',
-            facilityId: 'FAC001',
-            facilityName: 'Test Park',
-            campsiteId: 'SITE001',
-            campsiteName: 'Site 1',
-            startDate: '2024-07-15',
-            endDate: '2024-07-17',
-            nights: 2,
-            totalCost: 100.0,
-            taxes: 5.0,
-            fees: 10.0,
-            customerEmail: 'test@example.com',
-            customerName: 'Test User',
-            feeBreakdown: [],
-            createdAt: DateTime.now(),
-          ),
-        ];
+        // getUserReservations uses local cache only, no API calls
 
-        when(
-          mockApiService.getUserReservations(any),
-        ).thenAnswer((_) async => mockReservations);
-
-        // First call should hit the API
+        // getUserReservations uses local cache only, no API calls
         final result1 = await reservationService.getUserReservations();
-
-        // Second call within cache window should use cache
         final result2 = await reservationService.getUserReservations();
 
-        expect(result1, hasLength(1));
-        expect(result2, hasLength(1));
-        expect(result1.first.id, equals(result2.first.id));
-
-        // Should only be called once due to 15-minute caching
-        verify(mockApiService.getUserReservations(any)).called(1);
+        // Both calls should return empty list from cache
+        expect(result1, hasLength(0));
+        expect(result2, hasLength(0));
       });
     });
   });

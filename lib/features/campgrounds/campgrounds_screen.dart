@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../shared/providers/campground_providers_demo.dart';
+import '../../shared/providers/campground_providers_live.dart';
 import '../maps/maps_screen.dart';
 import 'widgets/campground_card.dart';
 
@@ -40,7 +40,9 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              expandedHeight: _isSearching ? 120 : 100,
+              expandedHeight: _isSearching
+                  ? 160
+                  : 100, // Increased height for search + radius selector
               floating: false,
               pinned: true,
               elevation: 0,
@@ -77,21 +79,15 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                           if (_isSearching) ...[
                             const SizedBox(height: 16),
                             _buildSearchBar(theme),
+                            const SizedBox(height: 12),
+                            _buildRadiusSelector(theme),
                           ],
                           if (!_isSearching) ...[
                             const SizedBox(height: 8),
                             Consumer(
                               builder: (context, ref, child) {
-                                final monitoredCountAsync = ref.watch(
-                                  monitoredCountProvider,
-                                );
-                                return monitoredCountAsync.when(
-                                  data: (count) =>
-                                      _buildHeaderStats(theme, count),
-                                  loading: () => _buildHeaderStats(theme, 0),
-                                  error: (error, stack) =>
-                                      _buildHeaderStats(theme, 0),
-                                );
+                                final count = ref.watch(monitoredCountProvider);
+                                return _buildHeaderStats(theme, count);
                               },
                             ),
                           ],
@@ -143,7 +139,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                         child: _buildSearchResults(
                           theme,
                           campgrounds.length,
-                          searchQuery.query,
+                          searchQuery,
                         ),
                       ),
                     ),
@@ -156,7 +152,7 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
                     error: (error, stack) => SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.all(16),
-                        child: _buildSearchResults(theme, 0, searchQuery.query),
+                        child: _buildSearchResults(theme, 0, searchQuery),
                       ),
                     ),
                   );
@@ -212,6 +208,66 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildRadiusSelector(ThemeData theme) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final currentRadius = ref.watch(searchRadiusProvider);
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withAlpha(230),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    size: 16,
+                    color: theme.colorScheme.onSurface.withAlpha(178),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Search radius:',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withAlpha(178),
+                    ),
+                  ),
+                ],
+              ),
+              DropdownButtonHideUnderline(
+                child: DropdownButton<double>(
+                  value: currentRadius,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 10.0, child: Text('10 miles')),
+                    DropdownMenuItem(value: 25.0, child: Text('25 miles')),
+                    DropdownMenuItem(value: 50.0, child: Text('50 miles')),
+                    DropdownMenuItem(value: 100.0, child: Text('100 miles')),
+                    DropdownMenuItem(value: 200.0, child: Text('200 miles')),
+                    DropdownMenuItem(value: 500.0, child: Text('500 miles')),
+                  ],
+                  onChanged: (double? newRadius) {
+                    if (newRadius != null) {
+                      ref
+                          .read(searchRadiusProvider.notifier)
+                          .updateRadius(newRadius);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -408,14 +464,72 @@ class _CampgroundsScreenState extends ConsumerState<CampgroundsScreen> {
     _searchController.clear();
     final actions = ref.read(campgroundActionsProvider);
     actions.updateSearchQuery('');
+    actions.resetSearchRadius(); // Reset radius to default 50 miles
   }
 
   void _showFilterDialog() {
-    // TODO: Implement filter dialog
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Filter functionality coming soon!'),
-        duration: Duration(seconds: 2),
+    showDialog(
+      context: context,
+      builder: (context) => Consumer(
+        builder: (context, ref, child) {
+          final commonAmenities = ref.watch(commonAmenitiesProvider);
+          final selectedAmenities = ref.watch(amenityFiltersProvider);
+          final actions = ref.read(campgroundActionsProvider);
+
+          return AlertDialog(
+            title: const Text('Filter Campgrounds'),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Amenities:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: commonAmenities.map((amenity) {
+                          final isSelected = selectedAmenities.contains(
+                            amenity,
+                          );
+                          return CheckboxListTile(
+                            title: Text(amenity),
+                            value: isSelected,
+                            onChanged: (value) {
+                              actions.toggleAmenityFilter(amenity);
+                            },
+                            dense: true,
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  actions.clearAllFilters();
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Clear All'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Apply'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
